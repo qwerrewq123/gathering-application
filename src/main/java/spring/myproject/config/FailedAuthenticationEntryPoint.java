@@ -1,4 +1,4 @@
-package spring.myproject.common.config;
+package spring.myproject.config;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

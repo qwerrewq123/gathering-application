@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 
 @Data
 @Builder
-public class GatheringRequest {
+public class AddGatheringRequest {
 
     private String title;
     private String content;

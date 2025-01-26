@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 public class EmailProvider {
 
     private final JavaMailSender javaMailSender;
-    private final String SUBJECT = "[임대주택 가격 서비스] 인증메일입니다.";
+    private final String SUBJECT = "[소모임 서비스] 인증메일입니다.";
 
     public boolean sendCertificationMail(String email,String certificationNumber){
 

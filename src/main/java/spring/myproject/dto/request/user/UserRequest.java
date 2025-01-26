@@ -1,10 +1,7 @@
 package spring.myproject.dto.request.user;
 
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
 import lombok.Builder;
 import lombok.Data;
-import spring.myproject.domain.image.Image;
 
 @Data
 @Builder

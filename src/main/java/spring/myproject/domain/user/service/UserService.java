@@ -19,6 +19,7 @@ import spring.myproject.provider.JwtProvider;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -45,7 +46,8 @@ public class UserService {
 
         Image image = null;
         if(!file.isEmpty()){
-            String fullPath = fileDir + file.getOriginalFilename();
+            String[] split = file.getOriginalFilename().split("\\.");
+            String fullPath = fileDir+"/" + UUID.randomUUID()+"."+split[1];
             file.transferTo(new File(fullPath));
             image = Image.builder()
                     .url(fullPath)

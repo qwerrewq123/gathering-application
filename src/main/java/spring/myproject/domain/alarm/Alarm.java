@@ -1,14 +1,16 @@
 package spring.myproject.domain.alarm;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import spring.myproject.domain.user.User;
 
 import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor
 @Entity
+@Setter
+@AllArgsConstructor
+@Builder
 @Table(name = "alarm")
 public class Alarm {
 

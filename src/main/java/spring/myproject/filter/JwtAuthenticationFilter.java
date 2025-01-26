@@ -15,7 +15,6 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
-import spring.myproject.domain.user.User;
 import spring.myproject.domain.user.repository.UserRepository;
 import spring.myproject.provider.JwtProvider;
 
@@ -37,9 +36,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         try{
             String token = parseBearerToken(request);
+
             if(token == null){
                 filterChain.doFilter(request,response);
                 return;
+
             }
 
             String userId = jwtProvider.validate(token);
@@ -47,8 +48,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             if(userId==null){
                 filterChain.doFilter(request,response);
                 return;
+
             }
-            User userEntity = userRepository.findByUsername(userId);
+
             String role = "ROLE_USER";
 
 
@@ -66,7 +68,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         }catch (Exception exception){
             exception.printStackTrace();
-
 
         }
 

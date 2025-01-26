@@ -8,8 +8,10 @@ import java.util.List;
 
 @Data
 @Builder
-public class GatheringReponse {
+public class GatheringResponse {
 
+    private String code;
+    private String message;
     private String title;
     private String content;
     private LocalDateTime registerDate;

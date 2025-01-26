@@ -1,10 +1,7 @@
 package spring.myproject.domain.gathering;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import spring.myproject.domain.category.Category;
 import spring.myproject.domain.image.Image;
 import spring.myproject.domain.user.User;
@@ -14,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 @Getter
 @NoArgsConstructor
+@Setter
 @Entity
 @Table(name = "gathering")
 @AllArgsConstructor
@@ -31,7 +29,7 @@ public class Gathering {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User createBy;
-    @OneToMany
+    @OneToMany(mappedBy = "gathering")
     private List<User> participatedBy = new ArrayList<>();
     @OneToOne
     @JoinColumn(name = "image_id")

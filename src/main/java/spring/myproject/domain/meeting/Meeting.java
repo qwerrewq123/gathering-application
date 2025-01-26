@@ -1,0 +1,35 @@
+package spring.myproject.domain.meeting;
+
+import jakarta.persistence.*;
+import lombok.*;
+import spring.myproject.domain.attend.Attend;
+import spring.myproject.domain.user.User;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@Getter
+@Setter
+@Entity
+public class Meeting {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String title;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User createdBy;
+    private LocalDateTime boardDate;
+    private LocalDateTime startDate;
+    private LocalDateTime endDate;
+    private String content;
+
+    @OneToMany(mappedBy = "meeting")
+    private List<Attend> attends = new ArrayList<>();
+
+}

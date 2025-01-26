@@ -2,11 +2,9 @@ package spring.myproject.domain.user.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import spring.myproject.domain.user.service.UserService;
 import spring.myproject.dto.request.user.EmailCertificationRequest;
@@ -49,8 +47,11 @@ public class UserController {
         }
     }
 
-    @PostMapping("/auth/sign-up")
-    public ResponseEntity<Object> signUp(@RequestBody UserRequest userRequest, @RequestParam MultipartFile file) throws IOException {
+    @PostMapping(value = "/auth/sign-up",consumes = {
+            MediaType.MULTIPART_FORM_DATA_VALUE,
+            MediaType.APPLICATION_JSON_VALUE
+    })
+    public ResponseEntity<Object> signUp(@RequestPart("userRequest") UserRequest userRequest, @RequestParam MultipartFile file) throws IOException {
         try {
             userService.signUp(userRequest, file);
             SignUpResponse signUpResponse = SignUpResponse.builder()
@@ -84,7 +85,7 @@ public class UserController {
 
     }
 
-    @PostMapping("/auth/email-certification")
+    @PostMapping(value = "/auth/email-certification")
     public ResponseEntity<Object> emailCertification(@RequestBody EmailCertificationRequest emailCertificationRequest){
         try {
             userService.emailCertification(emailCertificationRequest);

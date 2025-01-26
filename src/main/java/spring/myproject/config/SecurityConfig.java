@@ -1,4 +1,4 @@
-package spring.myproject.common.config;
+package spring.myproject.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -34,15 +34,18 @@ public class SecurityConfig {
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
-        http.
-                httpBasic(HttpBasicConfigurer::disable)
+        http
+
                 .csrf(CsrfConfigurer::disable)
+                .httpBasic(HttpBasicConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/auth/sign-up","/auth/id-check","/auth/sign-in","/auth/email-certification").permitAll()
                         .anyRequest().authenticated()
+
                 )
+
                 .exceptionHandling(exceptionHandle -> exceptionHandle.authenticationEntryPoint(failedAuthenticationEntryPoint))
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 

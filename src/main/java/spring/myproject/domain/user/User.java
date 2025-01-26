@@ -1,10 +1,8 @@
 package spring.myproject.domain.user;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import spring.myproject.domain.gathering.Gathering;
 import spring.myproject.domain.image.Image;
 
 @Getter
@@ -12,6 +10,7 @@ import spring.myproject.domain.image.Image;
 @Table(name="user")
 @Builder
 @AllArgsConstructor
+@Setter
 @Entity
 public class User {
 
@@ -27,5 +26,9 @@ public class User {
     @OneToOne
     @JoinColumn(name = "image_id")
     private Image profileImage;
+
+    @ManyToOne
+    @JoinColumn(name = "gathering_id")
+    private Gathering gathering;
 
 }
