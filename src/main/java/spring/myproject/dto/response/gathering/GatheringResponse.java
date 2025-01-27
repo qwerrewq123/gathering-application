@@ -19,4 +19,5 @@ public class GatheringResponse {
     private String createdBy;
     private List<String> participatedBy;
     private String image;
+    private int count;
 }

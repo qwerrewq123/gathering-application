@@ -23,16 +23,23 @@ public class Gathering {
     private String title;
     private String content;
     private LocalDateTime registerDate;
-    @OneToOne
+
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category;
-    @ManyToOne
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User createBy;
+
     @OneToMany(mappedBy = "gathering")
     private List<User> participatedBy = new ArrayList<>();
-    @OneToOne
+
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "image_id")
     private Image gatheringImage;
+
+    @OneToOne(mappedBy = "gathering",fetch = FetchType.LAZY)
+    private GatheringCount gatheringCount;
 
 }

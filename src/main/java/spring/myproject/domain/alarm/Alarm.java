@@ -20,7 +20,7 @@ public class Alarm {
     private String content;
     private LocalDateTime date;
     private Boolean checked;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 }

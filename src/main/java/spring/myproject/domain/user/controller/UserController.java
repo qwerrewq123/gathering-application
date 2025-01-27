@@ -6,6 +6,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import spring.myproject.async.AsyncService;
 import spring.myproject.domain.user.service.UserService;
 import spring.myproject.dto.request.user.EmailCertificationRequest;
 import spring.myproject.dto.request.user.IdCheckRequest;
@@ -23,6 +24,7 @@ import java.io.IOException;
 public class UserController {
 
     private final UserService userService;
+    private final AsyncService asyncService;
 
     @PostMapping("/auth/id-check")
     public ResponseEntity<Object> idCheck(@RequestBody IdCheckRequest idCheckRequest) {
@@ -89,6 +91,7 @@ public class UserController {
     public ResponseEntity<Object> emailCertification(@RequestBody EmailCertificationRequest emailCertificationRequest){
         try {
             userService.emailCertification(emailCertificationRequest);
+            //asyncService.asyncTask(emailCertificationRequest);
 
             EmailCertificationResponse emailCertificationResponse = EmailCertificationResponse.builder()
                     .code("SU")

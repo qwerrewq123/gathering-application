@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import spring.myproject.domain.category.Category;
 import spring.myproject.domain.category.repository.CategoryRepository;
 import spring.myproject.domain.gathering.Gathering;
+import spring.myproject.domain.gathering.GatheringCount;
 import spring.myproject.domain.gathering.repository.GatheringRepository;
 import spring.myproject.domain.image.Image;
 import spring.myproject.domain.image.repository.ImageRepository;
@@ -39,6 +40,7 @@ public class GatheringService {
     private final ImageRepository imageRepository;
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
+    private final GatheringCountService gatheringCountService;
 
 
     public void addGathering(AddGatheringRequest addGatheringRequest, MultipartFile file, String username) throws IOException {
@@ -77,7 +79,13 @@ public class GatheringService {
                 .gatheringImage(image)
                 .build();
 
+        gatheringCountService.makeCount(gathering);
+
+
+
+
         gatheringRepository.save(gathering);
+
     }
 
     public void updateGathering(UpdateGatheringRequest updateGatheringRequest, MultipartFile file, String username,Long gatheringId) throws IOException {
@@ -138,14 +146,20 @@ public class GatheringService {
             throw new IllegalArgumentException("해당하는 유저가 없습니다");
         }
 
-        Gathering gathering = gatheringRepository.findById(gatheringId).orElseThrow(() -> {
+        Gathering gathering = gatheringRepository.findGatheringAndCount(gatheringId).orElseThrow(() -> {
             throw new IllegalArgumentException("해당하는 소모임이 없습니다");
         });
+
+
+        GatheringCount gatheringCount = gathering.getGatheringCount();
+        gatheringCountService.addCount(gatheringCount);
 
         String category = gathering.getCategory().getName();
         String createdby = gathering.getCreateBy().getUsername();
         List<String> participatedBy = getParticipatedBy(gathering);
-        String image = encodeFileToBase64(gathering.getGatheringImage().getUrl());
+        Image image = gathering.getGatheringImage();
+
+        String base64Image = encodeFileToBase64(image.getUrl());
 
         return GatheringResponse.builder()
                 .code("SU")
@@ -156,7 +170,8 @@ public class GatheringService {
                 .participatedBy(participatedBy)
                 .category(category)
                 .content(gathering.getContent())
-                .image(image)
+                .image(base64Image)
+                .count(gatheringCount.getCount())
                 .build();
 
 
@@ -178,6 +193,7 @@ public class GatheringService {
                                 .content(g.getContent())
                                 .image(encodeFileToBase64(g.getGatheringImage().getUrl()))
                                 .participatedBy(getParticipatedBy(g))
+                                .count(g.getGatheringCount().getCount())
                                 .build();
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -218,6 +234,7 @@ public class GatheringService {
                                 .content(g.getContent())
                                 .image(encodeFileToBase64(g.getGatheringImage().getUrl()))
                                 .participatedBy(getParticipatedBy(g))
+                                .count(g.getGatheringCount().getCount())
                                 .build();
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -252,6 +269,7 @@ public class GatheringService {
                                 .content(g.getContent())
                                 .image(encodeFileToBase64(g.getGatheringImage().getUrl()))
                                 .participatedBy(getParticipatedBy(g))
+                                .count(g.getGatheringCount().getCount())
                                 .build();
                     } catch (Exception e) {
                         e.printStackTrace();

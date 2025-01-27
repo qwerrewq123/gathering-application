@@ -32,16 +32,15 @@ public class AlarmService {
             throw new IllegalArgumentException("해당하는 알림이 없습니다");
         });
 
-        try {
-            alarm.setChecked(true);
 
-        }catch (Exception e){
-            e.printStackTrace();
-            throw e;
-        }
+        alarm.setChecked(true);
+
+
     }
 
     public void deleteAlarm(Long id, String username) {
+
+
         User user = userRepository.findByUsername(username);
         if(user == null){
             throw new IllegalArgumentException("해당하는 유저가 없습니다");
@@ -50,13 +49,10 @@ public class AlarmService {
             throw new IllegalArgumentException("해당하는 알림이 없습니다");
         });
 
-        try {
-            alarmRepository.delete(alarm);
 
-        }catch (Exception e){
-            e.printStackTrace();
-            throw e;
-        }
+        alarmRepository.delete(alarm);
+
+
 
     }
 
@@ -66,40 +62,36 @@ public class AlarmService {
         if(user == null){
             throw new IllegalArgumentException("해당하는 유저가 없습니다");
         }
-        try {
-            if(checked == true){
-                PageRequest pageRequest = PageRequest.of(page - 1, 10);
-                Page<Alarm> alarmPage = alarmRepository.findCheckedAlarmPage(pageRequest, user.getId());
-                Page<AlarmResponse> alarmResponsePage = alarmPage.map(a -> AlarmResponse.builder()
-                        .date(a.getDate())
-                        .content(a.getContent())
-                        .checked(a.getChecked())
-                        .build());
 
-                return alarmResponsePage;
-            }else{
-                PageRequest pageRequest = PageRequest.of(page - 1, 10);
-                Page<Alarm> alarmPage = alarmRepository.findUncheckedAlarmPage(pageRequest, user.getId());
-                Page<AlarmResponse> alarmResponsePage = alarmPage.map(a -> AlarmResponse.builder()
-                        .date(a.getDate())
-                        .content(a.getContent())
-                        .checked(a.getChecked())
-                        .build());
+        if(checked == true){
+            PageRequest pageRequest = PageRequest.of(page - 1, 10);
+            Page<Alarm> alarmPage = alarmRepository.findCheckedAlarmPage(pageRequest, user.getId());
+            Page<AlarmResponse> alarmResponsePage = alarmPage.map(a -> AlarmResponse.builder()
+                    .date(a.getDate())
+                    .content(a.getContent())
+                    .checked(a.getChecked())
+                    .build());
 
-                return alarmResponsePage;
-            }
+            return alarmResponsePage;
+        }else{
+            PageRequest pageRequest = PageRequest.of(page - 1, 10);
+            Page<Alarm> alarmPage = alarmRepository.findUncheckedAlarmPage(pageRequest, user.getId());
+            Page<AlarmResponse> alarmResponsePage = alarmPage.map(a -> AlarmResponse.builder()
+                    .date(a.getDate())
+                    .content(a.getContent())
+                    .checked(a.getChecked())
+                    .build());
 
-
-
-        }catch (Exception e){
-            e.printStackTrace();
-            throw e;
+            return alarmResponsePage;
         }
 
 
 
-    }
 
+
+
+
+    }
     public void addAlarm(AddAlarmRequest addAlarmRequest, String username) {
 
         User user = userRepository.findByUsername(username);
@@ -107,20 +99,17 @@ public class AlarmService {
             throw new IllegalArgumentException("해당하는 유저가 없습니다");
         }
 
-        try {
-            Alarm alarm = Alarm.builder()
-                    .date(LocalDateTime.now())
-                    .content(addAlarmRequest.getContent())
-                    .checked(false)
-                    .user(user)
-                    .build();
 
-            alarmRepository.save(alarm);
+        Alarm alarm = Alarm.builder()
+                .date(LocalDateTime.now())
+                .content(addAlarmRequest.getContent())
+                .checked(false)
+                .user(user)
+                .build();
 
-        }catch (Exception e){
-            e.printStackTrace();
-            throw e;
-        }
+        alarmRepository.save(alarm);
+
+
 
 
     }
