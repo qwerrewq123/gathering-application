@@ -15,7 +15,8 @@ public class GatheringCount {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @OneToOne(fetch = FetchType.LAZY)
+    @MapsId
+    @OneToOne(fetch = FetchType.LAZY,optional = false)
     @JoinColumn(name = "gathering_id")
     private Gathering gathering;
 

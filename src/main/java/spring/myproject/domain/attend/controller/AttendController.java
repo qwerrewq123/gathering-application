@@ -25,7 +25,8 @@ public class AttendController {
             attendService.addAttend(meetingId,username);
             return new ResponseEntity<>(AddAttendResponse.builder()
                     .code("SU")
-                    .message("Success"), HttpStatus.OK);
+                    .message("Success")
+                    .build(), HttpStatus.OK);
 
         }catch (Exception e){
             e.printStackTrace();
@@ -43,7 +44,8 @@ public class AttendController {
             attendService.disAttend(meetingId,attendId,username);
             return new ResponseEntity<>(AddAttendResponse.builder()
                     .code("SU")
-                    .message("Success"), HttpStatus.OK);
+                    .message("Success")
+                    .build(), HttpStatus.OK);
         }catch (Exception e){
             e.printStackTrace();
             throw e;
@@ -58,7 +60,8 @@ public class AttendController {
             attendService.permitAttend(meetingId,attendId,username);
             return new ResponseEntity<>(AddAttendResponse.builder()
                     .code("SU")
-                    .message("Success"), HttpStatus.OK);
+                    .message("Success")
+                    .build(), HttpStatus.OK);
         }catch (Exception e){
             e.printStackTrace();
             throw e;

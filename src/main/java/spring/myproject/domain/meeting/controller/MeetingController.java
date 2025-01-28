@@ -20,16 +20,18 @@ public class MeetingController {
 
     private final MeetingService meetingService;
 
-    @PostMapping("/addMeeting")
+    @PostMapping("/meeting/{gatheringId}")
     public ResponseEntity<Object> addMeeting(@RequestBody AddMeetingRequest addMeetingRequest,
+                                             @PathVariable Long gatheringId,
                                              @AuthenticationPrincipal String username){
 
 
         try {
-            meetingService.addMeeting(addMeetingRequest,username);
+            meetingService.addMeeting(addMeetingRequest,username,gatheringId);
             return new ResponseEntity<>(AddMeetingResponse.builder()
                     .code("SU")
-                    .message("Success"), HttpStatus.OK);
+                    .message("Success")
+                    .build(), HttpStatus.OK);
 
         }catch (Exception e){
             e.printStackTrace();
@@ -39,17 +41,17 @@ public class MeetingController {
 
     }
 
-    @PostMapping("/deleteMeeting/{meetingId}")
-    public ResponseEntity<Object> deleteMeeting(@RequestBody AddMeetingRequest addMeetingRequest,
-                                                @AuthenticationPrincipal String username,
-                                                @RequestParam Long meetingId){
+    @DeleteMapping("/meeting/{meetingId}")
+    public ResponseEntity<Object> deleteMeeting(@AuthenticationPrincipal String username,
+                                                @PathVariable Long meetingId){
 
 
         try {
-            meetingService.deleteMeeting(addMeetingRequest,username,meetingId);
+            meetingService.deleteMeeting(username,meetingId);
             return new ResponseEntity<>(AddMeetingResponse.builder()
                     .code("SU")
-                    .message("Success"), HttpStatus.OK);
+                    .message("Success")
+                    .build(), HttpStatus.OK);
 
         }catch (Exception e){
             e.printStackTrace();
@@ -63,14 +65,15 @@ public class MeetingController {
     @PatchMapping("/updateMeeting/{meetingId}")
     public ResponseEntity<Object> updateMeeting(@RequestBody UpdateMeetingRequest updateMeetingRequest,
                                                 @AuthenticationPrincipal String username,
-                                                @RequestParam Long meetingId){
+                                                @PathVariable Long meetingId){
 
 
         try {
             meetingService.updateMeeting(updateMeetingRequest,username,meetingId);
             return new ResponseEntity<>(AddMeetingResponse.builder()
                     .code("SU")
-                    .message("Success"), HttpStatus.OK);
+                    .message("Success")
+                    .build(), HttpStatus.OK);
 
         }catch (Exception e){
             e.printStackTrace();

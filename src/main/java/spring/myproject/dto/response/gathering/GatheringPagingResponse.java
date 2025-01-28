@@ -12,16 +12,16 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class GatheringResponse {
+public class GatheringPagingResponse {
 
     private String code;
     private String message;
+    private Long id;
     private String title;
     private String content;
     private LocalDateTime registerDate;
     private String category;
     private String createdBy;
-    private List<String> participatedBy;
     private String image;
     private int count;
 }

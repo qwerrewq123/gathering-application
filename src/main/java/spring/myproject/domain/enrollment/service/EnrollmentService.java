@@ -33,8 +33,8 @@ public class EnrollmentService {
             throw new IllegalArgumentException("해당하는 소모임이 없습니다");
         });
 
-        Boolean exist = enrollmentRepository.existEnrollment(gatheringId, user.getId());
-        if(exist == true){
+        Enrollment exist = enrollmentRepository.existEnrollment(gatheringId, user.getId());
+        if(exist != null){
             throw new IllegalArgumentException("이미 해당 소모임이 등록신청하였거나 가입되어있습니다");
         }
 
@@ -42,7 +42,7 @@ public class EnrollmentService {
                 .date(LocalDateTime.now())
                 .enrolledBy(user)
                 .gathering(gathering)
-                .accepted(false)
+                .accepted(true)
                 .build();
 
         enrollmentRepository.save(enrollment);
@@ -67,8 +67,9 @@ public class EnrollmentService {
             throw new IllegalArgumentException("해당 소모임의 회원이 아닙니다");
         }
 
+        gathering.getEnrollments().remove(enrollment);
         enrollmentRepository.delete(enrollment);
-        gathering.getParticipatedBy().remove(user);
+
 
 
     }

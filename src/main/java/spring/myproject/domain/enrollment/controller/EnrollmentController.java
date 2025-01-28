@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,13 +18,14 @@ public class EnrollmentController {
 
     private final EnrollmentService enrollmentService;
     @PostMapping("/gathering/{gatheringId}/participate")
-    public ResponseEntity<Object> enrollGathering(@RequestParam Long gatheringId,
+    public ResponseEntity<Object> enrollGathering(@PathVariable Long gatheringId,
                                                        @AuthenticationPrincipal String username){
         try {
             enrollmentService.enrollGathering(gatheringId,username);
             return new ResponseEntity<>(EnrollGatheringResponse.builder()
                     .code("SU")
-                    .message("Success"), HttpStatus.OK);
+                    .message("Success")
+                    .build(), HttpStatus.OK);
 
         }catch (Exception e){
             e.printStackTrace();
@@ -33,13 +35,15 @@ public class EnrollmentController {
     }
 
     @PostMapping("/gathering/{gatheringId}/disParticipate")
-    public ResponseEntity<Object> disEnrollGathering(@RequestParam Long gatheringId,
+    public ResponseEntity<Object> disEnrollGathering(@PathVariable Long gatheringId,
                                                            @AuthenticationPrincipal String username){
         try {
+            System.out.println(username);
             enrollmentService.disEnrollGathering(gatheringId,username);
             return new ResponseEntity<>(DisEnrollGatheringResponse.builder()
                     .code("SU")
-                    .message("Success"),HttpStatus.OK);
+                    .message("Success")
+                    .build(),HttpStatus.OK);
 
         }catch (Exception e){
             e.printStackTrace();

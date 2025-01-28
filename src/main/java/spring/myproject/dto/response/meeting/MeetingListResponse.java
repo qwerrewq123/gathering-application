@@ -11,6 +11,7 @@ public class MeetingListResponse {
 
     private String code;
     private String message;
+    private Long id;
     private String title;
     private String createdBy;
     private LocalDateTime boardDate;

@@ -27,8 +27,6 @@ public class User {
     @JoinColumn(name = "image_id")
     private Image profileImage;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "gathering_id")
-    private Gathering gathering;
+
 
 }

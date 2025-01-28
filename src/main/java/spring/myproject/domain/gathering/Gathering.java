@@ -3,6 +3,7 @@ package spring.myproject.domain.gathering;
 import jakarta.persistence.*;
 import lombok.*;
 import spring.myproject.domain.category.Category;
+import spring.myproject.domain.enrollment.Enrollment;
 import spring.myproject.domain.image.Image;
 import spring.myproject.domain.user.User;
 
@@ -32,14 +33,15 @@ public class Gathering {
     @JoinColumn(name = "user_id")
     private User createBy;
 
-    @OneToMany(mappedBy = "gathering")
-    private List<User> participatedBy = new ArrayList<>();
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "image_id")
     private Image gatheringImage;
 
-    @OneToOne(mappedBy = "gathering",fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "gathering",fetch = FetchType.LAZY,optional = false)
     private GatheringCount gatheringCount;
+
+    @OneToMany(mappedBy = "gathering")
+    List<Enrollment> enrollments = new ArrayList<>();
 
 }

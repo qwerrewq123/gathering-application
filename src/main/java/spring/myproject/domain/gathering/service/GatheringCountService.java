@@ -16,11 +16,11 @@ public class GatheringCountService {
 
 
 
-    public void addCount(GatheringCount gatheringCount){
+    public void addCount(Long gatheringId){
 
 
 
-        gatheringCount.setCount(gatheringCount.getCount()+1);
+        gatheringCountRepository.addCount(gatheringId);
     }
 
     public void makeCount(Gathering gathering){

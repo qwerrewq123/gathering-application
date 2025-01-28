@@ -3,6 +3,7 @@ package spring.myproject.domain.meeting;
 import jakarta.persistence.*;
 import lombok.*;
 import spring.myproject.domain.attend.Attend;
+import spring.myproject.domain.gathering.Gathering;
 import spring.myproject.domain.user.User;
 
 import java.time.LocalDateTime;
@@ -21,15 +22,20 @@ public class Meeting {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String title;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User createdBy;
+
     private LocalDateTime boardDate;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
     private String content;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User createdBy;
+
     @OneToMany(mappedBy = "meeting")
     private List<Attend> attends = new ArrayList<>();
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Gathering gathering;
 
 }

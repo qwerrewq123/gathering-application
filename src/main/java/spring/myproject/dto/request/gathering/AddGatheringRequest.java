@@ -11,8 +11,7 @@ public class AddGatheringRequest {
 
     private String title;
     private String content;
-    private LocalDateTime registerDate;
     private String category;
-    private String createdBy;
+
 
 }

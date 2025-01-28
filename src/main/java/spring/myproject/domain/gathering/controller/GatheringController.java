@@ -2,6 +2,7 @@ package spring.myproject.domain.gathering.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.web.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -11,6 +12,7 @@ import spring.myproject.domain.gathering.service.GatheringService;
 import spring.myproject.dto.request.gathering.AddGatheringRequest;
 import spring.myproject.dto.request.gathering.UpdateGatheringRequest;
 import spring.myproject.dto.response.gathering.AddGatheringResponse;
+import spring.myproject.dto.response.gathering.GatheringPagingResponse;
 import spring.myproject.dto.response.gathering.GatheringResponse;
 import spring.myproject.dto.response.gathering.UpdateGatheringResponse;
 
@@ -27,6 +29,7 @@ public class GatheringController {
                                                @RequestPart MultipartFile file,
                                                @AuthenticationPrincipal String username) throws IOException {
         try {
+            System.out.println(username);
             gatheringService.addGathering(addGatheringRequest,file,username);
             AddGatheringResponse addGatheringResponse = AddGatheringResponse.builder()
                     .code("SU")
@@ -76,8 +79,8 @@ public class GatheringController {
                                              @RequestParam String title,
                                              @AuthenticationPrincipal String username){
         try {
-            Page<GatheringResponse> page = gatheringService.gatherings(pageNum,username,title);
-            return new ResponseEntity<>(page,HttpStatus.OK);
+            Page<GatheringPagingResponse> page = gatheringService.gatherings(pageNum,username,title);
+            return new ResponseEntity<>(new PagedModel<>(page),HttpStatus.OK);
         }catch (Exception e){
             e.printStackTrace();
             throw e ;
@@ -89,8 +92,8 @@ public class GatheringController {
                                                  @AuthenticationPrincipal String username){
         try {
 
-            Page<GatheringResponse> page = gatheringService.gatheringsLike(pageNum,username);
-            return new ResponseEntity<>(page,HttpStatus.OK);
+            Page<GatheringPagingResponse> page = gatheringService.gatheringsLike(pageNum,username);
+            return new ResponseEntity<>(new PagedModel<>(page),HttpStatus.OK);
         }catch (Exception e){
             e.printStackTrace();
             throw e;

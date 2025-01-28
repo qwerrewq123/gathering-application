@@ -7,9 +7,10 @@ import spring.myproject.domain.enrollment.Enrollment;
 public interface EnrollmentRepository extends JpaRepository<Enrollment,Long> {
 
     @Query("select e from Enrollment e where e.gathering.id = :gatheringId and e.enrolledBy.username = :userId")
-    Boolean existEnrollment(Long gatheringId,Long userId);
+    Enrollment existEnrollment(Long gatheringId,Long userId);
 
-    @Query("select e from Enrollment e where e.gathering.id = :gatheringId and e.enrolledBy.username = :userId and e.accepted = true")
+    @Query("select e from Enrollment e join e.enrolledBy u " +
+            "where e.gathering.id = :gatheringId and u.id = :userId and e.accepted = true")
     Enrollment findEnrollment(Long gatheringId,Long userId);
 
 
