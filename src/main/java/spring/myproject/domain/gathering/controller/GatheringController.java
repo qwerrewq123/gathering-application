@@ -29,7 +29,7 @@ public class GatheringController {
                                                @RequestPart MultipartFile file,
                                                @AuthenticationPrincipal String username) throws IOException {
         try {
-            System.out.println(username);
+
             gatheringService.addGathering(addGatheringRequest,file,username);
             AddGatheringResponse addGatheringResponse = AddGatheringResponse.builder()
                     .code("SU")
