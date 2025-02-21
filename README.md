@@ -70,9 +70,9 @@
 ## 🤔 기술적 이슈와 해결 과정
 - Redis 써야할까?
     - [Stream API에 대하여](https://velog.io/@yewo2nn16/Java-Stream-API)
-- SMTP 이용한 비동기 처리
+- SMTP 이용한 성능 향상
     - [gmail 보내기](https://velog.io/@yewo2nn16/Email-이메일-전송하기with-첨부파일)
-- AWS EC2에 배포 및 k6를 이용한 모니터링
+- AWS EC2에 배포 및 k6를 이용한 모니터링 및 아키텍처 개선
     - [서버 배포하기-1](https://velog.io/@yewo2nn16/SpringBoot-서버-배포)
     - [서버 배포하기-2](https://velog.io/@yewo2nn16/SpringBoot-서버-배포-인텔리제이에서-jar-파일-빌드해서-배포하기)
 
