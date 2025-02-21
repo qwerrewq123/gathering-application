@@ -67,7 +67,7 @@ public class GatheringController {
     }
 
     @GetMapping("/gatherings")
-    public ResponseEntity<Object> gatherings(@RequestParam int pageNum,
+    public ResponseEntity<GatheringPagingResponse> gatherings(@RequestParam int pageNum,
                                              @RequestParam String title,
                                              @AuthenticationPrincipal String username){
         GatheringPagingResponse gatheringPagingResponse = gatheringService.gatherings(pageNum, username, title);
@@ -79,7 +79,7 @@ public class GatheringController {
     }
 
     @GetMapping("/gatherings/like")
-    public ResponseEntity<Object> gatheringsLike(@RequestParam int pageNum,
+    public ResponseEntity<GatheringPagingResponse> gatheringsLike(@RequestParam int pageNum,
                                                  @AuthenticationPrincipal String username){
 
         GatheringPagingResponse gatheringPagingResponse = gatheringService.gatheringsLike(pageNum,username);

@@ -1,7 +1,9 @@
 package spring.myproject.dto.response.meeting;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import spring.myproject.domain.user.User;
@@ -11,6 +13,8 @@ import java.util.List;
 
 @Data
 @Builder
+@AllArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class MeetingResponse {
 
     private String code;

@@ -30,7 +30,7 @@ public class AttendService {
     private final UserRepository userRepository;
     private final AttendRepository attendRepository;
     private final MeetingRepository meetingRepository;
-
+    //TODO : 한유저가 중복 attend 로직 추가
     public AddAttendResponse addAttend(Long meetingId, String username) {
 
 

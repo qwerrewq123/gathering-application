@@ -96,7 +96,7 @@ public class EnrollmentService {
             Enrollment enrollment = enrollmentRepository.findEnrollment(gatheringId, user.getId()).orElseThrow(
                     () ->  new NotFoundEnrollmentException("no exist Enrollment!!"));
 
-
+            //TODO : 쿼리 한번 더 나가는데 어떻게 하는게 좋을까?
             gathering.getEnrollments().remove(enrollment);
             enrollmentRepository.delete(enrollment);
             return DisEnrollGatheringResponse.builder()

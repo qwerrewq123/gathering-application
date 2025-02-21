@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface EnrollmentRepository extends JpaRepository<Enrollment,Long> {
 
-    @Query("select e from Enrollment e where e.gathering.id = :gatheringId and e.enrolledBy.username = :userId")
+    @Query("select e from Enrollment e where e.gathering.id = :gatheringId and e.enrolledBy.id = :userId")
     Enrollment existEnrollment(Long gatheringId,Long userId);
 
 

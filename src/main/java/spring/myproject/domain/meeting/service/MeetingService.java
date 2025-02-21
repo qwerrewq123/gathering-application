@@ -135,7 +135,7 @@ public class MeetingService {
 
             boolean authorize = meeting.getCreatedBy().getId() == user.getId();
             if(authorize == false){
-                throw new IllegalArgumentException("no authority!");
+                throw new NotAuthrizeException("no authority!");
             }
 
             meeting.setTitle(updateMeetingRequest.getTitle());

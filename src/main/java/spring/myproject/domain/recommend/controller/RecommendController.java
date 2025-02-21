@@ -9,7 +9,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import spring.myproject.domain.gathering.service.GatheringService;
 import spring.myproject.domain.recommend.repository.RecommendRepository;
+import spring.myproject.domain.recommend.service.RecommendService;
 import spring.myproject.dto.response.gathering.GatheringResponse;
+import spring.myproject.dto.response.recommend.RecommendResponse;
 
 import java.util.List;
 
@@ -17,20 +19,19 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RecommendController {
 
-    private final GatheringService gatheringService;
+    private final RecommendService recommendService;
 
     @GetMapping("/recommend")
     public ResponseEntity<Object> recommend(@AuthenticationPrincipal String username){
 
-        try {
 
-            List<GatheringResponse> gatheringResponseList = gatheringService.recommend(username);
-            return new ResponseEntity<>(gatheringResponseList, HttpStatus.OK);
-
-        }catch (Exception e){
-            e.printStackTrace();
-            throw e;
+        RecommendResponse recommendResponse = recommendService.recommend(username);
+        if(recommendResponse.getCode().equals("SU")){
+            return new ResponseEntity<>(recommendResponse, HttpStatus.OK);
+        }else {
+            return new ResponseEntity<>(recommendResponse, HttpStatus.BAD_REQUEST);
         }
+
 
     }
 }

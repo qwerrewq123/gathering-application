@@ -73,22 +73,24 @@ public class UserService {
 
     }
 
-    public SignUpResponse signUp(UserRequest userRequest, MultipartFile file) throws IOException {
+    public SignUpResponse signUp(UserRequest userRequest, MultipartFile file){
 
 
-        Image image = null;
-        if(!file.isEmpty()){
-            String[] split = file.getOriginalFilename().split("\\.");
-            String fullPath = fileDir+"/" + UUID.randomUUID()+"."+split[1];
-            file.transferTo(new File(fullPath));
-            image = Image.builder()
-                    .url(fullPath)
-                    .build();
-            imageRepository.save(image);
 
-        }
 
         try {
+
+            Image image = null;
+            if(!file.isEmpty()){
+                String[] split = file.getOriginalFilename().split("\\.");
+                String fullPath = fileDir+"/" + UUID.randomUUID()+"."+split[1];
+                file.transferTo(new File(fullPath));
+                image = Image.builder()
+                        .url(fullPath)
+                        .build();
+                imageRepository.save(image);
+
+            }
 
             User user = User.builder()
                     .age(userRequest.getAge())
