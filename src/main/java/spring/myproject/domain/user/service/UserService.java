@@ -1,6 +1,7 @@
 package spring.myproject.domain.user.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -14,16 +15,26 @@ import spring.myproject.dto.request.user.EmailCertificationRequest;
 import spring.myproject.dto.request.user.IdCheckRequest;
 import spring.myproject.dto.request.user.SignInRequest;
 import spring.myproject.dto.request.user.UserRequest;
+import spring.myproject.dto.response.user.EmailCertificationResponse;
+import spring.myproject.dto.response.user.IdCheckResponse;
+import spring.myproject.dto.response.user.SignInResponse;
+import spring.myproject.dto.response.user.SignUpResponse;
+import spring.myproject.exception.user.NotFoundUserException;
+import spring.myproject.exception.user.UnCorrectPasswordException;
 import spring.myproject.provider.EmailProvider;
 import spring.myproject.provider.JwtProvider;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.UUID;
+
+import static spring.myproject.util.UserConst.*;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class UserService {
 
     private final UserRepository userRepository;
@@ -35,13 +46,34 @@ public class UserService {
     @Value("${file.dir}")
     private String fileDir;
 
-    public Boolean idCheck(IdCheckRequest idCheckRequest) {
+    public IdCheckResponse idCheck(IdCheckRequest idCheckRequest) {
 
-        Boolean exist = userRepository.existsByUsername(idCheckRequest.getUsername());
-        return exist;
+        boolean idCheck = !userRepository.existsByUsername(idCheckRequest.getUsername());
+        try {
+            if (idCheck == true) {
+                return IdCheckResponse.builder()
+                        .code(successCode)
+                        .message(successMessage)
+                        .build();
+
+            } else {
+                return IdCheckResponse.builder()
+                        .code(existCode)
+                        .message(existMessage)
+                        .build();
+            }
+        }catch (Exception e){
+            log.error("error", e);
+            return IdCheckResponse.builder()
+                    .code(dbErrorCode)
+                    .message(dbErrorMessage)
+                    .build();
+
+        }
+
     }
 
-    public void signUp(UserRequest userRequest, MultipartFile file) throws IOException {
+    public SignUpResponse signUp(UserRequest userRequest, MultipartFile file) throws IOException {
 
 
         Image image = null;
@@ -56,38 +88,119 @@ public class UserService {
 
         }
 
-        User user = User.builder()
-                .age(userRequest.getAge())
-                .email(userRequest.getEmail())
-                .hobby(userRequest.getHobby())
-                .address(userRequest.getAddress())
-                .username(userRequest.getUsername())
-                .password(passwordEncoder.encode(userRequest.getPassword()))
-                .profileImage(image)
-                .build();
+        try {
 
-        userRepository.save(user);
+            User user = User.builder()
+                    .age(userRequest.getAge())
+                    .email(userRequest.getEmail())
+                    .hobby(userRequest.getHobby())
+                    .address(userRequest.getAddress())
+                    .username(userRequest.getUsername())
+                    .password(passwordEncoder.encode(userRequest.getPassword()))
+                    .profileImage(image)
+                    .build();
+
+            userRepository.save(user);
+
+            return SignUpResponse.builder()
+                    .code(successCode)
+                    .message(successMessage)
+                    .build();
+
+        }catch (Exception e){
+            log.error("error", e);
+            return SignUpResponse.builder()
+                    .code(dbErrorCode)
+                    .message(dbErrorMessage)
+                    .build();
+        }
+
+
 
 
     }
 
-    public String signIn(SignInRequest signInRequest) {
-        User user = userRepository.findByUsername(signInRequest.getUsername());
-        if(user == null){
-            throw new IllegalArgumentException("회원이 존재하지 않습니다");
+    public SignInResponse signIn(SignInRequest signInRequest) {
+
+
+        try {
+
+            User user = userRepository.findByUsername(signInRequest.getUsername()).orElseThrow(() -> new NotFoundUserException("not Found User"));
+
+            boolean matches = passwordEncoder.matches(signInRequest.getPassword(), user.getPassword());
+
+            checkPassword(matches);
+
+            String token = jwtProvider.create(user.getUsername());
+
+            return SignInResponse.builder()
+                    .code(successCode)
+                    .message(successMessage)
+                    .token(token)
+                    .build();
+
+        }catch (NotFoundUserException e){
+            return SignInResponse.builder()
+                    .code(notFoundCode)
+                    .message(notFoundMessage)
+                    .build();
+
+
+        }catch (UnCorrectPasswordException e){
+            return SignInResponse.builder()
+                    .code(unCorrectCode)
+                    .message(unCorrectMessage)
+                    .build();
+        }catch (Exception e){
+            log.error("error", e);
+            return SignInResponse.builder()
+                    .code(dbErrorCode)
+                    .message(dbErrorMessage)
+                    .build();
         }
-        boolean matches = passwordEncoder.matches(signInRequest.getPassword(), user.getPassword());
+    }
+
+
+    public EmailCertificationResponse emailCertification(EmailCertificationRequest emailCertificationRequest) {
+
+
+        try {
+            List<User> users = userRepository.findByEmail(emailCertificationRequest.getEmail());
+            if(users.size() == 0){
+                return EmailCertificationResponse.builder()
+                        .code(notEmailCode)
+                        .message(notEmailMessage)
+                        .build();
+            } else if (users.size() == 1) {
+                emailProvider.sendCertificationMail(emailCertificationRequest.getEmail(), certificationNumber());
+                return EmailCertificationResponse.builder()
+                        .code(successCode)
+                        .message(successMessage)
+                        .build();
+            }else{
+                return EmailCertificationResponse.builder()
+                        .code(duplicateEmailCode)
+                        .message(duplicateEmailMessage)
+                        .build();
+            }
+        }catch (Exception e){
+            log.error("error", e);
+            return EmailCertificationResponse.builder()
+                    .code(dbErrorCode)
+                    .message(dbErrorMessage)
+                    .build();
+        }
+
+
+
+    }
+
+    private void checkPassword(boolean matches) {
         if(!matches){
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다");
+            throw new UnCorrectPasswordException("doesn't match Password!");
         }
-        return jwtProvider.create(user.getUsername());
     }
 
-    public void emailCertification(EmailCertificationRequest emailCertificationRequest) {
-
-        emailProvider.sendCertificationMail(emailCertificationRequest.getEmail(), certificationNumber());
-
-    }
 
     private String certificationNumber(){
         int number = (int) (Math.random() * 9000) + 1000;

@@ -49,7 +49,9 @@ public interface GatheringRepository extends JpaRepository<Gathering,Long> {
     @Query("select " +
             "new spring.myproject.dto.response.gathering." +
             "GatheringQueryDto(g.id,g.title,g.content,g.registerDate,ca.name,cr.username,u.username,im.url,gc.count) " +
-            "from Gathering g left join g.enrollments e left join e.enrolledBy u " +
+            "from Gathering g " +
+            "left join g.enrollments e " +
+            "left join e.enrolledBy u " +
             "left join g.createBy cr " +
             "left join g.category ca " +
             "left join g.gatheringImage im " +

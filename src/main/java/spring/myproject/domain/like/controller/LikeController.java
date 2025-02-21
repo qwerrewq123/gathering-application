@@ -19,36 +19,27 @@ public class LikeController {
     private final LikeService likeService;
 
     @PatchMapping("/like/{gatheringId}")
-    public ResponseEntity<Object> like(@PathVariable Long gatheringId, @AuthenticationPrincipal String username){
+    public ResponseEntity<LikeResponse> like(@PathVariable Long gatheringId, @AuthenticationPrincipal String username){
 
-        try {
-            likeService.like(gatheringId,username);
-            LikeResponse likeResponse = LikeResponse.builder()
-                    .code("SU")
-                    .message("Success")
-                    .build();
+        LikeResponse likeResponse = likeService.like(gatheringId, username);
 
+        if(likeResponse.getCode().equals("SU")){
             return new ResponseEntity<>(likeResponse, HttpStatus.OK);
-        }catch (Exception e){
-            e.printStackTrace();
-            throw e;
+        }else{
+            return new ResponseEntity<>(likeResponse, HttpStatus.BAD_REQUEST);
         }
+
     }
 
 
     @PatchMapping("/dislike/{gatheringId}")
-    public ResponseEntity<Object> dislike(@PathVariable Long gatheringId, @AuthenticationPrincipal String username){
-        try {
-            likeService.dislike(gatheringId,username);
-            DislikeResponse dislikeResponse = DislikeResponse.builder()
-                    .code("SU")
-                    .message("Success")
-                    .build();
+    public ResponseEntity<DislikeResponse> dislike(@PathVariable Long gatheringId, @AuthenticationPrincipal String username){
 
+        DislikeResponse dislikeResponse = likeService.dislike(gatheringId, username);
+        if(dislikeResponse.getCode().equals("SU")){
             return new ResponseEntity<>(dislikeResponse, HttpStatus.OK);
-        }catch (Exception e){
-            e.printStackTrace();
-            throw e;
+        }else{
+            return new ResponseEntity<>(dislikeResponse, HttpStatus.BAD_REQUEST);
         }
     }
 

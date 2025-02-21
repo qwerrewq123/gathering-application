@@ -18,9 +18,8 @@ public class GatheringCountService {
 
     public void addCount(Long gatheringId){
 
-
-
         gatheringCountRepository.addCount(gatheringId);
+
     }
 
     public void makeCount(Gathering gathering){

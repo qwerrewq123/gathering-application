@@ -27,61 +27,43 @@ public class UserController {
     private final AsyncService asyncService;
 
     @PostMapping("/auth/id-check")
-    public ResponseEntity<Object> idCheck(@RequestBody IdCheckRequest idCheckRequest) {
-        try {
-            Boolean idCheck = !userService.idCheck(idCheckRequest);
-            if (idCheck == true) {
-                IdCheckResponse idCheckResponse = IdCheckResponse.builder()
-                        .code("SU")
-                        .message("Success")
-                        .build();
-                return new ResponseEntity<>(idCheckResponse, HttpStatus.OK);
-            } else {
-                IdCheckResponse idCheckResponse = IdCheckResponse.builder()
-                        .code("UE")
-                        .message("User Exist")
-                        .build();
-                return new ResponseEntity<>(idCheckResponse, HttpStatus.OK);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw e;
+    public ResponseEntity<IdCheckResponse> idCheck(@RequestBody IdCheckRequest idCheckRequest) {
+
+        IdCheckResponse idCheckResponse = userService.idCheck(idCheckRequest);
+
+        if (idCheckResponse.getCode().equals("SU")) {
+
+            return new ResponseEntity<>(idCheckResponse, HttpStatus.OK);
+        } else {
+
+            return new ResponseEntity<>(idCheckResponse, HttpStatus.BAD_REQUEST);
         }
+
     }
 
     @PostMapping(value = "/auth/sign-up",consumes = {
             MediaType.MULTIPART_FORM_DATA_VALUE,
             MediaType.APPLICATION_JSON_VALUE
     })
-    public ResponseEntity<Object> signUp(@RequestPart("userRequest") UserRequest userRequest, @RequestParam MultipartFile file) throws IOException {
-        try {
-            userService.signUp(userRequest, file);
-            SignUpResponse signUpResponse = SignUpResponse.builder()
-                    .code("SU")
-                    .message("Success")
-                    .build();
+    public ResponseEntity<SignUpResponse> signUp(@RequestPart("userRequest") UserRequest userRequest, @RequestParam MultipartFile file) throws IOException {
+
+        SignUpResponse signUpResponse = userService.signUp(userRequest, file);
+        if(signUpResponse.getCode().equals("SU")){
             return new ResponseEntity<>(signUpResponse, HttpStatus.OK);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw e;
+        }else{
+            return new ResponseEntity<>(signUpResponse, HttpStatus.BAD_REQUEST);
         }
     }
 
     @PostMapping("/auth/sign-in")
     public ResponseEntity<Object> signIn(@RequestBody SignInRequest signInRequest) {
 
-        try {
-
-            String token = userService.signIn(signInRequest);
-            SignInResponse signInResponse = SignInResponse.builder()
-                    .code("SU")
-                    .message("Success")
-                    .token(token)
-                    .build();
+        SignInResponse signInResponse = userService.signIn(signInRequest);
+        if(signInResponse.getCode().equals("SU")){
             return new ResponseEntity<>(signInResponse,HttpStatus.OK);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw e;
+        }else{
+            return new ResponseEntity<>(signInResponse,HttpStatus.BAD_REQUEST);
+
         }
 
 
@@ -89,20 +71,13 @@ public class UserController {
 
     @PostMapping(value = "/auth/email-certification")
     public ResponseEntity<Object> emailCertification(@RequestBody EmailCertificationRequest emailCertificationRequest){
-        try {
-            userService.emailCertification(emailCertificationRequest);
-            //asyncService.asyncTask(emailCertificationRequest);
 
-            EmailCertificationResponse emailCertificationResponse = EmailCertificationResponse.builder()
-                    .code("SU")
-                    .message("Success")
-
-                    .build();
+        EmailCertificationResponse emailCertificationResponse = userService.emailCertification(emailCertificationRequest);
+        if(emailCertificationResponse.getCode().equals("SU")){
+            asyncService.asyncTask(emailCertificationRequest);
             return new ResponseEntity<>(emailCertificationResponse,HttpStatus.OK);
-
-        }catch (Exception e){
-            e.printStackTrace();
-            throw e;
+        }else{
+            return new ResponseEntity<>(emailCertificationResponse,HttpStatus.BAD_REQUEST);
         }
     }
 

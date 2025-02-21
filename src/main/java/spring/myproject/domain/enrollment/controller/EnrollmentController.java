@@ -18,36 +18,25 @@ public class EnrollmentController {
 
     private final EnrollmentService enrollmentService;
     @PostMapping("/gathering/{gatheringId}/participate")
-    public ResponseEntity<Object> enrollGathering(@PathVariable Long gatheringId,
+    public ResponseEntity<EnrollGatheringResponse> enrollGathering(@PathVariable Long gatheringId,
                                                        @AuthenticationPrincipal String username){
-        try {
-            enrollmentService.enrollGathering(gatheringId,username);
-            return new ResponseEntity<>(EnrollGatheringResponse.builder()
-                    .code("SU")
-                    .message("Success")
-                    .build(), HttpStatus.OK);
-
-        }catch (Exception e){
-            e.printStackTrace();
-            throw e;
+        EnrollGatheringResponse enrollGatheringResponse = enrollmentService.enrollGathering(gatheringId, username);
+        if(enrollGatheringResponse.getCode().equals("SU")){
+            return new ResponseEntity<>(enrollGatheringResponse, HttpStatus.OK);
+        }else {
+            return new ResponseEntity<>(enrollGatheringResponse, HttpStatus.BAD_REQUEST);
         }
 
     }
 
     @PostMapping("/gathering/{gatheringId}/disParticipate")
-    public ResponseEntity<Object> disEnrollGathering(@PathVariable Long gatheringId,
+    public ResponseEntity<DisEnrollGatheringResponse> disEnrollGathering(@PathVariable Long gatheringId,
                                                            @AuthenticationPrincipal String username){
-        try {
-            System.out.println(username);
-            enrollmentService.disEnrollGathering(gatheringId,username);
-            return new ResponseEntity<>(DisEnrollGatheringResponse.builder()
-                    .code("SU")
-                    .message("Success")
-                    .build(),HttpStatus.OK);
-
-        }catch (Exception e){
-            e.printStackTrace();
-            throw e;
+        DisEnrollGatheringResponse disEnrollGatheringResponse = enrollmentService.disEnrollGathering(gatheringId, username);
+        if(disEnrollGatheringResponse.getCode().equals("SU")){
+            return new ResponseEntity<>(disEnrollGatheringResponse, HttpStatus.OK);
+        }else {
+            return new ResponseEntity<>(disEnrollGatheringResponse, HttpStatus.BAD_REQUEST);
         }
 
     }

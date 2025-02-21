@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import spring.myproject.domain.attend.service.AttendService;
 import spring.myproject.dto.response.attend.AddAttendResponse;
+import spring.myproject.dto.response.attend.DisAttendResponse;
+import spring.myproject.dto.response.attend.PermitAttendResponse;
 
 @RestController
 @RequiredArgsConstructor
@@ -17,54 +19,41 @@ public class AttendController {
     private final AttendService attendService;
 
     @PostMapping("/meeting/{meetingId}/attend")
-    public ResponseEntity<Object> addAttend(@PathVariable Long meetingId,
+    public ResponseEntity<AddAttendResponse> addAttend(@PathVariable Long meetingId,
                                             @AuthenticationPrincipal String username
                                             ){
-        try {
 
-            attendService.addAttend(meetingId,username);
-            return new ResponseEntity<>(AddAttendResponse.builder()
-                    .code("SU")
-                    .message("Success")
-                    .build(), HttpStatus.OK);
-
-        }catch (Exception e){
-            e.printStackTrace();
-            throw e;
+        AddAttendResponse addAttendResponse = attendService.addAttend(meetingId, username);
+        if(addAttendResponse.getCode().equals("SU")){
+            return new ResponseEntity<>(addAttendResponse, HttpStatus.OK);
+        }else {
+            return new ResponseEntity<>(addAttendResponse, HttpStatus.BAD_REQUEST);
         }
     }
 
 
     @PostMapping("/meeting/{meetingId}/disAttend/{attendId}")
-    public ResponseEntity<Object> disAttend(@PathVariable Long meetingId,
+    public ResponseEntity<DisAttendResponse> disAttend(@PathVariable Long meetingId,
                                             @PathVariable Long attendId,
                                             @AuthenticationPrincipal String username){
-        try {
 
-            attendService.disAttend(meetingId,attendId,username);
-            return new ResponseEntity<>(AddAttendResponse.builder()
-                    .code("SU")
-                    .message("Success")
-                    .build(), HttpStatus.OK);
-        }catch (Exception e){
-            e.printStackTrace();
-            throw e;
+        DisAttendResponse disAttendResponse = attendService.disAttend(meetingId, attendId, username);
+        if(disAttendResponse.getCode().equals("SU")){
+            return new ResponseEntity<>(disAttendResponse, HttpStatus.OK);
+        }else {
+            return new ResponseEntity<>(disAttendResponse, HttpStatus.BAD_REQUEST);
         }
     }
 
     @PostMapping("/meeting/{meetingId}/permitAttend/{attendId}")
-    public ResponseEntity<Object> permitAttend(@PathVariable Long meetingId,
+    public ResponseEntity<PermitAttendResponse> permitAttend(@PathVariable Long meetingId,
                                                @PathVariable Long attendId,
                                                @AuthenticationPrincipal String username){
-        try {
-            attendService.permitAttend(meetingId,attendId,username);
-            return new ResponseEntity<>(AddAttendResponse.builder()
-                    .code("SU")
-                    .message("Success")
-                    .build(), HttpStatus.OK);
-        }catch (Exception e){
-            e.printStackTrace();
-            throw e;
+        PermitAttendResponse permitAttendResponse = attendService.permitAttend(meetingId, attendId, username);
+        if(permitAttendResponse.getCode().equals("SU")){
+            return new ResponseEntity<>(permitAttendResponse, HttpStatus.OK);
+        }else {
+            return new ResponseEntity<>(permitAttendResponse, HttpStatus.BAD_REQUEST);
         }
     }
 }

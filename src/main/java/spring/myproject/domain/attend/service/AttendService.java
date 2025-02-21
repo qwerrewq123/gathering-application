@@ -9,8 +9,18 @@ import spring.myproject.domain.meeting.Meeting;
 import spring.myproject.domain.meeting.repository.MeetingRepository;
 import spring.myproject.domain.user.User;
 import spring.myproject.domain.user.repository.UserRepository;
+import spring.myproject.dto.response.attend.AddAttendResponse;
+import spring.myproject.dto.response.attend.DisAttendResponse;
+import spring.myproject.dto.response.attend.PermitAttendResponse;
+import spring.myproject.exception.attend.*;
+import spring.myproject.exception.meeting.NotFoundMeeting;
+import spring.myproject.exception.user.NotFoundUserException;
+import spring.myproject.util.AttendConst;
+import spring.myproject.util.MeetingConst;
 
 import java.time.LocalDateTime;
+
+import static spring.myproject.util.UserConst.*;
 
 @Service
 @Transactional
@@ -21,84 +31,163 @@ public class AttendService {
     private final AttendRepository attendRepository;
     private final MeetingRepository meetingRepository;
 
-    public void addAttend(Long meetingId, String username) {
-        User user = userRepository.findByUsername(username);
+    public AddAttendResponse addAttend(Long meetingId, String username) {
 
-        if(user == null){
-            throw new IllegalArgumentException("해당하는 유저가 없습니다");
+
+        try {
+            User user = userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
+
+            Meeting meeting = meetingRepository.findById(meetingId).orElseThrow(()->new NotFoundMeeting("no exist Meeting!!"));
+
+            if(meeting.getCreatedBy().getId()  == meetingId){
+                throw new AutoAttendException("Meeting Opener auto attend");
+            }
+
+            Attend attend = Attend.builder()
+                    .accepted(false)
+                    .attendBy(user)
+                    .date(LocalDateTime.now())
+                    .meeting(meeting)
+                    .build();
+
+            attendRepository.save(attend);
+            return AddAttendResponse.builder()
+                    .code(successCode)
+                    .message(successMessage)
+                    .build();
+
+        }catch (NotFoundUserException e){
+            return AddAttendResponse.builder()
+                    .code(notFoundCode)
+                    .message(notFoundMessage)
+                    .build();
+
+        }catch (NotFoundMeeting e){
+            return AddAttendResponse.builder()
+                    .code(MeetingConst.notFoundCode)
+                    .message(MeetingConst.notFoundMessage)
+                    .build();
+        }catch (AutoAttendException e){
+            return AddAttendResponse.builder()
+                    .code(AttendConst.autoAttendCode)
+                    .message(AttendConst.autoAttendMessage)
+                    .build();
         }
 
-        Meeting meeting = meetingRepository.findById(meetingId).orElseThrow(() -> {
-            throw new IllegalArgumentException("해당하는 미팅이 없습니다");
-        });
+    }
 
-        if(meeting.getCreatedBy().getId()  == meetingId){
-            throw new IllegalArgumentException("미팅 개최자는 자동으로 참여됩니다");
+    public DisAttendResponse disAttend(Long meetingId, Long attendId, String username) {
+
+
+
+        try {
+
+            User user = userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
+
+            Meeting meeting = meetingRepository.findById(meetingId).orElseThrow(()->new NotFoundMeeting("no exist Meeting!!"));
+
+            Attend attend = attendRepository.findById(attendId).orElseThrow(() -> {
+                throw new AlreadyAttendExeption("Already Attend Meeting!!");
+            });
+
+            if(meeting.getCreatedBy().getId()  == meetingId){
+                throw new NotWithdrawException("Opener cannot  disAttend Meeting!!");
+            }
+
+            attendRepository.delete(attend);
+            return DisAttendResponse.builder()
+                    .code(successCode)
+                    .message(successMessage)
+                    .build();
+
+        }catch (NotFoundUserException e){
+            return DisAttendResponse.builder()
+                    .code(notFoundCode)
+                    .message(notFoundMessage)
+                    .build();
+
+        }catch (NotFoundMeeting e){
+            return DisAttendResponse.builder()
+                    .code(MeetingConst.notFoundCode)
+                    .message(MeetingConst.notFoundMessage)
+                    .build();
+        }catch (AlreadyAttendExeption e){
+            return DisAttendResponse.builder()
+                    .code(AttendConst.alreadyAttendCode)
+                    .message(AttendConst.alreadyAttendMessage)
+                    .build();
+
+
+        }catch (NotWithdrawException e){
+            return DisAttendResponse.builder()
+                    .code(AttendConst.notWithdrawCode)
+                    .message(AttendConst.notWithdrawMessage)
+                    .build();
+
+        }catch (Exception e){
+            return DisAttendResponse.builder()
+                    .code(dbErrorCode)
+                    .message(dbErrorMessage)
+                    .build();
         }
 
-        Attend attend = Attend.builder()
-                .accepted(false)
-                .attendBy(user)
-                .date(LocalDateTime.now())
-                .meeting(meeting)
+
+
+    }
+
+    public PermitAttendResponse permitAttend(Long meetingId, Long attendId, String username) {
+
+        try {
+
+            User user = userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
+
+            Meeting meeting = meetingRepository.findById(meetingId).orElseThrow(()->new NotFoundMeeting("no exist Meeting!!"));
+
+            Attend attend = attendRepository.findById(attendId).orElseThrow(() -> new NotFoundAttend("no exist Attend!!"));
+
+            if(attend.getAccepted() == true){
+                throw new AlreadyAttendExeption("already attend!!");
+            }
+
+            if(meeting.getCreatedBy().getId()  == meetingId){
+                throw new AlwaysPermitException("opener always permitted");
+
+            }
+
+            attend.setAccepted(true);
+            return PermitAttendResponse.builder()
+                    .code(successCode)
+                    .message(successMessage)
+                    .build();
+
+        }catch (NotFoundUserException e){
+        return PermitAttendResponse.builder()
+                .code(notFoundCode)
+                .message(notFoundMessage)
                 .build();
 
-        attendRepository.save(attend);
+        }catch (NotFoundMeeting e){
+        return PermitAttendResponse.builder()
+                .code(MeetingConst.notFoundCode)
+                .message(MeetingConst.notFoundMessage)
+                .build();
+        }catch (NotFoundAttend e){
+            return PermitAttendResponse.builder()
+                    .code(AttendConst.notFoundCode)
+                    .message(AttendConst.notFoundMessage)
+                    .build();
 
-
-    }
-
-    public void disAttend(Long meetingId, Long attendId, String username) {
-
-        User user = userRepository.findByUsername(username);
-
-        if(user == null){
-            throw new IllegalArgumentException("해당하는 유저가 없습니다");
+        }catch (AlreadyAttendExeption e){
+            return PermitAttendResponse.builder()
+                    .code(AttendConst.alreadyAttendCode)
+                    .message(AttendConst.alreadyAttendMessage)
+                    .build();
+        }catch (AlwaysPermitException e){
+            return PermitAttendResponse.builder()
+                    .code(AttendConst.alwaysPermitCode)
+                    .message(AttendConst.alwaysPermitMessage)
+                    .build();
         }
-
-        Meeting meeting = meetingRepository.findById(meetingId).orElseThrow(() -> {
-            throw new IllegalArgumentException("해당하는 미팅이 없습니다");
-        });
-
-        Attend attend = attendRepository.findById(attendId).orElseThrow(() -> {
-            throw new IllegalArgumentException("해당 미팅에 참석한 적이 없습니다");
-        });
-
-        if(meeting.getCreatedBy().getId()  == meetingId){
-            throw new IllegalArgumentException("미팅 개최자는 탈퇴할 수 없습니다");
-        }
-
-        attendRepository.delete(attend);
-
-
-
-    }
-
-    public void permitAttend(Long meetingId, Long attendId, String username) {
-        User user = userRepository.findByUsername(username);
-
-        if(user == null){
-            throw new IllegalArgumentException("해당하는 유저가 없습니다");
-        }
-
-        Meeting meeting = meetingRepository.findById(meetingId).orElseThrow(() -> {
-            throw new IllegalArgumentException("해당하는 미팅이 없습니다");
-        });
-
-        Attend attend = attendRepository.findById(attendId).orElseThrow(() -> {
-            throw new IllegalArgumentException("해당 미팅에 참석한 적이 없습니다");
-        });
-
-        if(attend.getAccepted() == true){
-            throw new IllegalArgumentException("해당 유저는 이미 미팅에 참석한 상태입니다");
-        }
-
-        if(meeting.getCreatedBy().getId()  == meetingId){
-            throw new IllegalArgumentException("미팅 개최자는 항상 미팅에 참여합니다");
-
-        }
-
-        attend.setAccepted(true);
 
 
     }

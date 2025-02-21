@@ -9,9 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import spring.myproject.domain.meeting.service.MeetingService;
 import spring.myproject.dto.request.meeting.AddMeetingRequest;
 import spring.myproject.dto.request.meeting.UpdateMeetingRequest;
-import spring.myproject.dto.response.meeting.AddMeetingResponse;
-import spring.myproject.dto.response.meeting.MeetingListResponse;
-import spring.myproject.dto.response.meeting.MeetingResponse;
+import spring.myproject.dto.response.meeting.*;
 
 
 @RestController
@@ -21,21 +19,17 @@ public class MeetingController {
     private final MeetingService meetingService;
 
     @PostMapping("/meeting/{gatheringId}")
-    public ResponseEntity<Object> addMeeting(@RequestBody AddMeetingRequest addMeetingRequest,
+    public ResponseEntity<AddMeetingResponse> addMeeting(@RequestBody AddMeetingRequest addMeetingRequest,
                                              @PathVariable Long gatheringId,
                                              @AuthenticationPrincipal String username){
 
 
-        try {
-            meetingService.addMeeting(addMeetingRequest,username,gatheringId);
-            return new ResponseEntity<>(AddMeetingResponse.builder()
-                    .code("SU")
-                    .message("Success")
-                    .build(), HttpStatus.OK);
+        AddMeetingResponse addMeetingResponse = meetingService.addMeeting(addMeetingRequest, username, gatheringId);
+        if(addMeetingResponse.getCode().equals("SU")){
+            return new ResponseEntity<>(addMeetingResponse, HttpStatus.OK);
 
-        }catch (Exception e){
-            e.printStackTrace();
-            throw e;
+        }else {
+            return new ResponseEntity<>(addMeetingResponse, HttpStatus.BAD_REQUEST);
         }
 
 
@@ -46,18 +40,13 @@ public class MeetingController {
                                                 @PathVariable Long meetingId){
 
 
-        try {
-            meetingService.deleteMeeting(username,meetingId);
-            return new ResponseEntity<>(AddMeetingResponse.builder()
-                    .code("SU")
-                    .message("Success")
-                    .build(), HttpStatus.OK);
+        DeleteMeetingResponse deleteMeetingResponse = meetingService.deleteMeeting(username, meetingId);
+        if(deleteMeetingResponse.getCode().equals("SU")){
+            return new ResponseEntity<>(deleteMeetingResponse, HttpStatus.OK);
 
-        }catch (Exception e){
-            e.printStackTrace();
-            throw e;
+        }else {
+            return new ResponseEntity<>(deleteMeetingResponse, HttpStatus.BAD_REQUEST);
         }
-
 
     }
 
@@ -68,33 +57,25 @@ public class MeetingController {
                                                 @PathVariable Long meetingId){
 
 
-        try {
-            meetingService.updateMeeting(updateMeetingRequest,username,meetingId);
-            return new ResponseEntity<>(AddMeetingResponse.builder()
-                    .code("SU")
-                    .message("Success")
-                    .build(), HttpStatus.OK);
+        UpdateMeetingResponse updateMeetingResponse = meetingService.updateMeeting(updateMeetingRequest, username, meetingId);
+        if(updateMeetingResponse.getCode().equals("SU")){
+            return new ResponseEntity<>(updateMeetingResponse, HttpStatus.OK);
 
-        }catch (Exception e){
-            e.printStackTrace();
-            throw e;
+        }else {
+            return new ResponseEntity<>(updateMeetingResponse, HttpStatus.BAD_REQUEST);
         }
-
 
     }
 
     @GetMapping("/meeting/{meetingId}")
-    public ResponseEntity<Object> meetingDetail(@PathVariable Long meetingId,
+    public ResponseEntity<MeetingResponse> meetingDetail(@PathVariable Long meetingId,
                                                 @AuthenticationPrincipal String username){
-        try {
             MeetingResponse meetingResponse = meetingService.meetingDetail(meetingId,username);
-            return new ResponseEntity<>(meetingResponse,HttpStatus.OK);
+        if(meetingResponse.getCode().equals("SU")){
+            return new ResponseEntity<>(meetingResponse, HttpStatus.OK);
 
-
-
-        }catch (Exception e){
-            e.printStackTrace();
-            throw e;
+        }else {
+            return new ResponseEntity<>(meetingResponse, HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -103,15 +84,13 @@ public class MeetingController {
     public ResponseEntity<Object> meetings(@RequestParam int pageNum,
                                             @RequestParam String title,
                                             @AuthenticationPrincipal String username){
-        try {
-            Page<MeetingListResponse> meetingListResponses = meetingService.meetings(pageNum,username,title);
-            return new ResponseEntity<>(meetingListResponses,HttpStatus.OK);
 
+        MeetingListResponse meetingListResponse = meetingService.meetings(pageNum, username, title);
+        if(meetingListResponse.getCode().equals("SU")){
+            return new ResponseEntity<>(meetingListResponse, HttpStatus.OK);
 
-
-        }catch (Exception e){
-            e.printStackTrace();
-            throw e;
+        }else {
+            return new ResponseEntity<>(meetingListResponse, HttpStatus.BAD_REQUEST);
         }
     }
 

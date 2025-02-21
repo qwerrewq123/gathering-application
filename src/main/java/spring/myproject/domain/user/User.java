@@ -2,7 +2,6 @@ package spring.myproject.domain.user;
 
 import jakarta.persistence.*;
 import lombok.*;
-import spring.myproject.domain.gathering.Gathering;
 import spring.myproject.domain.image.Image;
 
 @Getter

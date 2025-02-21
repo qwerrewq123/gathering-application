@@ -8,10 +8,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import spring.myproject.domain.alarm.service.AlarmService;
 import spring.myproject.dto.request.alarm.AddAlarmRequest;
-import spring.myproject.dto.response.alarm.AddAlarmResponse;
-import spring.myproject.dto.response.alarm.AlarmResponse;
-import spring.myproject.dto.response.alarm.CheckAlarmResponse;
-import spring.myproject.dto.response.alarm.DeleteAlarmResponse;
+import spring.myproject.dto.response.alarm.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -20,34 +17,24 @@ public class AlarmController {
     private final AlarmService alarmService;
 
     @PatchMapping("/alarm/{id}")
-    public ResponseEntity<Object> checkAlarm(Long id,@AuthenticationPrincipal String username){
-        try {
-            alarmService.checkAlarm(id,username);
-
-            return new ResponseEntity<>(CheckAlarmResponse.builder()
-                    .code("SU")
-                    .message("Success"), HttpStatus.OK);
-
-
-
-        }catch (Exception e){
-            e.printStackTrace();
-            throw e;
+    public ResponseEntity<CheckAlarmResponse> checkAlarm(Long id,@AuthenticationPrincipal String username){
+        CheckAlarmResponse checkAlarmResponse = alarmService.checkAlarm(id, username);
+        if(checkAlarmResponse.getCode().equals("SU")){
+            return new ResponseEntity<>(checkAlarmResponse, HttpStatus.OK);
+        }else {
+            return new ResponseEntity<>(checkAlarmResponse, HttpStatus.BAD_REQUEST);
         }
+
 
     }
 
     @DeleteMapping("/alarm/{id}")
-    public ResponseEntity<Object> deleteAlarm(Long id,@AuthenticationPrincipal String username){
-        try {
-            alarmService.deleteAlarm(id,username);
-            return new ResponseEntity<>(DeleteAlarmResponse.builder()
-                    .code("SU")
-                    .message("Success"), HttpStatus.OK);
-
-        }catch (Exception e){
-            e.printStackTrace();
-            throw e;
+    public ResponseEntity<DeleteAlarmResponse> deleteAlarm(Long id,@AuthenticationPrincipal String username){
+        DeleteAlarmResponse deleteAlarmResponse = alarmService.deleteAlarm(id, username);
+        if(deleteAlarmResponse.getCode().equals("SU")){
+            return new ResponseEntity<>(deleteAlarmResponse, HttpStatus.OK);
+        }else {
+            return new ResponseEntity<>(deleteAlarmResponse, HttpStatus.BAD_REQUEST);
         }
 
 
@@ -57,30 +44,15 @@ public class AlarmController {
     public ResponseEntity<Object> alarmList(@RequestParam int page,
                                             @AuthenticationPrincipal String username,
                                             @RequestParam Boolean checked){
-        try {
-            Page<AlarmResponse> alarmResponses = alarmService.alarmList(page, username,checked);
-            return new ResponseEntity<>(alarmResponses,HttpStatus.OK);
-        }catch (Exception e){
-            e.printStackTrace();
-            throw e;
+        AlarmResponsePage alarmResponsePage = alarmService.alarmList(page, username, checked);
+        if(alarmResponsePage.getCode().equals("SU")){
+            return new ResponseEntity<>(alarmResponsePage, HttpStatus.OK);
+        }else {
+            return new ResponseEntity<>(alarmResponsePage, HttpStatus.BAD_REQUEST);
         }
 
 
     }
 
-    @PostMapping("/alarm")
-    public ResponseEntity<Object> addAlarm(@RequestBody AddAlarmRequest addAlarmRequest, @AuthenticationPrincipal String username){
-        try {
-            alarmService.addAlarm(addAlarmRequest,username);
-            return new ResponseEntity<>(AddAlarmResponse.builder()
-                    .code("SU")
-                    .message("Success"),HttpStatus.OK);
 
-        }catch (Exception e){
-            e.printStackTrace();
-            throw e;
-        }
-
-
-    }
 }
