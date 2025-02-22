@@ -37,7 +37,6 @@
 <br />
 
 ## ⚙ 기술 스택
-> skills 폴더에 있는 아이콘을 이용할 수 있습니다.
 ### Back-end
 <div>
 <img src="https://github.com/yewon-Noh/readme-template/blob/main/skills/Java.png?raw=true" width="80">
@@ -81,5 +80,4 @@
 
 ## 💁‍♂️ 프로젝트 팀원
 Backend
-![](https://github.com/yewon-Noh.png?size=120)
-[노예원](https://github.com/yewon-Noh)
+
