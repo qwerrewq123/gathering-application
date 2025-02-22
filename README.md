@@ -5,7 +5,6 @@
 
 ### Back-end Git Reamd.me Template ✅
 
-[<img src="https://img.shields.io/badge/-readme.md-important?style=flat&logo=google-chrome&logoColor=white" />]() [<img src="https://img.shields.io/badge/-tech blog-blue?style=flat&logo=google-chrome&logoColor=white" />]
 
 </div> 
 
