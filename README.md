@@ -83,6 +83,6 @@
 <br />
 
 ## 💁‍♂️ 프로젝트 팀원
-<img src="https://github.com/user-attachments/assets/7671baa8-20d3-4eeb-b3f7-e23bab3eb5be"  width="200" height="400"/>
+<img src="https://github.com/user-attachments/assets/7671baa8-20d3-4eeb-b3f7-e23bab3eb5be"  width="200" height="300"/>
 최성욱
 
