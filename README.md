@@ -79,5 +79,6 @@
 <br />
 
 ## 💁‍♂️ 프로젝트 팀원
-Backend
+![Image](https://github.com/user-attachments/assets/7671baa8-20d3-4eeb-b3f7-e23bab3eb5be)
+최성욱
 
