@@ -92,7 +92,7 @@
 <br />
 
 ## 💁‍♂️ 프로젝트 팀원
-|Backend|Frontend|
+|Backend|
 |:---:|:---:|
-| ![](https://github.com/yewon-Noh.png?size=120) | ![](https://github.com/SeongHo-C.png?size=120) |
-|[노예원](https://github.com/yewon-Noh)|[이성호](https://github.com/SeongHo-C)|
+| ![](https://github.com/yewon-Noh.png?size=120) |
+|[노예원](https://github.com/yewon-Noh)|
