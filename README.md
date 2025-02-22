@@ -68,9 +68,9 @@
 
 ## 🤔 기술적 이슈와 해결 과정
 - JWT 써야할까??
-    - [JWT에 대하여](https://velog.io/write?id=d411b324-d039-4f74-900f-adab75c2e435)
+    - [JWT에 대하여](https://velog.io/@ccccssung/JWT%EB%A5%BC-%EA%BC%AD-%EC%8D%A8%EC%95%BC%ED%95%A0%EA%B9%8C)
 - Gmail STMP 이용하여 이메일 비동기 처리하기
-    - [비동기 처리](https://velog.io/write?id=26daadf4-6b04-4c6b-b2ac-8839ad93b904)
+    - [비동기 처리](https://velog.io/@ccccssung/Async-%EC%9D%B4%EC%9A%A9%ED%95%9C-%EC%9D%B4%EB%A9%94%EC%9D%BC-%EC%A0%84%EC%86%A1%EB%B9%84%EB%8F%99%EA%B8%B0-%EC%B2%98%EB%A6%AC)
 - DB Replica에 대하여
     - [DB Replica](https://velog.io/@yewo2nn16/SpringBoot-서버-배포)
     
