@@ -30,7 +30,6 @@ public class AttendService {
     private final UserRepository userRepository;
     private final AttendRepository attendRepository;
     private final MeetingRepository meetingRepository;
-    //TODO : 한유저가 중복 attend 로직 추가
     public AddAttendResponse addAttend(Long meetingId, String username) {
 
 
@@ -41,6 +40,10 @@ public class AttendService {
 
             if(meeting.getCreatedBy().getId()  == meetingId){
                 throw new AutoAttendException("Meeting Opener auto attend");
+            }
+            Attend checkAttend = attendRepository.findByUserIdAndMeetingId(user.getId(),meetingId);
+            if(checkAttend != null){
+                throw new AlreadyAttendExeption("Meeting already attend");
             }
 
             Attend attend = Attend.builder()
@@ -71,6 +74,11 @@ public class AttendService {
             return AddAttendResponse.builder()
                     .code(AttendConst.autoAttendCode)
                     .message(AttendConst.autoAttendMessage)
+                    .build();
+        }catch (AlreadyAttendExeption e){
+            return AddAttendResponse.builder()
+                    .code(AttendConst.alreadyAttendCode)
+                    .message(AttendConst.alreadyAttendMessage)
                     .build();
         }
 

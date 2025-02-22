@@ -32,7 +32,6 @@ public class RecommendService {
     private final GatheringRepository gatheringRepository;
     private final UserRepository userRepository;
 
-    //TODO
     public RecommendResponse recommend(String username) {
 
         try {

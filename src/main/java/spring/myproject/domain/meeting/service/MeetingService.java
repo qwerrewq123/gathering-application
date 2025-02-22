@@ -19,6 +19,7 @@ import spring.myproject.dto.request.meeting.UpdateMeetingRequest;
 import spring.myproject.dto.response.enrollment.EnrollGatheringResponse;
 import spring.myproject.dto.response.meeting.*;
 import spring.myproject.exception.gathering.NotFoundGatheringException;
+import spring.myproject.exception.meeting.MeetingIsnotEmptyException;
 import spring.myproject.exception.meeting.NotAuthrizeException;
 import spring.myproject.exception.meeting.NotFoundMeeting;
 import spring.myproject.exception.user.NotFoundUserException;
@@ -99,6 +100,9 @@ public class MeetingService {
                 throw new NotAuthrizeException("no authority!");
             }
             meetingRepository.delete(meeting);
+            if(meeting.getAttends().size() >0){
+                throw new MeetingIsnotEmptyException("meeting is not empty!!");
+            }
             return DeleteMeetingResponse.builder()
                     .code(successCode)
                     .message(successMessage)
@@ -119,6 +123,11 @@ public class MeetingService {
             return DeleteMeetingResponse.builder()
                     .code(MeetingConst.notAuthorizeCode)
                     .message(MeetingConst.notAuthorizedMessage)
+                    .build();
+        }catch (MeetingIsnotEmptyException e){
+            return DeleteMeetingResponse.builder()
+                    .code(MeetingConst.meetingIsNotEmptyCode)
+                    .message(MeetingConst.meetingIsNotEmptyMessage)
                     .build();
         }
 

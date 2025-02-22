@@ -34,7 +34,6 @@ public class MeetingController {
 
 
     }
-    //TODO : 구성원 전부 없어야하는거 확인
     @DeleteMapping("/meeting/{meetingId}")
     public ResponseEntity<Object> deleteMeeting(@AuthenticationPrincipal String username,
                                                 @PathVariable Long meetingId){

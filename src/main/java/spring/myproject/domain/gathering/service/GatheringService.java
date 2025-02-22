@@ -20,16 +20,13 @@ import spring.myproject.dto.request.gathering.UpdateGatheringRequest;
 import spring.myproject.dto.response.gathering.*;
 import spring.myproject.exception.category.NotFoundCategoryException;
 import spring.myproject.exception.gathering.NotFoundGatheringException;
+import spring.myproject.exception.meeting.NotAuthrizeException;
 import spring.myproject.exception.user.NotFoundUserException;
 import spring.myproject.s3.S3ImageDownloadService;
 import spring.myproject.s3.S3ImageUploadService;
-import spring.myproject.util.CategoryConst;
-import spring.myproject.util.GatheringConst;
-import spring.myproject.util.ImageConst;
+import spring.myproject.util.*;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -40,8 +37,7 @@ import static spring.myproject.util.UserConst.*;
 @RequiredArgsConstructor
 public class GatheringService {
 
-    @Value("${file.dir}")
-    private String fileDir;
+
 
     private final GatheringRepository gatheringRepository;
     private final ImageRepository imageRepository;
@@ -108,7 +104,6 @@ public class GatheringService {
 
 
     }
-    //TODO : gathering 권한 로직 추가
     public UpdateGatheringResponse updateGathering(UpdateGatheringRequest updateGatheringRequest, MultipartFile file, String username,Long gatheringId){
 
 
@@ -120,6 +115,10 @@ public class GatheringService {
 
             Gathering gathering = gatheringRepository.findById(gatheringId).orElseThrow(()->new NotFoundGatheringException("no exist Gathering!!"));
 
+            boolean authorize = gathering.getCreateBy().getId() == user.getId();
+            if(!authorize){
+                throw new NotAuthrizeException("no authorize!!");
+            }
             Image image = null;
             String url = s3ImageUploadService.upload(file);
 
@@ -161,7 +160,13 @@ public class GatheringService {
                     .build();
 
 
-        }catch (IOException e){
+        }catch (NotAuthrizeException e){
+            return UpdateGatheringResponse.builder()
+                    .code(MeetingConst.notAuthorizeCode)
+                    .message(MeetingConst.notAuthorizedMessage)
+                    .build();
+        }
+        catch (IOException e){
             return UpdateGatheringResponse.builder()
                     .code(ImageConst.uploadFailCode)
                     .message(ImageConst.uploadFailMessage)
@@ -170,7 +175,7 @@ public class GatheringService {
 
     }
 
-    public GatheringResponse gatheringDetail(Long gatheringId, String username) throws IOException {
+    public GatheringResponse gatheringDetail(Long gatheringId, String username){
 
         try {
             User user = userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
