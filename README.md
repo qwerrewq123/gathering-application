@@ -67,13 +67,13 @@
 <br />
 
 ## 🤔 기술적 이슈와 해결 과정
-- Stream 써야할까?
-    - [Stream API에 대하여](https://velog.io/@yewo2nn16/Java-Stream-API)
-- Gmail STMP 이용하여 이메일 전송하기
-    - [gmail 보내기](https://velog.io/@yewo2nn16/Email-이메일-전송하기with-첨부파일)
-- AWS EC2에 배포하기
-    - [서버 배포하기-1](https://velog.io/@yewo2nn16/SpringBoot-서버-배포)
-    - [서버 배포하기-2](https://velog.io/@yewo2nn16/SpringBoot-서버-배포-인텔리제이에서-jar-파일-빌드해서-배포하기)
+- JWT 써야할까??
+    - [JWT에 대하여](https://velog.io/write?id=d411b324-d039-4f74-900f-adab75c2e435)
+- Gmail STMP 이용하여 이메일 비동기 처리하기
+    - [비동기 처리](https://velog.io/write?id=26daadf4-6b04-4c6b-b2ac-8839ad93b904)
+- DB Replica에 대하여
+    - [DB Replica](https://velog.io/@yewo2nn16/SpringBoot-서버-배포)
+    
 
 
 <br />
