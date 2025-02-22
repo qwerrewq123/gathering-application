@@ -21,17 +21,17 @@ import spring.myproject.dto.response.gathering.*;
 import spring.myproject.exception.category.NotFoundCategoryException;
 import spring.myproject.exception.gathering.NotFoundGatheringException;
 import spring.myproject.exception.user.NotFoundUserException;
+import spring.myproject.s3.S3ImageDownloadService;
+import spring.myproject.s3.S3ImageUploadService;
 import spring.myproject.util.CategoryConst;
 import spring.myproject.util.GatheringConst;
 import spring.myproject.util.ImageConst;
-import spring.myproject.util.UserConst;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static spring.myproject.util.UserConst.*;
 
@@ -48,27 +48,26 @@ public class GatheringService {
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
     private final GatheringCountService gatheringCountService;
+    private final S3ImageUploadService s3ImageUploadService;
+    private final S3ImageDownloadService s3ImageDownloadService;
 
     public AddGatheringResponse addGathering(AddGatheringRequest addGatheringRequest, MultipartFile file, String username){
 
-        Image image = null;
-        User user = userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
-
-
-        Category category = categoryRepository.findByName(addGatheringRequest.getCategory()).orElseThrow(()-> new NotFoundCategoryException("no exist Category!!"));
 
 
         try {
 
-            if(!file.isEmpty()){
-                String[] split = file.getOriginalFilename().split("\\.");
-                String fullPath = fileDir+"/" + UUID.randomUUID()+"."+split[1];
-                file.transferTo(new File(fullPath));
+            User user = userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
+            Category category = categoryRepository.findByName(addGatheringRequest.getCategory()).orElseThrow(()-> new NotFoundCategoryException("no exist Category!!"));
+            Image image = null;
+            String url = s3ImageUploadService.upload(file);
+
+            if(StringUtils.hasText(url)){
+
                 image = Image.builder()
-                        .url(fullPath)
+                        .url(url)
                         .build();
                 imageRepository.save(image);
-
             }
 
             Gathering gathering = Gathering.builder()
@@ -113,35 +112,24 @@ public class GatheringService {
     public UpdateGatheringResponse updateGathering(UpdateGatheringRequest updateGatheringRequest, MultipartFile file, String username,Long gatheringId){
 
 
-        try {
 
-            Image image = null;
+        try {
             User user = userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
 
             Category category = categoryRepository.findByName(updateGatheringRequest.getCategory()).orElseThrow(()-> new NotFoundCategoryException("no exist Category!!"));
 
             Gathering gathering = gatheringRepository.findById(gatheringId).orElseThrow(()->new NotFoundGatheringException("no exist Gathering!!"));
 
-            if(!file.isEmpty()){
+            Image image = null;
+            String url = s3ImageUploadService.upload(file);
 
-                Image preImage = gathering.getGatheringImage();
-                String preUrl = preImage.getUrl();
-                File preFile = new File(preUrl);
-                preFile.delete();
-                imageRepository.delete(preImage);
+            if(StringUtils.hasText(url)){
 
-
-                String[] split = file.getOriginalFilename().split("\\.");
-                String fullPath = fileDir+"/" + UUID.randomUUID()+"."+split[1];
-                file.transferTo(new File(fullPath));
                 image = Image.builder()
-                        .url(fullPath)
+                        .url(url)
                         .build();
-
                 imageRepository.save(image);
-
             }
-
 
             gathering.setGatheringImage(image);
             gathering.setCategory(category);
@@ -244,7 +232,7 @@ public class GatheringService {
                                     .registerDate(g.getRegisterDate())
                                     .category(g.getCategory())
                                     .content(g.getContent())
-                                    .image(encodeFileToBase64(g.getUrl()))
+                                    .image(s3ImageDownloadService.getFileBase64CodeFromS3(g.getUrl()))
                                     .count(g.getCount())
                                     .build();
                         } catch (IOException e) {
@@ -300,7 +288,7 @@ public class GatheringService {
                                     .registerDate(g.getRegisterDate())
                                     .category(g.getCategory())
                                     .content(g.getContent())
-                                    .image(encodeFileToBase64(g.getUrl()))
+                                    .image(s3ImageDownloadService.getFileBase64CodeFromS3(g.getUrl()))
                                     .count(g.getCount())
                                     .build();
                         } catch (IOException e) {
@@ -337,15 +325,6 @@ public class GatheringService {
 
 
 
-
-
-    private String encodeFileToBase64(String filePath) throws IOException {
-        File file = new File(filePath);
-        byte[] fileBytes  = Files.readAllBytes(file.toPath());
-        return Base64.getEncoder().encodeToString(fileBytes);
-
-    }
-
     private GatheringResponse getGatheringResponse(List<GatheringQueryDto> gatheringQueryDtos) throws IOException {
 
         GatheringResponse gatheringResponse = GatheringResponse.builder()
@@ -356,7 +335,7 @@ public class GatheringService {
                 .registerDate(gatheringQueryDtos.getFirst().getRegisterDate())
                 .category(gatheringQueryDtos.getFirst().getCategory())
                 .createdBy(gatheringQueryDtos.getFirst().getCreatedBy())
-                .image(encodeFileToBase64(gatheringQueryDtos.getFirst().getUrl()))
+                .image(s3ImageDownloadService.getFileBase64CodeFromS3(gatheringQueryDtos.getFirst().getUrl()))
                 .count(gatheringQueryDtos.getFirst().getCount()+1)
                 .participatedBy(new ArrayList<>())
                 .build();

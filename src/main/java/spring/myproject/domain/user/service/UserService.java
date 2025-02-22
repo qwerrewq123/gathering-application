@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import spring.myproject.domain.image.Image;
 import spring.myproject.domain.image.repository.ImageRepository;
@@ -23,11 +24,9 @@ import spring.myproject.exception.user.NotFoundUserException;
 import spring.myproject.exception.user.UnCorrectPasswordException;
 import spring.myproject.provider.EmailProvider;
 import spring.myproject.provider.JwtProvider;
+import spring.myproject.s3.S3ImageUploadService;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
-import java.util.UUID;
 
 import static spring.myproject.util.UserConst.*;
 
@@ -42,6 +41,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
     private final EmailProvider emailProvider;
+    private final S3ImageUploadService s3ImageUploadService;
 
     @Value("${file.dir}")
     private String fileDir;
@@ -80,16 +80,16 @@ public class UserService {
 
         try {
 
-            Image image = null;
-            if(!file.isEmpty()){
-                String[] split = file.getOriginalFilename().split("\\.");
-                String fullPath = fileDir+"/" + UUID.randomUUID()+"."+split[1];
-                file.transferTo(new File(fullPath));
-                image = Image.builder()
-                        .url(fullPath)
-                        .build();
-                imageRepository.save(image);
 
+            Image image = null;
+            String url = s3ImageUploadService.upload(file);
+
+            if(StringUtils.hasText(url)){
+
+                image = Image.builder()
+                            .url(url)
+                            .build();
+                imageRepository.save(image);
             }
 
             User user = User.builder()

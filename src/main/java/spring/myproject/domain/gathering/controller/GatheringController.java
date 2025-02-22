@@ -26,7 +26,7 @@ public class GatheringController {
 
     @PostMapping("/gathering")
     public ResponseEntity<AddGatheringResponse> addGathering(@RequestPart AddGatheringRequest addGatheringRequest,
-                                               @RequestPart MultipartFile file,
+                                               @RequestPart(required = false) MultipartFile file,
                                                @AuthenticationPrincipal String username) throws IOException {
 
 
@@ -42,7 +42,7 @@ public class GatheringController {
     @PutMapping("/gathering/{gatheringId}")
     public ResponseEntity<UpdateGatheringResponse> updateGathering(@RequestPart UpdateGatheringRequest updateGatheringRequest,
                                                @PathVariable Long gatheringId,
-                                               @RequestPart MultipartFile file,
+                                               @RequestPart(required = false) MultipartFile file,
                                                @AuthenticationPrincipal String username) throws IOException {
         UpdateGatheringResponse updateGatheringResponse = gatheringService.updateGathering(updateGatheringRequest, file, username, gatheringId);
 

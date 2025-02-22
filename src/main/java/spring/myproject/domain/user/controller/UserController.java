@@ -45,7 +45,7 @@ public class UserController {
             MediaType.MULTIPART_FORM_DATA_VALUE,
             MediaType.APPLICATION_JSON_VALUE
     })
-    public ResponseEntity<SignUpResponse> signUp(@RequestPart("userRequest") UserRequest userRequest, @RequestParam MultipartFile file){
+    public ResponseEntity<SignUpResponse> signUp(@RequestPart("userRequest") UserRequest userRequest, @RequestParam(required = false) MultipartFile file){
 
         SignUpResponse signUpResponse = userService.signUp(userRequest, file);
         if(signUpResponse.getCode().equals("SU")){
