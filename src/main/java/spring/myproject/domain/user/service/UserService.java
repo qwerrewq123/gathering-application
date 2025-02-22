@@ -1,8 +1,13 @@
 package spring.myproject.domain.user.service;
 
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,9 +44,10 @@ public class UserService {
     private final UserRepository userRepository;
     private final ImageRepository imageRepository;
     private final PasswordEncoder passwordEncoder;
-    private final JwtProvider jwtProvider;
+//    private final JwtProvider jwtProvider;
     private final EmailProvider emailProvider;
     private final S3ImageUploadService s3ImageUploadService;
+    private final AuthenticationManager authenticationManager;
 
     @Value("${file.dir}")
     private String fileDir;
@@ -122,23 +128,29 @@ public class UserService {
 
     }
 
-    public SignInResponse signIn(SignInRequest signInRequest) {
+
+    public SignInResponse signIn(SignInRequest signInRequest, HttpSession session) {
 
 
         try {
 
             User user = userRepository.findByUsername(signInRequest.getUsername()).orElseThrow(() -> new NotFoundUserException("not Found User"));
 
-            boolean matches = passwordEncoder.matches(signInRequest.getPassword(), user.getPassword());
+//            boolean matches = passwordEncoder.matches(signInRequest.getPassword(), user.getPassword());
+//
+//            checkPassword(matches);
+//
+//            String token = jwtProvider.create(user.getUsername());
 
-            checkPassword(matches);
-
-            String token = jwtProvider.create(user.getUsername());
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(signInRequest.getUsername(), signInRequest.getPassword())
+            );
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            session.setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
 
             return SignInResponse.builder()
                     .code(successCode)
                     .message(successMessage)
-                    .token(token)
                     .build();
 
         }catch (NotFoundUserException e){
@@ -147,12 +159,12 @@ public class UserService {
                     .message(notFoundMessage)
                     .build();
 
-
         }catch (UnCorrectPasswordException e){
             return SignInResponse.builder()
                     .code(unCorrectCode)
                     .message(unCorrectMessage)
                     .build();
+
         }catch (Exception e){
             log.error("error", e);
             return SignInResponse.builder()

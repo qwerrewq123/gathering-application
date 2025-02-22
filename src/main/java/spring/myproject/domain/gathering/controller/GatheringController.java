@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import spring.myproject.annotation.Username;
 import spring.myproject.domain.gathering.service.GatheringService;
 import spring.myproject.dto.request.gathering.AddGatheringRequest;
 import spring.myproject.dto.request.gathering.UpdateGatheringRequest;
@@ -15,6 +16,7 @@ import spring.myproject.dto.response.gathering.AddGatheringResponse;
 import spring.myproject.dto.response.gathering.GatheringPagingResponse;
 import spring.myproject.dto.response.gathering.GatheringResponse;
 import spring.myproject.dto.response.gathering.UpdateGatheringResponse;
+import spring.myproject.security.CustomUserDetails;
 
 import java.io.IOException;
 
@@ -57,8 +59,8 @@ public class GatheringController {
 
 
     @GetMapping("/gathering/{gatheringId}")
-    public ResponseEntity<GatheringResponse> gatheringDetail(@PathVariable Long gatheringId, @AuthenticationPrincipal String username) throws IOException {
-        GatheringResponse gatheringResponse = gatheringService.gatheringDetail(gatheringId,username);
+    public ResponseEntity<GatheringResponse> gatheringDetail(@PathVariable Long gatheringId, @Username String username) {
+        GatheringResponse gatheringResponse = gatheringService.gatheringDetail(gatheringId,"username");
         if(gatheringResponse.getCode().equals("SU")){
             return new ResponseEntity<>(gatheringResponse, HttpStatus.OK);
         }else{

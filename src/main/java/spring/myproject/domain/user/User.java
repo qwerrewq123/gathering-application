@@ -2,7 +2,10 @@ package spring.myproject.domain.user;
 
 import jakarta.persistence.*;
 import lombok.*;
+import software.amazon.awssdk.services.s3.S3Client;
 import spring.myproject.domain.image.Image;
+
+import java.io.Serializable;
 
 @Getter
 @NoArgsConstructor
@@ -11,7 +14,7 @@ import spring.myproject.domain.image.Image;
 @AllArgsConstructor
 @Setter
 @Entity
-public class User {
+public class User implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

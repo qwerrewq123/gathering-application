@@ -1,5 +1,6 @@
 package spring.myproject.domain.user.controller;
 
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -56,9 +57,9 @@ public class UserController {
     }
 
     @PostMapping("/auth/sign-in")
-    public ResponseEntity<Object> signIn(@RequestBody SignInRequest signInRequest) {
+    public ResponseEntity<Object> signIn(@RequestBody SignInRequest signInRequest, HttpSession session) {
 
-        SignInResponse signInResponse = userService.signIn(signInRequest);
+        SignInResponse signInResponse = userService.signIn(signInRequest,session);
         if(signInResponse.getCode().equals("SU")){
             return new ResponseEntity<>(signInResponse,HttpStatus.OK);
         }else{
