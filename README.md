@@ -3,7 +3,6 @@
 <!-- logo -->
 <img src="https://user-images.githubusercontent.com/80824750/208554611-f8277015-12e8-48d2-b2cc-d09d67f03c02.png" width="400"/>
 
-### Back-end Git Reamd.me Template ✅
 
 
 </div> 
