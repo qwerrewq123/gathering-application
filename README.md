@@ -1,3 +1,15 @@
+<div align="center">
+
+<!-- logo -->
+<img src="https://user-images.githubusercontent.com/80824750/208554611-f8277015-12e8-48d2-b2cc-d09d67f03c02.png" width="400"/>
+
+### Back-end Git Reamd.me Template ✅
+
+[<img src="https://img.shields.io/badge/-readme.md-important?style=flat&logo=google-chrome&logoColor=white" />]() [<img src="https://img.shields.io/badge/-tech blog-blue?style=flat&logo=google-chrome&logoColor=white" />]() [<img src="https://img.shields.io/badge/release-v0.0.0-yellow?style=flat&logo=google-chrome&logoColor=white" />]() 
+<br/> [<img src="https://img.shields.io/badge/프로젝트 기간-2022.12.10~2022.12.19-green?style=flat&logo=&logoColor=white" />]()
+
+</div> 
+
 ## 📝 소개
 백엔드 깃 레파지토리의 README.md를 빠르게 작성하기 위해 만든 템플릿입니다.
 
@@ -68,11 +80,11 @@
 <br />
 
 ## 🤔 기술적 이슈와 해결 과정
-- Redis 써야할까?
+- Stream 써야할까?
     - [Stream API에 대하여](https://velog.io/@yewo2nn16/Java-Stream-API)
-- SMTP 이용한 성능 향상
+- Gmail STMP 이용하여 이메일 전송하기
     - [gmail 보내기](https://velog.io/@yewo2nn16/Email-이메일-전송하기with-첨부파일)
-- AWS EC2에 배포 및 k6를 이용한 모니터링 및 아키텍처 개선
+- AWS EC2에 배포하기
     - [서버 배포하기-1](https://velog.io/@yewo2nn16/SpringBoot-서버-배포)
     - [서버 배포하기-2](https://velog.io/@yewo2nn16/SpringBoot-서버-배포-인텔리제이에서-jar-파일-빌드해서-배포하기)
 
