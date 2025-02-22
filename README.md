@@ -41,7 +41,7 @@
 ## 🗂️ APIs
 작성한 API는 아래에서 확인할 수 있습니다.
 
-👉🏻 [API 바로보기](/backend/APIs.md)
+👉🏻 [API 바로보기]([/backend/APIs.md](https://www.notion.so/rest-api-a42b3300c8884c6a86ef56fccb14264c))
 
 
 <br />
