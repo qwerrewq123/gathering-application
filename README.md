@@ -93,6 +93,6 @@
 
 ## 💁‍♂️ 프로젝트 팀원
 |Backend|
-|:---:|:---:|
+
 | ![](https://github.com/yewon-Noh.png?size=120) |
 |[노예원](https://github.com/yewon-Noh)|
