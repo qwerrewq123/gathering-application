@@ -62,7 +62,7 @@ public class GatheringController {
 
     @GetMapping("/gathering/{gatheringId}")
     public ResponseEntity<GatheringResponse> gatheringDetail(@PathVariable Long gatheringId, @AuthenticationPrincipal String username) {
-        GatheringResponse gatheringResponse = gatheringService.gatheringDetail(gatheringId,"username");
+        GatheringResponse gatheringResponse = gatheringService.gatheringDetail(gatheringId,username);
         if(gatheringResponse.getCode().equals("SU")){
             return new ResponseEntity<>(gatheringResponse, HttpStatus.OK);
         }else{
