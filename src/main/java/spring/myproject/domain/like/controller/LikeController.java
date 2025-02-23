@@ -20,7 +20,7 @@ public class LikeController {
     private final LikeService likeService;
 
     @PatchMapping("/like/{gatheringId}")
-    public ResponseEntity<LikeResponse> like(@PathVariable Long gatheringId, @Username String username){
+    public ResponseEntity<LikeResponse> like(@PathVariable Long gatheringId, @AuthenticationPrincipal String username){
 
         LikeResponse likeResponse = likeService.like(gatheringId, username);
 
@@ -34,7 +34,7 @@ public class LikeController {
 
 
     @PatchMapping("/dislike/{gatheringId}")
-    public ResponseEntity<DislikeResponse> dislike(@PathVariable Long gatheringId, @Username String username){
+    public ResponseEntity<DislikeResponse> dislike(@PathVariable Long gatheringId, @AuthenticationPrincipal String username){
 
         DislikeResponse dislikeResponse = likeService.dislike(gatheringId, username);
         if(dislikeResponse.getCode().equals("SU")){

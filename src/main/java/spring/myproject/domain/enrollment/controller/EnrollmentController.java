@@ -20,7 +20,7 @@ public class EnrollmentController {
     private final EnrollmentService enrollmentService;
     @PostMapping("/gathering/{gatheringId}/participate")
     public ResponseEntity<EnrollGatheringResponse> enrollGathering(@PathVariable Long gatheringId,
-                                                       @Username String username){
+                                                       @AuthenticationPrincipal String username){
         EnrollGatheringResponse enrollGatheringResponse = enrollmentService.enrollGathering(gatheringId, username);
         if(enrollGatheringResponse.getCode().equals("SU")){
             return new ResponseEntity<>(enrollGatheringResponse, HttpStatus.OK);
@@ -32,7 +32,7 @@ public class EnrollmentController {
 
     @PostMapping("/gathering/{gatheringId}/disParticipate")
     public ResponseEntity<DisEnrollGatheringResponse> disEnrollGathering(@PathVariable Long gatheringId,
-                                                           @Username String username){
+                                                           @AuthenticationPrincipal String username){
         DisEnrollGatheringResponse disEnrollGatheringResponse = enrollmentService.disEnrollGathering(gatheringId, username);
         if(disEnrollGatheringResponse.getCode().equals("SU")){
             return new ResponseEntity<>(disEnrollGatheringResponse, HttpStatus.OK);

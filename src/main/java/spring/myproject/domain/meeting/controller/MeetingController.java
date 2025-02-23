@@ -22,7 +22,7 @@ public class MeetingController {
     @PostMapping("/meeting/{gatheringId}")
     public ResponseEntity<AddMeetingResponse> addMeeting(@RequestBody AddMeetingRequest addMeetingRequest,
                                              @PathVariable Long gatheringId,
-                                             @Username String username){
+                                             @AuthenticationPrincipal String username){
 
 
         AddMeetingResponse addMeetingResponse = meetingService.addMeeting(addMeetingRequest, username, gatheringId);
@@ -36,7 +36,7 @@ public class MeetingController {
 
     }
     @DeleteMapping("/meeting/{meetingId}")
-    public ResponseEntity<Object> deleteMeeting(@Username String username,
+    public ResponseEntity<Object> deleteMeeting(@AuthenticationPrincipal String username,
                                                 @PathVariable Long meetingId){
 
 
@@ -53,7 +53,7 @@ public class MeetingController {
 
     @PatchMapping("/updateMeeting/{meetingId}")
     public ResponseEntity<Object> updateMeeting(@RequestBody UpdateMeetingRequest updateMeetingRequest,
-                                                @Username String username,
+                                                @AuthenticationPrincipal String username,
                                                 @PathVariable Long meetingId){
 
 
@@ -69,7 +69,7 @@ public class MeetingController {
 
     @GetMapping("/meeting/{meetingId}")
     public ResponseEntity<MeetingResponse> meetingDetail(@PathVariable Long meetingId,
-                                                @Username String username){
+                                                @AuthenticationPrincipal String username){
             MeetingResponse meetingResponse = meetingService.meetingDetail(meetingId,username);
         if(meetingResponse.getCode().equals("SU")){
             return new ResponseEntity<>(meetingResponse, HttpStatus.OK);
@@ -83,7 +83,7 @@ public class MeetingController {
     @GetMapping("/meetings")
     public ResponseEntity<Object> meetings(@RequestParam int pageNum,
                                             @RequestParam String title,
-                                            @Username String username){
+                                            @AuthenticationPrincipal String username){
 
         MeetingListResponse meetingListResponse = meetingService.meetings(pageNum, username, title);
         if(meetingListResponse.getCode().equals("SU")){

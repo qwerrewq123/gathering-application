@@ -21,7 +21,7 @@ public class AttendController {
 
     @PostMapping("/meeting/{meetingId}/attend")
     public ResponseEntity<AddAttendResponse> addAttend(@PathVariable Long meetingId,
-                                            @Username String username
+                                            @AuthenticationPrincipal String username
                                             ){
 
         AddAttendResponse addAttendResponse = attendService.addAttend(meetingId, username);
@@ -36,7 +36,7 @@ public class AttendController {
     @PostMapping("/meeting/{meetingId}/disAttend/{attendId}")
     public ResponseEntity<DisAttendResponse> disAttend(@PathVariable Long meetingId,
                                             @PathVariable Long attendId,
-                                            @Username String username){
+                                            @AuthenticationPrincipal String username){
 
         DisAttendResponse disAttendResponse = attendService.disAttend(meetingId, attendId, username);
         if(disAttendResponse.getCode().equals("SU")){
@@ -49,7 +49,7 @@ public class AttendController {
     @PostMapping("/meeting/{meetingId}/permitAttend/{attendId}")
     public ResponseEntity<PermitAttendResponse> permitAttend(@PathVariable Long meetingId,
                                                @PathVariable Long attendId,
-                                               @Username String username){
+                                               @AuthenticationPrincipal String username){
         PermitAttendResponse permitAttendResponse = attendService.permitAttend(meetingId, attendId, username);
         if(permitAttendResponse.getCode().equals("SU")){
             return new ResponseEntity<>(permitAttendResponse, HttpStatus.OK);

@@ -23,7 +23,7 @@ public class RecommendController {
     private final RecommendService recommendService;
 
     @GetMapping("/recommend")
-    public ResponseEntity<Object> recommend(@Username String username){
+    public ResponseEntity<Object> recommend(@AuthenticationPrincipal String username){
 
 
         RecommendResponse recommendResponse = recommendService.recommend(username);
