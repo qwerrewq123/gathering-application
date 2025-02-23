@@ -1,6 +1,7 @@
 package spring.myproject.domain.meeting.service;
 
 import lombok.RequiredArgsConstructor;
+import org.aspectj.apache.bcel.classfile.ConstantClass;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -21,12 +22,14 @@ import spring.myproject.domain.meeting.exception.MeetingIsnotEmptyException;
 import spring.myproject.domain.meeting.exception.NotAuthrizeException;
 import spring.myproject.domain.meeting.exception.NotFoundMeeting;
 import spring.myproject.domain.user.exception.NotFoundUserException;
+import spring.myproject.util.ConstClass;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static spring.myproject.util.UserConst.*;
+import static spring.myproject.util.ConstClass.*;
+
 
 @Service
 @Transactional
@@ -40,11 +43,8 @@ public class MeetingService {
     public AddMeetingResponse addMeeting(AddMeetingRequest addMeetingRequest, String username, Long gatheringId) {
 
         try {
-
             User user = userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
-
             Gathering gathering = gatheringRepository.findById(gatheringId).orElseThrow(() -> new NotFoundGatheringException("no exist Gathering!!"));
-
             Meeting meeting = Meeting.builder()
                     .title(addMeetingRequest.getTitle())
                     .content(addMeetingRequest.getContent())
@@ -54,33 +54,27 @@ public class MeetingService {
                     .endDate(addMeetingRequest.getEndDate())
                     .gathering(gathering)
                     .build();
-
             meetingRepository.save(meeting);
             return AddMeetingResponse.builder()
-                    .code(successCode)
-                    .message(successMessage)
+                    .code(SUCCESS_CODE)
+                    .message(SUCCESS_MESSAGE)
                     .build();
-
-
         }catch (NotFoundUserException e){
             return AddMeetingResponse.builder()
-                    .code(notFoundCode)
-                    .message(notFoundMessage)
+                    .code(NOT_FOUND_USER_CODE)
+                    .message(NOT_FOUND_USER_MESSAGE)
                     .build();
-
         }catch (NotFoundGatheringException e){
             return AddMeetingResponse.builder()
-                    .code(GatheringConst.notFoundGatheringCode)
-                    .message(GatheringConst.notFoundGatheringMessage)
+                    .code(NOT_FOUND_GATHERING_CODE)
+                    .message(NOT_FOUND_GATHERING_MESSAGE)
                     .build();
-
         }catch (Exception e){
             return AddMeetingResponse.builder()
-                    .code(dbErrorCode)
-                    .message(dbErrorMessage)
+                    .code(DB_ERROR_CODE)
+                    .message(DB_ERROR_MESSAGE)
                     .build();
         }
-
     }
 
     public DeleteMeetingResponse deleteMeeting(String username, Long meetingId) {
@@ -99,35 +93,31 @@ public class MeetingService {
                 throw new MeetingIsnotEmptyException("meeting is not empty!!");
             }
             return DeleteMeetingResponse.builder()
-                    .code(successCode)
-                    .message(successMessage)
+                    .code(SUCCESS_CODE)
+                    .message(SUCCESS_MESSAGE)
                     .build();
-
         }catch (NotFoundUserException e){
             return DeleteMeetingResponse.builder()
-                    .code(notFoundCode)
-                    .message(notFoundMessage)
+                    .code(NOT_FOUND_USER_CODE)
+                    .message(NOT_FOUND_USER_MESSAGE)
                     .build();
-
         }catch (NotFoundMeeting e){
             return DeleteMeetingResponse.builder()
-                    .code(MeetingConst.notFoundCode)
-                    .message(MeetingConst.notFoundMessage)
+                    .code(NOT_FOUND_MEETING_CODE)
+                    .message(NOT_FOUND_MEETING_MESSAGE)
                     .build();
         }catch (NotAuthrizeException e){
             return DeleteMeetingResponse.builder()
-                    .code(MeetingConst.notAuthorizeCode)
-                    .message(MeetingConst.notAuthorizedMessage)
+                    .code(NOT_AUTHORIZE_CODE)
+                    .message(NOT_AUTHORIZED_MESSAGE)
                     .build();
         }catch (MeetingIsnotEmptyException e){
             return DeleteMeetingResponse.builder()
-                    .code(MeetingConst.meetingIsNotEmptyCode)
-                    .message(MeetingConst.meetingIsNotEmptyMessage)
+                    .code(MEETING_IS_NOT_EMPTY_CODE)
+                    .message(MEETING_IS_NOT_EMPTY_MESSAGE)
                     .build();
         }
-
     }
-
 
     public UpdateMeetingResponse updateMeeting(UpdateMeetingRequest updateMeetingRequest, String username, Long meetingId) {
 
@@ -148,29 +138,27 @@ public class MeetingService {
             meeting.setEndDate(updateMeetingRequest.getEndDate());
 
             return UpdateMeetingResponse.builder()
-                    .code(successCode)
-                    .message(successMessage)
+                    .code(SUCCESS_CODE)
+                    .message(SUCCESS_MESSAGE)
                     .build();
 
         }catch (NotFoundUserException e){
             return UpdateMeetingResponse.builder()
-                    .code(notFoundCode)
-                    .message(notFoundMessage)
+                    .code(NOT_FOUND_USER_CODE)
+                    .message(NOT_FOUND_USER_MESSAGE)
                     .build();
-
         }catch (NotFoundMeeting e){
             return UpdateMeetingResponse.builder()
-                    .code(MeetingConst.notFoundCode)
-                    .message(MeetingConst.notFoundMessage)
+                    .code(NOT_FOUND_MEETING_CODE)
+                    .message(NOT_FOUND_MEETING_MESSAGE)
                     .build();
         }catch (NotAuthrizeException e){
             return UpdateMeetingResponse.builder()
-                    .code(MeetingConst.notAuthorizeCode)
-                    .message(MeetingConst.notAuthorizedMessage)
+                    .code(NOT_AUTHORIZE_CODE)
+                    .message(NOT_AUTHORIZED_MESSAGE)
                     .build();
         }
     }
-
     public MeetingResponse meetingDetail(Long meetingId, String username) {
 
         User user = userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
@@ -193,40 +181,30 @@ public class MeetingService {
                 .createdBy(meetingQueryResponses.getFirst().getCreatedBy())
                 .attendedBy(attendedBy(meetingQueryResponses))
                 .build();
-
-
-
     }
 
     public MeetingListResponse meetings(int pageNum, String username, String title) {
-
-
         try {
             User user = userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
             PageRequest pageRequest = PageRequest.of(pageNum - 1, 10, Sort.Direction.ASC,"id");
             Page<MeetingQueryListResponse> page = meetingRepository.meetings(pageRequest,title);
             return MeetingListResponse.builder()
-                    .code(successCode)
-                    .message(successMessage)
+                    .code(SUCCESS_CODE)
+                    .message(SUCCESS_MESSAGE)
                     .page(page)
                     .build();
-
         }catch (NotFoundUserException e){
             return MeetingListResponse.builder()
-                    .code(notFoundCode)
-                    .message(notFoundMessage)
+                    .code(NOT_FOUND_USER_CODE)
+                    .message(NOT_FOUND_USER_MESSAGE)
                     .build();
-
         }catch (Exception e){
             return MeetingListResponse.builder()
-                    .code(dbErrorCode)
-                    .message(dbErrorMessage)
+                    .code(DB_ERROR_CODE)
+                    .message(DB_ERROR_MESSAGE)
                     .build();
         }
-
     }
-
-
 
     private List<String> attendedBy(List<MeetingQueryResponse> meetingQueryResponses){
 
@@ -237,8 +215,6 @@ public class MeetingService {
                 attendedBy.add(meetingQueryResponse.getAttendedBy());
             }
         }
-
         return attendedBy;
     }
-
 }

@@ -18,7 +18,7 @@ import spring.myproject.domain.user.exception.NotFoundUserException;
 
 import java.time.LocalDateTime;
 
-import static spring.myproject.util.UserConst.*;
+import static spring.myproject.util.ConstClass.*;
 
 @Service
 @Transactional
@@ -29,97 +29,72 @@ public class EnrollmentService {
     private final UserRepository userRepository;
     private final GatheringRepository gatheringRepository;
 
-
     public EnrollGatheringResponse enrollGathering(Long gatheringId, String username) {
-
 
         try {
             User user = userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
-
-
             Gathering gathering = gatheringRepository.findById(gatheringId).orElseThrow(() -> new NotFoundGatheringException("no exist Gathering!!"));
-
             Enrollment exist = enrollmentRepository.existEnrollment(gatheringId, user.getId());
             if(exist != null){
                 throw new AlreadyEnrollmentException("Already enrolled;");
             }
-
             Enrollment enrollment = Enrollment.builder()
                     .date(LocalDateTime.now())
                     .enrolledBy(user)
                     .gathering(gathering)
                     .accepted(true)
                     .build();
-
             enrollmentRepository.save(enrollment);
-
             return EnrollGatheringResponse.builder()
-                    .code(successCode)
-                    .message(successMessage)
+                    .code(SUCCESS_CODE)
+                    .message(SUCCESS_MESSAGE)
                     .build();
-
         }catch (NotFoundUserException e){
             return EnrollGatheringResponse.builder()
-                    .code(notFoundCode)
-                    .message(notFoundMessage)
+                    .code(NOT_FOUND_USER_CODE)
+                    .message(NOT_FOUND_USER_MESSAGE)
                     .build();
-
         }catch (NotFoundGatheringException e){
             return EnrollGatheringResponse.builder()
-                    .code(GatheringConst.notFoundGatheringCode)
-                    .message(GatheringConst.notFoundGatheringMessage)
+                    .code(NOT_FOUND_GATHERING_CODE)
+                    .message(NOT_FOUND_GATHERING_MESSAGE)
                     .build();
-
         }catch (AlreadyEnrollmentException e){
             return EnrollGatheringResponse.builder()
-                    .code(EnrollmentConst.alreadyEnrollmentCode)
-                    .message(EnrollmentConst.alreadyEnrollmentMessage)
+                    .code(ALREADY_ENROLLMENT_CODE)
+                    .message(ALREADY_ENROLLMENT_MESSAGE)
                     .build();
         }
-
-
     }
 
     public DisEnrollGatheringResponse disEnrollGathering(Long gatheringId, String username) {
 
-
-
         try {
-
             User user = userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
-
             Gathering gathering = gatheringRepository.findById(gatheringId).orElseThrow(
                     () ->  new NotFoundGatheringException("no exist Gathering!!"));
-
             Enrollment enrollment = enrollmentRepository.findEnrollment(gatheringId, user.getId()).orElseThrow(
                     () ->  new NotFoundEnrollmentException("no exist Enrollment!!"));
-
             enrollmentRepository.delete(enrollment);
             return DisEnrollGatheringResponse.builder()
-                    .code(successCode)
-                    .message(successMessage)
+                    .code(SUCCESS_CODE)
+                    .message(SUCCESS_MESSAGE)
                     .build();
-
         }catch (NotFoundUserException e){
             return DisEnrollGatheringResponse.builder()
-                    .code(notFoundCode)
-                    .message(notFoundMessage)
+                    .code(NOT_FOUND_USER_CODE)
+                    .message(NOT_FOUND_USER_MESSAGE)
                     .build();
-
         }catch (NotFoundGatheringException e){
             return DisEnrollGatheringResponse.builder()
-                    .code(GatheringConst.notFoundGatheringCode)
-                    .message(GatheringConst.notFoundGatheringMessage)
+                    .code(NOT_FOUND_GATHERING_CODE)
+                    .message(NOT_FOUND_GATHERING_MESSAGE)
                     .build();
-
         }catch (NotFoundEnrollmentException e){
             return DisEnrollGatheringResponse.builder()
-                    .code(EnrollmentConst.notFoundEnrollmentCode)
-                    .message(EnrollmentConst.notFoundEnrollmentMessage)
+                    .code(NOT_FOUND_ENROLLMENT_CODE)
+                    .message(NOT_FOUND_ENROLLMENT_MESSAGE)
                     .build();
         }
-
-
-
     }
 }

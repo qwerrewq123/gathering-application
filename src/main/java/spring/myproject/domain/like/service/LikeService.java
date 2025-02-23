@@ -15,10 +15,12 @@ import spring.myproject.domain.gathering.exception.NotFoundGatheringException;
 import spring.myproject.domain.like.exception.AlreadyLikeGathering;
 import spring.myproject.domain.like.exception.NotFoundLikeException;
 import spring.myproject.domain.user.exception.NotFoundUserException;
+import spring.myproject.util.ConstClass;
 
 import java.util.Optional;
 
-import static spring.myproject.util.UserConst.*;
+import static spring.myproject.util.ConstClass.*;
+
 
 @Service
 @RequiredArgsConstructor
@@ -47,69 +49,54 @@ public class LikeService {
                     .likedBy(user)
                     .build());
             return LikeResponse.builder()
-                    .code(successCode)
-                    .message(successMessage)
+                    .code(SUCCESS_CODE)
+                    .message(SUCCESS_MESSAGE)
                     .build();
-
         }catch (NotFoundUserException e){
             return LikeResponse.builder()
-                    .code(notFoundCode)
-                    .message(notFoundMessage)
+                    .code(NOT_FOUND_USER_CODE)
+                    .message(NOT_FOUND_USER_MESSAGE)
                     .build();
-
         }catch (NotFoundGatheringException e){
             return LikeResponse.builder()
-                    .code(GatheringConst.notFoundGatheringCode)
-                    .message(GatheringConst.notFoundGatheringMessage)
+                    .code(NOT_FOUND_GATHERING_CODE)
+                    .message(NOT_FOUND_GATHERING_MESSAGE)
                     .build();
-
         }catch (AlreadyLikeGathering e){
             return LikeResponse.builder()
-                    .code(LikeConst.alreadyLikeCode)
-                    .message(LikeConst.alreadyLikeMessage)
+                    .code(ALREADY_LIKE_CODE)
+                    .message(ALREADY_LIKE_MESSAGE)
                     .build();
         }
-
-
     }
 
     public DislikeResponse dislike(Long gatheringId, String username) {
-
-
 
         try {
             User user = userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
             Long userId = user.getId();
             Like like = likeRepository.findLike(userId, gatheringId).orElseThrow(()-> new NotFoundLikeException("no exist Like"));
             Gathering gathering = gatheringRepository.findById(gatheringId).orElseThrow(()-> new NotFoundGatheringException("no exist Gathering!!"));
-
-
             likeRepository.delete(like);
-
             return DislikeResponse.builder()
-                    .code(successCode)
-                    .message(successMessage)
+                    .code(SUCCESS_CODE)
+                    .message(SUCCESS_MESSAGE)
                     .build();
-
-
         }catch (NotFoundUserException e){
             return DislikeResponse.builder()
-                    .code(notFoundCode)
-                    .message(notFoundMessage)
+                    .code(NOT_FOUND_USER_CODE)
+                    .message(NOT_FOUND_USER_MESSAGE)
                     .build();
-
         }catch (NotFoundGatheringException e){
             return DislikeResponse.builder()
-                    .code(GatheringConst.notFoundGatheringCode)
-                    .message(GatheringConst.notFoundGatheringMessage)
+                    .code(NOT_FOUND_GATHERING_CODE)
+                    .message(NOT_FOUND_GATHERING_MESSAGE)
                     .build();
-
         }catch (NotFoundLikeException e){
             return DislikeResponse.builder()
-                    .code(LikeConst.noFoundLikeCode)
-                    .message(LikeConst.noFoundLikeMessage)
+                    .code(NOT_FOUND_LIKE_CODE)
+                    .message(NOT_FOUND_LIKE_MESSAGE)
                     .build();
-
         }
     }
 }

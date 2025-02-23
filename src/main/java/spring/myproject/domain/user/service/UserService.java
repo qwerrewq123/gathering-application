@@ -30,7 +30,7 @@ import spring.myproject.s3.S3ImageUploadService;
 
 import java.util.List;
 
-import static spring.myproject.util.UserConst.*;
+import static spring.myproject.util.ConstClass.*;
 
 @Service
 @RequiredArgsConstructor
@@ -55,46 +55,35 @@ public class UserService {
         try {
             if (idCheck == true) {
                 return IdCheckResponse.builder()
-                        .code(successCode)
-                        .message(successMessage)
+                        .code(SUCCESS_CODE)
+                        .message(SUCCESS_MESSAGE)
                         .build();
-
             } else {
                 return IdCheckResponse.builder()
-                        .code(existCode)
-                        .message(existMessage)
+                        .code(EXIST_CODE)
+                        .message(EXIST_MESSAGE)
                         .build();
             }
         }catch (Exception e){
             log.error("error", e);
             return IdCheckResponse.builder()
-                    .code(dbErrorCode)
-                    .message(dbErrorMessage)
+                    .code(DB_ERROR_CODE)
+                    .message(DB_ERROR_MESSAGE)
                     .build();
-
         }
-
     }
 
     public SignUpResponse signUp(UserRequest userRequest, MultipartFile file){
 
-
-
-
         try {
-
-
             Image image = null;
             String url = s3ImageUploadService.upload(file);
-
             if(StringUtils.hasText(url)){
-
                 image = Image.builder()
                             .url(url)
                             .build();
                 imageRepository.save(image);
             }
-
             User user = User.builder()
                     .age(userRequest.getAge())
                     .email(userRequest.getEmail())
@@ -104,106 +93,78 @@ public class UserService {
                     .password(passwordEncoder.encode(userRequest.getPassword()))
                     .profileImage(image)
                     .build();
-
             userRepository.save(user);
-
             return SignUpResponse.builder()
-                    .code(successCode)
-                    .message(successMessage)
+                    .code(SUCCESS_CODE)
+                    .message(SUCCESS_MESSAGE)
                     .build();
-
         }catch (Exception e){
             log.error("error", e);
             return SignUpResponse.builder()
-                    .code(dbErrorCode)
-                    .message(dbErrorMessage)
+                    .code(DB_ERROR_CODE)
+                    .message(DB_ERROR_MESSAGE)
                     .build();
         }
-
-
-
-
     }
-
 
     public SignInResponse signIn(SignInRequest signInRequest, HttpSession session) {
 
-
         try {
-
             User user = userRepository.findByUsername(signInRequest.getUsername()).orElseThrow(() -> new NotFoundUserException("not Found User"));
-
             boolean matches = passwordEncoder.matches(signInRequest.getPassword(), user.getPassword());
-
             checkPassword(matches);
-
             String token = jwtProvider.create(user.getUsername());
-
-//            Authentication authentication = authenticationManager.authenticate(
-//                    new UsernamePasswordAuthenticationToken(signInRequest.getUsername(), signInRequest.getPassword())
-//            );
-//            SecurityContextHolder.getContext().setAuthentication(authentication);
-//            session.setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
-
             return SignInResponse.builder()
-                    .code(successCode)
-                    .message(successMessage)
+                    .code(SUCCESS_CODE)
+                    .message(SUCCESS_MESSAGE)
                     .token(token)
                     .build();
-
         }catch (NotFoundUserException e){
             return SignInResponse.builder()
-                    .code(notFoundCode)
-                    .message(notFoundMessage)
+                    .code(NOT_FOUND_USER_CODE)
+                    .message(NOT_FOUND_USER_MESSAGE)
                     .build();
-
         }catch (UnCorrectPasswordException e){
             return SignInResponse.builder()
-                    .code(unCorrectCode)
-                    .message(unCorrectMessage)
+                    .code(UNCORRECT_CODE)
+                    .message(UNCORRECT_MESSAGE)
                     .build();
-
         }catch (Exception e){
             return SignInResponse.builder()
-                    .code(dbErrorCode)
-                    .message(dbErrorMessage)
+                    .code(DB_ERROR_CODE)
+                    .message(DB_ERROR_MESSAGE)
                     .build();
         }
     }
 
-
     public EmailCertificationResponse emailCertification(EmailCertificationRequest emailCertificationRequest) {
-
 
         try {
             List<User> users = userRepository.findByEmail(emailCertificationRequest.getEmail());
             if(users.size() == 0){
                 return EmailCertificationResponse.builder()
-                        .code(notEmailCode)
-                        .message(notEmailMessage)
+                        .code(NOT_EMAIL_CODE)
+                        .message(NOT_EMAIL_MESSAGE)
                         .build();
             } else if (users.size() == 1) {
                 emailProvider.sendCertificationMail(emailCertificationRequest.getEmail(), certificationNumber());
                 return EmailCertificationResponse.builder()
-                        .code(successCode)
-                        .message(successMessage)
+                        .code(SUCCESS_CODE)
+                        .message(SUCCESS_MESSAGE)
                         .build();
             }else{
                 return EmailCertificationResponse.builder()
-                        .code(duplicateEmailCode)
-                        .message(duplicateEmailMessage)
+                        .code(DUPLICATE_EMAIL_CODE)
+                        .message(DUPLICATE_EMAIL_MESSAGE)
                         .build();
             }
         }catch (Exception e){
             log.error("error", e);
             return EmailCertificationResponse.builder()
-                    .code(dbErrorCode)
-                    .message(dbErrorMessage)
+                    .code(DB_ERROR_CODE)
+                    .message(DB_ERROR_MESSAGE)
                     .build();
         }
-
-
-
     }
 
     private void checkPassword(boolean matches) {
