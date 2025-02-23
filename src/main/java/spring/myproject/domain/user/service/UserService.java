@@ -166,7 +166,6 @@ public class UserService {
                     .build();
 
         }catch (Exception e){
-            log.error("error", e);
             return SignInResponse.builder()
                     .code(dbErrorCode)
                     .message(dbErrorMessage)
