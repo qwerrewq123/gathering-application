@@ -7,29 +7,24 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
-import spring.myproject.domain.attend.repository.AttendRepository;
 import spring.myproject.domain.gathering.Gathering;
 import spring.myproject.domain.gathering.repository.GatheringRepository;
 import spring.myproject.domain.meeting.Meeting;
+import spring.myproject.domain.meeting.dto.response.*;
 import spring.myproject.domain.meeting.repository.MeetingRepository;
 import spring.myproject.domain.user.User;
 import spring.myproject.domain.user.repository.UserRepository;
-import spring.myproject.dto.request.meeting.AddMeetingRequest;
-import spring.myproject.dto.request.meeting.UpdateMeetingRequest;
-import spring.myproject.dto.response.enrollment.EnrollGatheringResponse;
-import spring.myproject.dto.response.meeting.*;
-import spring.myproject.exception.gathering.NotFoundGatheringException;
-import spring.myproject.exception.meeting.MeetingIsnotEmptyException;
-import spring.myproject.exception.meeting.NotAuthrizeException;
-import spring.myproject.exception.meeting.NotFoundMeeting;
-import spring.myproject.exception.user.NotFoundUserException;
-import spring.myproject.util.GatheringConst;
-import spring.myproject.util.MeetingConst;
+import spring.myproject.domain.meeting.dto.request.AddMeetingRequest;
+import spring.myproject.domain.meeting.dto.request.UpdateMeetingRequest;
+import spring.myproject.domain.gathering.exception.NotFoundGatheringException;
+import spring.myproject.domain.meeting.exception.MeetingIsnotEmptyException;
+import spring.myproject.domain.meeting.exception.NotAuthrizeException;
+import spring.myproject.domain.meeting.exception.NotFoundMeeting;
+import spring.myproject.domain.user.exception.NotFoundUserException;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static spring.myproject.util.UserConst.*;
 
@@ -42,7 +37,7 @@ public class MeetingService {
     private final MeetingRepository meetingRepository;
     private final GatheringRepository gatheringRepository;
 
-    public AddMeetingResponse addMeeting(AddMeetingRequest addMeetingRequest, String username,Long gatheringId) {
+    public AddMeetingResponse addMeeting(AddMeetingRequest addMeetingRequest, String username, Long gatheringId) {
 
         try {
 
@@ -203,7 +198,7 @@ public class MeetingService {
 
     }
 
-    public MeetingListResponse meetings(int pageNum, String username,String title) {
+    public MeetingListResponse meetings(int pageNum, String username, String title) {
 
 
         try {

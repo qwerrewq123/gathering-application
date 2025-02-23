@@ -1,16 +1,14 @@
 package spring.myproject.domain.meeting.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import spring.myproject.annotation.Username;
+import spring.myproject.domain.meeting.dto.response.*;
 import spring.myproject.domain.meeting.service.MeetingService;
-import spring.myproject.dto.request.meeting.AddMeetingRequest;
-import spring.myproject.dto.request.meeting.UpdateMeetingRequest;
-import spring.myproject.dto.response.meeting.*;
+import spring.myproject.domain.meeting.dto.request.AddMeetingRequest;
+import spring.myproject.domain.meeting.dto.request.UpdateMeetingRequest;
 
 
 @RestController
@@ -21,8 +19,8 @@ public class MeetingController {
 
     @PostMapping("/meeting/{gatheringId}")
     public ResponseEntity<AddMeetingResponse> addMeeting(@RequestBody AddMeetingRequest addMeetingRequest,
-                                             @PathVariable Long gatheringId,
-                                             @AuthenticationPrincipal String username){
+                                                         @PathVariable Long gatheringId,
+                                                         @AuthenticationPrincipal String username){
 
 
         AddMeetingResponse addMeetingResponse = meetingService.addMeeting(addMeetingRequest, username, gatheringId);
@@ -69,7 +67,7 @@ public class MeetingController {
 
     @GetMapping("/meeting/{meetingId}")
     public ResponseEntity<MeetingResponse> meetingDetail(@PathVariable Long meetingId,
-                                                @AuthenticationPrincipal String username){
+                                                         @AuthenticationPrincipal String username){
             MeetingResponse meetingResponse = meetingService.meetingDetail(meetingId,username);
         if(meetingResponse.getCode().equals("SU")){
             return new ResponseEntity<>(meetingResponse, HttpStatus.OK);

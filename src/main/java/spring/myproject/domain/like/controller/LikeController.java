@@ -7,10 +7,9 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
-import spring.myproject.annotation.Username;
 import spring.myproject.domain.like.service.LikeService;
-import spring.myproject.dto.response.like.DislikeResponse;
-import spring.myproject.dto.response.like.LikeResponse;
+import spring.myproject.domain.like.dto.response.DislikeResponse;
+import spring.myproject.domain.like.dto.response.LikeResponse;
 
 
 @RestController

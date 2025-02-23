@@ -5,12 +5,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import spring.myproject.domain.gathering.Gathering;
-import spring.myproject.dto.response.gathering.GatheringPagingQueryDto;
-import spring.myproject.dto.response.gathering.GatheringPagingResponse;
-import spring.myproject.dto.response.gathering.GatheringQueryDto;
+import spring.myproject.domain.gathering.dto.response.GatheringPagingQueryDto;
+import spring.myproject.domain.gathering.dto.response.GatheringQueryDto;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface GatheringRepository extends JpaRepository<Gathering,Long> {
 

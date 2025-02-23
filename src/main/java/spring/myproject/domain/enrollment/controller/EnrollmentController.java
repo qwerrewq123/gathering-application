@@ -6,12 +6,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import spring.myproject.annotation.Username;
 import spring.myproject.domain.enrollment.service.EnrollmentService;
-import spring.myproject.dto.response.enrollment.DisEnrollGatheringResponse;
-import spring.myproject.dto.response.enrollment.EnrollGatheringResponse;
+import spring.myproject.domain.enrollment.dto.response.DisEnrollGatheringResponse;
+import spring.myproject.domain.enrollment.dto.response.EnrollGatheringResponse;
 
 @RestController
 @RequiredArgsConstructor

@@ -5,10 +5,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import spring.myproject.domain.meeting.Meeting;
-import spring.myproject.domain.user.User;
-import spring.myproject.dto.response.meeting.MeetingListResponse;
-import spring.myproject.dto.response.meeting.MeetingQueryListResponse;
-import spring.myproject.dto.response.meeting.MeetingQueryResponse;
+import spring.myproject.domain.meeting.dto.response.MeetingQueryListResponse;
+import spring.myproject.domain.meeting.dto.response.MeetingQueryResponse;
 
 import java.util.List;
 

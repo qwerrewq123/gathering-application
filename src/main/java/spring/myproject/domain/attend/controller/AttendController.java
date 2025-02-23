@@ -7,11 +7,10 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
-import spring.myproject.annotation.Username;
 import spring.myproject.domain.attend.service.AttendService;
-import spring.myproject.dto.response.attend.AddAttendResponse;
-import spring.myproject.dto.response.attend.DisAttendResponse;
-import spring.myproject.dto.response.attend.PermitAttendResponse;
+import spring.myproject.domain.attend.dto.response.AddAttendResponse;
+import spring.myproject.domain.attend.dto.response.DisAttendResponse;
+import spring.myproject.domain.attend.dto.response.PermitAttendResponse;
 
 @RestController
 @RequiredArgsConstructor

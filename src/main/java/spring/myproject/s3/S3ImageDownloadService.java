@@ -52,8 +52,11 @@ public class S3ImageDownloadService {
     }
 
     private String encodeFileToBase64(File tempFile) throws IOException {
+
         byte[] fileBytes  = Files.readAllBytes(tempFile.toPath());
-        return Base64.getEncoder().encodeToString(fileBytes);
+        String encodeUrl = Base64.getEncoder().encodeToString(fileBytes);
+        tempFile.delete();
+        return encodeUrl;
 
     }
 }

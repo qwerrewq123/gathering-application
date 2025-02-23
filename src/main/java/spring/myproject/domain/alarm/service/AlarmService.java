@@ -6,15 +6,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import spring.myproject.domain.alarm.Alarm;
+import spring.myproject.domain.alarm.dto.response.*;
 import spring.myproject.domain.alarm.repository.AlarmRepository;
 import spring.myproject.domain.user.User;
 import spring.myproject.domain.user.repository.UserRepository;
-import spring.myproject.dto.request.alarm.AddAlarmRequest;
-import spring.myproject.dto.response.alarm.*;
-import spring.myproject.dto.response.attend.AddAttendResponse;
-import spring.myproject.exception.alarm.NotFoundAlarmException;
-import spring.myproject.exception.user.NotFoundUserException;
-import spring.myproject.util.AlarmConst;
+import spring.myproject.domain.alarm.dto.request.AddAlarmRequest;
+import spring.myproject.domain.alarm.exception.NotFoundAlarmException;
+import spring.myproject.domain.user.exception.NotFoundUserException;
 
 import java.time.LocalDateTime;
 

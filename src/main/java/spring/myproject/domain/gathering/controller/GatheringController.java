@@ -1,24 +1,18 @@
 package spring.myproject.domain.gathering.controller;
 
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.web.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import spring.myproject.annotation.Username;
 import spring.myproject.domain.gathering.service.GatheringService;
-import spring.myproject.dto.request.gathering.AddGatheringRequest;
-import spring.myproject.dto.request.gathering.UpdateGatheringRequest;
-import spring.myproject.dto.response.gathering.AddGatheringResponse;
-import spring.myproject.dto.response.gathering.GatheringPagingResponse;
-import spring.myproject.dto.response.gathering.GatheringResponse;
-import spring.myproject.dto.response.gathering.UpdateGatheringResponse;
-import spring.myproject.security.CustomUserDetails;
+import spring.myproject.domain.gathering.dto.request.AddGatheringRequest;
+import spring.myproject.domain.gathering.dto.request.UpdateGatheringRequest;
+import spring.myproject.domain.gathering.dto.response.AddGatheringResponse;
+import spring.myproject.domain.gathering.dto.response.GatheringPagingResponse;
+import spring.myproject.domain.gathering.dto.response.GatheringResponse;
+import spring.myproject.domain.gathering.dto.response.UpdateGatheringResponse;
 
 import java.io.IOException;
 

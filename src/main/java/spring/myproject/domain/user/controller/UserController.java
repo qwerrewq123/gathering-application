@@ -9,14 +9,12 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import spring.myproject.async.AsyncService;
+import spring.myproject.domain.user.dto.response.*;
 import spring.myproject.domain.user.service.UserService;
-import spring.myproject.dto.request.user.EmailCertificationRequest;
-import spring.myproject.dto.request.user.IdCheckRequest;
-import spring.myproject.dto.request.user.SignInRequest;
-import spring.myproject.dto.request.user.UserRequest;
-import spring.myproject.dto.response.user.*;
-
-import java.io.IOException;
+import spring.myproject.domain.user.dto.request.EmailCertificationRequest;
+import spring.myproject.domain.user.dto.request.IdCheckRequest;
+import spring.myproject.domain.user.dto.request.SignInRequest;
+import spring.myproject.domain.user.dto.request.UserRequest;
 
 @RestController
 @RequiredArgsConstructor

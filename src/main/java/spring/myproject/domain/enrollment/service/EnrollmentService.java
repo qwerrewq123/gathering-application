@@ -9,14 +9,12 @@ import spring.myproject.domain.gathering.Gathering;
 import spring.myproject.domain.gathering.repository.GatheringRepository;
 import spring.myproject.domain.user.User;
 import spring.myproject.domain.user.repository.UserRepository;
-import spring.myproject.dto.response.enrollment.DisEnrollGatheringResponse;
-import spring.myproject.dto.response.enrollment.EnrollGatheringResponse;
-import spring.myproject.exception.enrollment.AlreadyEnrollmentException;
-import spring.myproject.exception.enrollment.NotFoundEnrollmentException;
-import spring.myproject.exception.gathering.NotFoundGatheringException;
-import spring.myproject.exception.user.NotFoundUserException;
-import spring.myproject.util.EnrollmentConst;
-import spring.myproject.util.GatheringConst;
+import spring.myproject.domain.enrollment.dto.response.DisEnrollGatheringResponse;
+import spring.myproject.domain.enrollment.dto.response.EnrollGatheringResponse;
+import spring.myproject.domain.enrollment.exception.AlreadyEnrollmentException;
+import spring.myproject.domain.enrollment.exception.NotFoundEnrollmentException;
+import spring.myproject.domain.gathering.exception.NotFoundGatheringException;
+import spring.myproject.domain.user.exception.NotFoundUserException;
 
 import java.time.LocalDateTime;
 

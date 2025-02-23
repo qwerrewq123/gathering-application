@@ -9,15 +9,12 @@ import spring.myproject.domain.like.Like;
 import spring.myproject.domain.like.repository.LikeRepository;
 import spring.myproject.domain.user.User;
 import spring.myproject.domain.user.repository.UserRepository;
-import spring.myproject.dto.response.enrollment.EnrollGatheringResponse;
-import spring.myproject.dto.response.like.DislikeResponse;
-import spring.myproject.dto.response.like.LikeResponse;
-import spring.myproject.exception.gathering.NotFoundGatheringException;
-import spring.myproject.exception.like.AlreadyLikeGathering;
-import spring.myproject.exception.like.NotFoundLikeException;
-import spring.myproject.exception.user.NotFoundUserException;
-import spring.myproject.util.GatheringConst;
-import spring.myproject.util.LikeConst;
+import spring.myproject.domain.like.dto.response.DislikeResponse;
+import spring.myproject.domain.like.dto.response.LikeResponse;
+import spring.myproject.domain.gathering.exception.NotFoundGatheringException;
+import spring.myproject.domain.like.exception.AlreadyLikeGathering;
+import spring.myproject.domain.like.exception.NotFoundLikeException;
+import spring.myproject.domain.user.exception.NotFoundUserException;
 
 import java.util.Optional;
 

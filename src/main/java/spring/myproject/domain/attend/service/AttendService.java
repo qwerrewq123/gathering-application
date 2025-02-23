@@ -4,19 +4,17 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import spring.myproject.domain.attend.Attend;
+import spring.myproject.domain.attend.exception.*;
 import spring.myproject.domain.attend.repository.AttendRepository;
 import spring.myproject.domain.meeting.Meeting;
 import spring.myproject.domain.meeting.repository.MeetingRepository;
 import spring.myproject.domain.user.User;
 import spring.myproject.domain.user.repository.UserRepository;
-import spring.myproject.dto.response.attend.AddAttendResponse;
-import spring.myproject.dto.response.attend.DisAttendResponse;
-import spring.myproject.dto.response.attend.PermitAttendResponse;
-import spring.myproject.exception.attend.*;
-import spring.myproject.exception.meeting.NotFoundMeeting;
-import spring.myproject.exception.user.NotFoundUserException;
-import spring.myproject.util.AttendConst;
-import spring.myproject.util.MeetingConst;
+import spring.myproject.domain.attend.dto.response.AddAttendResponse;
+import spring.myproject.domain.attend.dto.response.DisAttendResponse;
+import spring.myproject.domain.attend.dto.response.PermitAttendResponse;
+import spring.myproject.domain.meeting.exception.NotFoundMeeting;
+import spring.myproject.domain.user.exception.NotFoundUserException;
 
 import java.time.LocalDateTime;
 

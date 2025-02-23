@@ -2,17 +2,13 @@ package spring.myproject.domain.recommend.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import spring.myproject.domain.category.repository.CategoryRepository;
 import spring.myproject.domain.gathering.repository.GatheringRepository;
-import spring.myproject.domain.gathering.service.GatheringCountService;
-import spring.myproject.domain.image.repository.ImageRepository;
 import spring.myproject.domain.user.User;
 import spring.myproject.domain.user.repository.UserRepository;
-import spring.myproject.dto.response.gathering.GatheringQueryDto;
-import spring.myproject.dto.response.gathering.GatheringResponse;
-import spring.myproject.dto.response.recommend.RecommendResponse;
-import spring.myproject.exception.user.NotFoundUserException;
-import spring.myproject.util.UserConst;
+import spring.myproject.domain.gathering.dto.response.GatheringQueryDto;
+import spring.myproject.domain.gathering.dto.response.GatheringResponse;
+import spring.myproject.domain.recommend.dto.response.RecommendResponse;
+import spring.myproject.domain.user.exception.NotFoundUserException;
 
 import java.io.File;
 import java.io.IOException;

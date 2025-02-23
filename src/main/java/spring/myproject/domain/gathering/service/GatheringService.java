@@ -1,7 +1,6 @@
 package spring.myproject.domain.gathering.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,21 +9,20 @@ import org.springframework.web.multipart.MultipartFile;
 import spring.myproject.domain.category.Category;
 import spring.myproject.domain.category.repository.CategoryRepository;
 import spring.myproject.domain.gathering.Gathering;
+import spring.myproject.domain.gathering.dto.response.*;
 import spring.myproject.domain.gathering.repository.GatheringRepository;
 import spring.myproject.domain.image.Image;
 import spring.myproject.domain.image.repository.ImageRepository;
 import spring.myproject.domain.user.User;
 import spring.myproject.domain.user.repository.UserRepository;
-import spring.myproject.dto.request.gathering.AddGatheringRequest;
-import spring.myproject.dto.request.gathering.UpdateGatheringRequest;
-import spring.myproject.dto.response.gathering.*;
-import spring.myproject.exception.category.NotFoundCategoryException;
-import spring.myproject.exception.gathering.NotFoundGatheringException;
-import spring.myproject.exception.meeting.NotAuthrizeException;
-import spring.myproject.exception.user.NotFoundUserException;
+import spring.myproject.domain.gathering.dto.request.AddGatheringRequest;
+import spring.myproject.domain.gathering.dto.request.UpdateGatheringRequest;
+import spring.myproject.domain.category.exception.NotFoundCategoryException;
+import spring.myproject.domain.gathering.exception.NotFoundGatheringException;
+import spring.myproject.domain.meeting.exception.NotAuthrizeException;
+import spring.myproject.domain.user.exception.NotFoundUserException;
 import spring.myproject.s3.S3ImageDownloadService;
 import spring.myproject.s3.S3ImageUploadService;
-import spring.myproject.util.*;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -213,6 +211,7 @@ public class GatheringService {
 
 
         }catch (IOException e){
+            System.out.println(e.getMessage());
         return GatheringResponse.builder()
                 .code(ImageConst.uploadFailCode)
                 .message(ImageConst.uploadFailMessage)
@@ -221,12 +220,13 @@ public class GatheringService {
 
     }
 
-    public GatheringPagingResponse gatherings(int pageNum, String username,String title) {
+    public GatheringPagingResponse gatherings(int pageNum, String username, String title) {
 
 
         try {
             PageRequest pageRequest = PageRequest.of(pageNum - 1, 10, Sort.Direction.ASC,"id");
             Page<GatheringPagingQueryDto> gatheringPage = gatheringRepository.findPaging(pageRequest, title);
+
             Page<GatheringElement> gatheringElementPage = gatheringPage.map(
                     g -> {
                         try {
