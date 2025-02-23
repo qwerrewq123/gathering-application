@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import spring.myproject.annotation.Username;
 import spring.myproject.domain.meeting.service.MeetingService;
 import spring.myproject.dto.request.meeting.AddMeetingRequest;
 import spring.myproject.dto.request.meeting.UpdateMeetingRequest;
@@ -21,7 +22,7 @@ public class MeetingController {
     @PostMapping("/meeting/{gatheringId}")
     public ResponseEntity<AddMeetingResponse> addMeeting(@RequestBody AddMeetingRequest addMeetingRequest,
                                              @PathVariable Long gatheringId,
-                                             @AuthenticationPrincipal String username){
+                                             @Username String username){
 
 
         AddMeetingResponse addMeetingResponse = meetingService.addMeeting(addMeetingRequest, username, gatheringId);
@@ -35,7 +36,7 @@ public class MeetingController {
 
     }
     @DeleteMapping("/meeting/{meetingId}")
-    public ResponseEntity<Object> deleteMeeting(@AuthenticationPrincipal String username,
+    public ResponseEntity<Object> deleteMeeting(@Username String username,
                                                 @PathVariable Long meetingId){
 
 
@@ -52,7 +53,7 @@ public class MeetingController {
 
     @PatchMapping("/updateMeeting/{meetingId}")
     public ResponseEntity<Object> updateMeeting(@RequestBody UpdateMeetingRequest updateMeetingRequest,
-                                                @AuthenticationPrincipal String username,
+                                                @Username String username,
                                                 @PathVariable Long meetingId){
 
 
@@ -68,7 +69,7 @@ public class MeetingController {
 
     @GetMapping("/meeting/{meetingId}")
     public ResponseEntity<MeetingResponse> meetingDetail(@PathVariable Long meetingId,
-                                                @AuthenticationPrincipal String username){
+                                                @Username String username){
             MeetingResponse meetingResponse = meetingService.meetingDetail(meetingId,username);
         if(meetingResponse.getCode().equals("SU")){
             return new ResponseEntity<>(meetingResponse, HttpStatus.OK);
@@ -82,7 +83,7 @@ public class MeetingController {
     @GetMapping("/meetings")
     public ResponseEntity<Object> meetings(@RequestParam int pageNum,
                                             @RequestParam String title,
-                                            @AuthenticationPrincipal String username){
+                                            @Username String username){
 
         MeetingListResponse meetingListResponse = meetingService.meetings(pageNum, username, title);
         if(meetingListResponse.getCode().equals("SU")){

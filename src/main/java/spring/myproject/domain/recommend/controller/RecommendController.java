@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+import spring.myproject.annotation.Username;
 import spring.myproject.domain.gathering.service.GatheringService;
 import spring.myproject.domain.recommend.repository.RecommendRepository;
 import spring.myproject.domain.recommend.service.RecommendService;
@@ -22,7 +23,7 @@ public class RecommendController {
     private final RecommendService recommendService;
 
     @GetMapping("/recommend")
-    public ResponseEntity<Object> recommend(@AuthenticationPrincipal String username){
+    public ResponseEntity<Object> recommend(@Username String username){
 
 
         RecommendResponse recommendResponse = recommendService.recommend(username);

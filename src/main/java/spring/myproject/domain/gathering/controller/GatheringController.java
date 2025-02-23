@@ -29,7 +29,7 @@ public class GatheringController {
     @PostMapping("/gathering")
     public ResponseEntity<AddGatheringResponse> addGathering(@RequestPart AddGatheringRequest addGatheringRequest,
                                                @RequestPart(required = false) MultipartFile file,
-                                               @AuthenticationPrincipal String username) throws IOException {
+                                               @Username String username) throws IOException {
 
 
         AddGatheringResponse addGatheringResponse = gatheringService.addGathering(addGatheringRequest, file, username);
@@ -45,7 +45,7 @@ public class GatheringController {
     public ResponseEntity<UpdateGatheringResponse> updateGathering(@RequestPart UpdateGatheringRequest updateGatheringRequest,
                                                @PathVariable Long gatheringId,
                                                @RequestPart(required = false) MultipartFile file,
-                                               @AuthenticationPrincipal String username) throws IOException {
+                                               @Username String username) throws IOException {
         UpdateGatheringResponse updateGatheringResponse = gatheringService.updateGathering(updateGatheringRequest, file, username, gatheringId);
 
         if(updateGatheringResponse.getCode().equals("SU")){
@@ -71,7 +71,7 @@ public class GatheringController {
     @GetMapping("/gatherings")
     public ResponseEntity<GatheringPagingResponse> gatherings(@RequestParam int pageNum,
                                              @RequestParam String title,
-                                             @AuthenticationPrincipal String username){
+                                             @Username String username){
         GatheringPagingResponse gatheringPagingResponse = gatheringService.gatherings(pageNum, username, title);
         if(gatheringPagingResponse.getCode().equals("SU")){
             return new ResponseEntity<>(gatheringPagingResponse, HttpStatus.OK);
@@ -82,7 +82,7 @@ public class GatheringController {
 
     @GetMapping("/gatherings/like")
     public ResponseEntity<GatheringPagingResponse> gatheringsLike(@RequestParam int pageNum,
-                                                 @AuthenticationPrincipal String username){
+                                                 @Username String username){
 
         GatheringPagingResponse gatheringPagingResponse = gatheringService.gatheringsLike(pageNum,username);
         if(gatheringPagingResponse.getCode().equals("SU")){

@@ -1,7 +1,10 @@
 package spring.myproject.common.resolver;
 
 import org.springframework.core.MethodParameter;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.support.WebDataBinderFactory;
@@ -22,12 +25,13 @@ public class UsernameMethodArgumentResolver implements HandlerMethodArgumentReso
 
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
-                                  NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
-        AuthenticationPrincipal principalAnnotation = parameter.getParameterAnnotation(AuthenticationPrincipal.class);
-        if (principalAnnotation != null) {
-            CustomUserDetails userDetails = (CustomUserDetails) webRequest.getAttribute("SPRING_SECURITY_CONTEXT", NativeWebRequest.SCOPE_REQUEST);
-            return userDetails != null ? userDetails.getUsername() : null;
-        }
-        return null;
+                                  NativeWebRequest webRequest, WebDataBinderFactory binderFactory){
+        SecurityContext context = SecurityContextHolder.getContext();
+
+        UsernamePasswordAuthenticationToken authentication = (UsernamePasswordAuthenticationToken) context.getAuthentication();
+        if(authentication == null) return null;
+        CustomUserDetails customUserDetails = (CustomUserDetails)authentication.getPrincipal();
+        String username = customUserDetails.getUsername();
+        return username;
     }
 }
