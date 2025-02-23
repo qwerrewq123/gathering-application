@@ -15,7 +15,7 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
-//@Component
+@Component
 public class JwtProvider {
 
 

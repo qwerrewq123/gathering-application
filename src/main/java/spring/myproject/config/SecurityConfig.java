@@ -16,10 +16,11 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import spring.myproject.security.CustomUserDetailService;
+import spring.myproject.filter.JwtAuthenticationFilter;
 
 
 @Configuration
@@ -28,8 +29,7 @@ import spring.myproject.security.CustomUserDetailService;
 public class SecurityConfig {
 
     private final FailedAuthenticationEntryPoint failedAuthenticationEntryPoint;
-//    private final JwtAuthenticationFilter jwtAuthenticationFilter;
-    private final CustomUserDetailService userDetailsService;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
 
     @Bean
@@ -45,17 +45,16 @@ public class SecurityConfig {
                 .csrf(CsrfConfigurer::disable)
                 .httpBasic(HttpBasicConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/auth/sign-up","/auth/id-check","/auth/sign-in","/auth/email-certification","/health").permitAll()
+                        .requestMatchers("/**").permitAll()
                         .anyRequest().authenticated()
 
                 )
                 .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
-
-                .exceptionHandling(exceptionHandle -> exceptionHandle.authenticationEntryPoint(failedAuthenticationEntryPoint));
-//                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+//                .sessionManagement(session ->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .exceptionHandling(exceptionHandle -> exceptionHandle.authenticationEntryPoint(failedAuthenticationEntryPoint))
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
 
         return http.build();

@@ -44,13 +44,13 @@ public class UserService {
     private final UserRepository userRepository;
     private final ImageRepository imageRepository;
     private final PasswordEncoder passwordEncoder;
-//    private final JwtProvider jwtProvider;
     private final EmailProvider emailProvider;
     private final S3ImageUploadService s3ImageUploadService;
     private final AuthenticationManager authenticationManager;
-
+    private final JwtProvider jwtProvider;
     @Value("${file.dir}")
     private String fileDir;
+
 
     public IdCheckResponse idCheck(IdCheckRequest idCheckRequest) {
 
@@ -136,21 +136,22 @@ public class UserService {
 
             User user = userRepository.findByUsername(signInRequest.getUsername()).orElseThrow(() -> new NotFoundUserException("not Found User"));
 
-//            boolean matches = passwordEncoder.matches(signInRequest.getPassword(), user.getPassword());
-//
-//            checkPassword(matches);
-//
-//            String token = jwtProvider.create(user.getUsername());
+            boolean matches = passwordEncoder.matches(signInRequest.getPassword(), user.getPassword());
 
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(signInRequest.getUsername(), signInRequest.getPassword())
-            );
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-            session.setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
+            checkPassword(matches);
+
+            String token = jwtProvider.create(user.getUsername());
+
+//            Authentication authentication = authenticationManager.authenticate(
+//                    new UsernamePasswordAuthenticationToken(signInRequest.getUsername(), signInRequest.getPassword())
+//            );
+//            SecurityContextHolder.getContext().setAuthentication(authentication);
+//            session.setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
 
             return SignInResponse.builder()
                     .code(successCode)
                     .message(successMessage)
+                    .token(token)
                     .build();
 
         }catch (NotFoundUserException e){

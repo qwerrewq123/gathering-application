@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import spring.myproject.async.AsyncService;
@@ -13,10 +14,7 @@ import spring.myproject.dto.request.user.EmailCertificationRequest;
 import spring.myproject.dto.request.user.IdCheckRequest;
 import spring.myproject.dto.request.user.SignInRequest;
 import spring.myproject.dto.request.user.UserRequest;
-import spring.myproject.dto.response.user.EmailCertificationResponse;
-import spring.myproject.dto.response.user.IdCheckResponse;
-import spring.myproject.dto.response.user.SignInResponse;
-import spring.myproject.dto.response.user.SignUpResponse;
+import spring.myproject.dto.response.user.*;
 
 import java.io.IOException;
 
@@ -57,7 +55,7 @@ public class UserController {
     }
 
     @PostMapping("/auth/sign-in")
-    public ResponseEntity<Object> signIn(@RequestBody SignInRequest signInRequest, HttpSession session) {
+    public ResponseEntity<SignInResponse> signIn(@RequestBody SignInRequest signInRequest, HttpSession session) {
 
         SignInResponse signInResponse = userService.signIn(signInRequest,session);
         if(signInResponse.getCode().equals("SU")){
@@ -71,7 +69,7 @@ public class UserController {
     }
 
     @PostMapping(value = "/auth/email-certification")
-    public ResponseEntity<Object> emailCertification(@RequestBody EmailCertificationRequest emailCertificationRequest){
+    public ResponseEntity<EmailCertificationResponse> emailCertification(@RequestBody EmailCertificationRequest emailCertificationRequest){
 
         EmailCertificationResponse emailCertificationResponse = userService.emailCertification(emailCertificationRequest);
         if(emailCertificationResponse.getCode().equals("SU")){
@@ -80,6 +78,17 @@ public class UserController {
         }else{
             return new ResponseEntity<>(emailCertificationResponse,HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<LogOutResponse> logout() {
+        SecurityContextHolder.clearContext();
+        return new ResponseEntity<>(
+                LogOutResponse.builder()
+                        .code("SU")
+                        .message("Success logout!")
+                        .build()
+                ,HttpStatus.OK);
     }
 
 

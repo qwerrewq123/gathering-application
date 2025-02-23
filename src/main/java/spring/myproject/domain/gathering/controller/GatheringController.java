@@ -1,11 +1,13 @@
 package spring.myproject.domain.gathering.controller;
 
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.web.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import spring.myproject.annotation.Username;
@@ -29,7 +31,7 @@ public class GatheringController {
     @PostMapping("/gathering")
     public ResponseEntity<AddGatheringResponse> addGathering(@RequestPart AddGatheringRequest addGatheringRequest,
                                                @RequestPart(required = false) MultipartFile file,
-                                               @Username String username) throws IOException {
+                                               @Username String username){
 
 
         AddGatheringResponse addGatheringResponse = gatheringService.addGathering(addGatheringRequest, file, username);
@@ -91,6 +93,8 @@ public class GatheringController {
             return new ResponseEntity<>(gatheringPagingResponse, HttpStatus.BAD_REQUEST);
         }
     }
+
+
 
 
 

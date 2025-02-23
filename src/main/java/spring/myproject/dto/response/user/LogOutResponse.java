@@ -5,13 +5,12 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
-@Data
 @Builder
+@Data
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class SignInResponse {
+public class LogOutResponse {
 
     private String code;
     private String message;
-    private String token;
 }
