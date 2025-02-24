@@ -37,3 +37,4 @@ out/
 .vscode/
 
 application-aws-properties
+/src/main/resources/firebase/gathering-project-dcf1a-firebase-adminsdk-fbsvc-061788000f.json

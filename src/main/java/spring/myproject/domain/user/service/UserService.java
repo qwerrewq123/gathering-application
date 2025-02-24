@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 import spring.myproject.domain.image.Image;
 import spring.myproject.domain.image.repository.ImageRepository;
 import spring.myproject.domain.user.User;
+import spring.myproject.domain.user.exception.*;
 import spring.myproject.domain.user.repository.UserRepository;
 import spring.myproject.domain.user.dto.request.EmailCertificationRequest;
 import spring.myproject.domain.user.dto.request.IdCheckRequest;
@@ -22,8 +23,6 @@ import spring.myproject.domain.user.dto.response.EmailCertificationResponse;
 import spring.myproject.domain.user.dto.response.IdCheckResponse;
 import spring.myproject.domain.user.dto.response.SignInResponse;
 import spring.myproject.domain.user.dto.response.SignUpResponse;
-import spring.myproject.domain.user.exception.NotFoundUserException;
-import spring.myproject.domain.user.exception.UnCorrectPasswordException;
 import spring.myproject.provider.EmailProvider;
 import spring.myproject.provider.JwtProvider;
 import spring.myproject.s3.S3ImageUploadService;
@@ -43,7 +42,6 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final EmailProvider emailProvider;
     private final S3ImageUploadService s3ImageUploadService;
-    private final AuthenticationManager authenticationManager;
     private final JwtProvider jwtProvider;
     @Value("${file.dir}")
     private String fileDir;
@@ -52,38 +50,23 @@ public class UserService {
     public IdCheckResponse idCheck(IdCheckRequest idCheckRequest) {
 
         boolean idCheck = !userRepository.existsByUsername(idCheckRequest.getUsername());
-        try {
-            if (idCheck == true) {
-                return IdCheckResponse.builder()
-                        .code(SUCCESS_CODE)
-                        .message(SUCCESS_MESSAGE)
-                        .build();
-            } else {
-                return IdCheckResponse.builder()
-                        .code(EXIST_CODE)
-                        .message(EXIST_MESSAGE)
-                        .build();
-            }
-        }catch (Exception e){
-            log.error("error", e);
-            return IdCheckResponse.builder()
-                    .code(DB_ERROR_CODE)
-                    .message(DB_ERROR_MESSAGE)
-                    .build();
-        }
+        if(!idCheck) throw new ExistUserException("user Exist!!");
+        return IdCheckResponse.builder()
+                .code(SUCCESS_CODE)
+                .message(SUCCESS_MESSAGE)
+                .build();
     }
-
     public SignUpResponse signUp(UserRequest userRequest, MultipartFile file){
 
         try {
             Image image = null;
-            String url = s3ImageUploadService.upload(file);
-            if(StringUtils.hasText(url)){
+            if(!file.isEmpty()){
+                String url = s3ImageUploadService.upload(file);
                 image = Image.builder()
-                            .url(url)
-                            .build();
-                imageRepository.save(image);
+                        .url(url)
+                        .build();
             }
+            imageRepository.save(image);
             User user = User.builder()
                     .age(userRequest.getAge())
                     .email(userRequest.getEmail())
@@ -109,7 +92,6 @@ public class UserService {
 
     public SignInResponse signIn(SignInRequest signInRequest, HttpSession session) {
 
-        try {
             User user = userRepository.findByUsername(signInRequest.getUsername()).orElseThrow(() -> new NotFoundUserException("not Found User"));
             boolean matches = passwordEncoder.matches(signInRequest.getPassword(), user.getPassword());
             checkPassword(matches);
@@ -119,61 +101,24 @@ public class UserService {
                     .message(SUCCESS_MESSAGE)
                     .token(token)
                     .build();
-        }catch (NotFoundUserException e){
-            return SignInResponse.builder()
-                    .code(NOT_FOUND_USER_CODE)
-                    .message(NOT_FOUND_USER_MESSAGE)
-                    .build();
-        }catch (UnCorrectPasswordException e){
-            return SignInResponse.builder()
-                    .code(UNCORRECT_CODE)
-                    .message(UNCORRECT_MESSAGE)
-                    .build();
-        }catch (Exception e){
-            return SignInResponse.builder()
-                    .code(DB_ERROR_CODE)
-                    .message(DB_ERROR_MESSAGE)
-                    .build();
-        }
     }
 
     public EmailCertificationResponse emailCertification(EmailCertificationRequest emailCertificationRequest) {
 
-        try {
             List<User> users = userRepository.findByEmail(emailCertificationRequest.getEmail());
-            if(users.size() == 0){
-                return EmailCertificationResponse.builder()
-                        .code(NOT_EMAIL_CODE)
-                        .message(NOT_EMAIL_MESSAGE)
-                        .build();
-            } else if (users.size() == 1) {
-                emailProvider.sendCertificationMail(emailCertificationRequest.getEmail(), certificationNumber());
-                return EmailCertificationResponse.builder()
+            if(users.size() == 0) throw new NotFoundEmailExeption("Not Found Email");
+            if(users.size()>1) throw new DuplicateEmailExeption("Duplicate Email");
+            emailProvider.sendCertificationMail(emailCertificationRequest.getEmail(), certificationNumber());
+            return EmailCertificationResponse.builder()
                         .code(SUCCESS_CODE)
                         .message(SUCCESS_MESSAGE)
                         .build();
-            }else{
-                return EmailCertificationResponse.builder()
-                        .code(DUPLICATE_EMAIL_CODE)
-                        .message(DUPLICATE_EMAIL_MESSAGE)
-                        .build();
-            }
-        }catch (Exception e){
-            log.error("error", e);
-            return EmailCertificationResponse.builder()
-                    .code(DB_ERROR_CODE)
-                    .message(DB_ERROR_MESSAGE)
-                    .build();
-        }
     }
-
     private void checkPassword(boolean matches) {
         if(!matches){
             throw new UnCorrectPasswordException("doesn't match Password!");
         }
     }
-
-
     private String certificationNumber(){
         int number = (int) (Math.random() * 9000) + 1000;
         return String.valueOf(number);

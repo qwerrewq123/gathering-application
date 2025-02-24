@@ -18,14 +18,7 @@ public class RecommendController {
     @GetMapping("/recommend")
     public ResponseEntity<Object> recommend(@AuthenticationPrincipal String username){
 
-
         RecommendResponse recommendResponse = recommendService.recommend(username);
-        if(recommendResponse.getCode().equals("SU")){
-            return new ResponseEntity<>(recommendResponse, HttpStatus.OK);
-        }else {
-            return new ResponseEntity<>(recommendResponse, HttpStatus.BAD_REQUEST);
-        }
-
-
+        return new ResponseEntity<>(recommendResponse, HttpStatus.OK);
     }
 }

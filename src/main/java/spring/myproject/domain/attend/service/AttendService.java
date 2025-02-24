@@ -15,7 +15,6 @@ import spring.myproject.domain.attend.dto.response.DisAttendResponse;
 import spring.myproject.domain.attend.dto.response.PermitAttendResponse;
 import spring.myproject.domain.meeting.exception.NotFoundMeeting;
 import spring.myproject.domain.user.exception.NotFoundUserException;
-import spring.myproject.util.ConstClass;
 
 import java.time.LocalDateTime;
 
@@ -31,7 +30,6 @@ public class AttendService {
     private final MeetingRepository meetingRepository;
     public AddAttendResponse addAttend(Long meetingId, String username) {
 
-        try {
             User user = userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
             Meeting meeting = meetingRepository.findById(meetingId).orElseThrow(()->new NotFoundMeeting("no exist Meeting!!"));
             if(meeting.getCreatedBy().getId()  == meetingId) throw new AutoAttendException("Meeting Opener auto attend");
@@ -48,33 +46,11 @@ public class AttendService {
                     .code(SUCCESS_CODE)
                     .message(SUCCESS_MESSAGE)
                     .build();
-        }catch (NotFoundUserException e){
-            return AddAttendResponse.builder()
-                    .code(NOT_FOUND_USER_CODE)
-                    .message(NOT_FOUND_USER_MESSAGE)
-                    .build();
-        }catch (NotFoundMeeting e){
-            return AddAttendResponse.builder()
-                    .code(NOT_FOUND_MEETING_CODE)
-                    .message(NOT_FOUND_MEETING_MESSAGE)
-                    .build();
-        }catch (AutoAttendException e){
-            return AddAttendResponse.builder()
-                    .code(AUTO_ATTEND_CODE)
-                    .message(AUTO_ATTEND_MESSAGE)
-                    .build();
-        }catch (AlreadyAttendExeption e){
-            return AddAttendResponse.builder()
-                    .code(ALREADY_ATTEND_CODE)
-                    .message(ALREADY_ATTEND_MESSAGE)
-                    .build();
-        }
     }
 
     public DisAttendResponse disAttend(Long meetingId, Long attendId, String username) {
 
-        try {
-            User user = userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
+            userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
             Meeting meeting = meetingRepository.findById(meetingId).orElseThrow(()->new NotFoundMeeting("no exist Meeting!!"));
             Attend attend = attendRepository.findById(attendId).orElseThrow(() -> {
                 throw new AlreadyAttendExeption("Already Attend Meeting!!");
@@ -87,38 +63,11 @@ public class AttendService {
                     .code(SUCCESS_CODE)
                     .message(SUCCESS_MESSAGE)
                     .build();
-        }catch (NotFoundUserException e){
-            return DisAttendResponse.builder()
-                    .code(NOT_FOUND_USER_CODE)
-                    .message(NOT_FOUND_USER_MESSAGE)
-                    .build();
-        }catch (NotFoundMeeting e){
-            return DisAttendResponse.builder()
-                    .code(NOT_FOUND_MEETING_CODE)
-                    .message(NOT_FOUND_MEETING_MESSAGE)
-                    .build();
-        }catch (AlreadyAttendExeption e){
-            return DisAttendResponse.builder()
-                    .code(ALREADY_ATTEND_CODE)
-                    .message(ALREADY_ATTEND_MESSAGE)
-                    .build();
-        }catch (NotWithdrawException e){
-            return DisAttendResponse.builder()
-                    .code(NOT_WITHDRAW_CODE)
-                    .message(NOT_WITHDRAW_MESSAGE)
-                    .build();
-        }catch (Exception e){
-            return DisAttendResponse.builder()
-                    .code(DB_ERROR_CODE)
-                    .message(DB_ERROR_MESSAGE)
-                    .build();
-        }
     }
 
     public PermitAttendResponse permitAttend(Long meetingId, Long attendId, String username) {
 
-        try {
-            User user = userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
+            userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
             Meeting meeting = meetingRepository.findById(meetingId).orElseThrow(()->new NotFoundMeeting("no exist Meeting!!"));
             Attend attend = attendRepository.findById(attendId).orElseThrow(() -> new NotFoundAttend("no exist Attend!!"));
             if(attend.getAccepted() == true) throw new AlreadyAttendExeption("already attend!!");
@@ -128,31 +77,5 @@ public class AttendService {
                     .code(SUCCESS_CODE)
                     .message(SUCCESS_MESSAGE)
                     .build();
-        }catch (NotFoundUserException e){
-        return PermitAttendResponse.builder()
-                .code(NOT_FOUND_USER_CODE)
-                .message(NOT_FOUND_USER_MESSAGE)
-                .build();
-        }catch (NotFoundMeeting e){
-        return PermitAttendResponse.builder()
-                .code(NOT_FOUND_MEETING_CODE)
-                .message(NOT_FOUND_MEETING_MESSAGE)
-                .build();
-        }catch (NotFoundAttend e){
-            return PermitAttendResponse.builder()
-                    .code(NOT_FOUND_ATTEND_CODE)
-                    .message(NOT_FOUND_ATTEND_MESSAGE)
-                    .build();
-        }catch (AlreadyAttendExeption e){
-            return PermitAttendResponse.builder()
-                    .code(ALREADY_ATTEND_CODE)
-                    .message(ALREADY_ATTEND_MESSAGE)
-                    .build();
-        }catch (AlwaysPermitException e){
-            return PermitAttendResponse.builder()
-                    .code(ALWAYS_PERMIT_CODE)
-                    .message(ALWAYS_PERMIT_MESSAGE)
-                    .build();
-        }
     }
 }

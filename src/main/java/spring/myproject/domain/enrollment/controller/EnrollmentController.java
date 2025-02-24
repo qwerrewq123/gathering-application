@@ -19,24 +19,16 @@ public class EnrollmentController {
     @PostMapping("/gathering/{gatheringId}/participate")
     public ResponseEntity<EnrollGatheringResponse> enrollGathering(@PathVariable Long gatheringId,
                                                        @AuthenticationPrincipal String username){
-        EnrollGatheringResponse enrollGatheringResponse = enrollmentService.enrollGathering(gatheringId, username);
-        if(enrollGatheringResponse.getCode().equals("SU")){
-            return new ResponseEntity<>(enrollGatheringResponse, HttpStatus.OK);
-        }else {
-            return new ResponseEntity<>(enrollGatheringResponse, HttpStatus.BAD_REQUEST);
-        }
 
+        EnrollGatheringResponse enrollGatheringResponse = enrollmentService.enrollGathering(gatheringId, username);
+        return new ResponseEntity<>(enrollGatheringResponse, HttpStatus.OK);
     }
 
     @PostMapping("/gathering/{gatheringId}/disParticipate")
     public ResponseEntity<DisEnrollGatheringResponse> disEnrollGathering(@PathVariable Long gatheringId,
                                                            @AuthenticationPrincipal String username){
-        DisEnrollGatheringResponse disEnrollGatheringResponse = enrollmentService.disEnrollGathering(gatheringId, username);
-        if(disEnrollGatheringResponse.getCode().equals("SU")){
-            return new ResponseEntity<>(disEnrollGatheringResponse, HttpStatus.OK);
-        }else {
-            return new ResponseEntity<>(disEnrollGatheringResponse, HttpStatus.BAD_REQUEST);
-        }
 
+        DisEnrollGatheringResponse disEnrollGatheringResponse = enrollmentService.disEnrollGathering(gatheringId, username);
+        return new ResponseEntity<>(disEnrollGatheringResponse, HttpStatus.OK);
     }
 }

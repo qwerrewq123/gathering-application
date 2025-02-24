@@ -31,13 +31,11 @@ public class EnrollmentService {
 
     public EnrollGatheringResponse enrollGathering(Long gatheringId, String username) {
 
-        try {
             User user = userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
-            Gathering gathering = gatheringRepository.findById(gatheringId).orElseThrow(() -> new NotFoundGatheringException("no exist Gathering!!"));
+            Gathering gathering = gatheringRepository.findById(gatheringId).orElseThrow(
+                    () -> new NotFoundGatheringException("no exist Gathering!!"));
             Enrollment exist = enrollmentRepository.existEnrollment(gatheringId, user.getId());
-            if(exist != null){
-                throw new AlreadyEnrollmentException("Already enrolled;");
-            }
+            if(exist != null) throw new AlreadyEnrollmentException("Already enrolled;");
             Enrollment enrollment = Enrollment.builder()
                     .date(LocalDateTime.now())
                     .enrolledBy(user)
@@ -49,29 +47,11 @@ public class EnrollmentService {
                     .code(SUCCESS_CODE)
                     .message(SUCCESS_MESSAGE)
                     .build();
-        }catch (NotFoundUserException e){
-            return EnrollGatheringResponse.builder()
-                    .code(NOT_FOUND_USER_CODE)
-                    .message(NOT_FOUND_USER_MESSAGE)
-                    .build();
-        }catch (NotFoundGatheringException e){
-            return EnrollGatheringResponse.builder()
-                    .code(NOT_FOUND_GATHERING_CODE)
-                    .message(NOT_FOUND_GATHERING_MESSAGE)
-                    .build();
-        }catch (AlreadyEnrollmentException e){
-            return EnrollGatheringResponse.builder()
-                    .code(ALREADY_ENROLLMENT_CODE)
-                    .message(ALREADY_ENROLLMENT_MESSAGE)
-                    .build();
-        }
     }
-
     public DisEnrollGatheringResponse disEnrollGathering(Long gatheringId, String username) {
 
-        try {
             User user = userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
-            Gathering gathering = gatheringRepository.findById(gatheringId).orElseThrow(
+            gatheringRepository.findById(gatheringId).orElseThrow(
                     () ->  new NotFoundGatheringException("no exist Gathering!!"));
             Enrollment enrollment = enrollmentRepository.findEnrollment(gatheringId, user.getId()).orElseThrow(
                     () ->  new NotFoundEnrollmentException("no exist Enrollment!!"));
@@ -80,21 +60,5 @@ public class EnrollmentService {
                     .code(SUCCESS_CODE)
                     .message(SUCCESS_MESSAGE)
                     .build();
-        }catch (NotFoundUserException e){
-            return DisEnrollGatheringResponse.builder()
-                    .code(NOT_FOUND_USER_CODE)
-                    .message(NOT_FOUND_USER_MESSAGE)
-                    .build();
-        }catch (NotFoundGatheringException e){
-            return DisEnrollGatheringResponse.builder()
-                    .code(NOT_FOUND_GATHERING_CODE)
-                    .message(NOT_FOUND_GATHERING_MESSAGE)
-                    .build();
-        }catch (NotFoundEnrollmentException e){
-            return DisEnrollGatheringResponse.builder()
-                    .code(NOT_FOUND_ENROLLMENT_CODE)
-                    .message(NOT_FOUND_ENROLLMENT_MESSAGE)
-                    .build();
-        }
     }
 }

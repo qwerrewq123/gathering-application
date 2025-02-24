@@ -29,107 +29,40 @@ public class AlarmService {
 
     public CheckAlarmResponse checkAlarm(Long id, String username) {
 
-//        try {
-            User user = userRepository.findByUsername(username).orElseThrow(()-> new NotFoundUserException("no exist User!!"));
+            userRepository.findByUsername(username).orElseThrow(()-> new NotFoundUserException("no exist User!!"));
             Alarm alarm = alarmRepository.findById(id).orElseThrow(() ->  new NotFoundAlarmException("no exist alarm!!"));
             alarm.setChecked(true);
             return CheckAlarmResponse.builder()
                     .code(SUCCESS_CODE)
                     .message(SUCCESS_MESSAGE)
                     .build();
-//        }catch (NotFoundUserException e){
-//            return CheckAlarmResponse.builder()
-//                    .code(NOT_FOUND_USER_CODE)
-//                    .message(NOT_FOUND_USER_MESSAGE)
-//                    .build();
-//        }catch (NotFoundAlarmException e){
-//            return CheckAlarmResponse.builder()
-//                    .code(NOT_FOUND_ALARM_CODE)
-//                    .message(NOT_FOUND_ALARM_MESSAGE)
-//                    .build();
-//        }catch (Exception e){
-//            return CheckAlarmResponse.builder()
-//                    .code(DB_ERROR_CODE)
-//                    .message(DB_ERROR_MESSAGE)
-//                    .build();
-//        }
     }
 
     public DeleteAlarmResponse deleteAlarm(Long id, String username) {
 
-//        try {
-            User user = userRepository.findByUsername(username).orElseThrow(()-> new NotFoundUserException("no exist User!!"));
+            userRepository.findByUsername(username).orElseThrow(()-> new NotFoundUserException("no exist User!!"));
             Alarm alarm = alarmRepository.findById(id).orElseThrow(() ->  new IllegalArgumentException("no exist alarm!!"));
             alarmRepository.delete(alarm);
             return DeleteAlarmResponse.builder()
                     .code(SUCCESS_CODE)
                     .message(SUCCESS_MESSAGE)
                     .build();
-//        }catch (NotFoundUserException e){
-//            return DeleteAlarmResponse.builder()
-//                    .code(NOT_FOUND_USER_CODE)
-//                    .message(NOT_FOUND_USER_MESSAGE)
-//                    .build();
-//        }catch (NotFoundAlarmException e){
-//            return DeleteAlarmResponse.builder()
-//                    .code(NOT_FOUND_ATTEND_CODE)
-//                    .message(NOT_FOUND_ALARM_MESSAGE)
-//                    .build();
-//        }catch (Exception e){
-//            return DeleteAlarmResponse.builder()
-//                    .code(DB_ERROR_CODE)
-//                    .message(DB_ERROR_MESSAGE)
-//                    .build();
-//        }
     }
 
     public AlarmResponsePage alarmList(Integer page, String username, Boolean checked) {
 
-//        try {
             User user = userRepository.findByUsername(username).orElseThrow(()-> new NotFoundUserException("no exist User!!"));
-            if(checked == true){
-                PageRequest pageRequest = PageRequest.of(page - 1, 10);
-                Page<Alarm> alarmPage = alarmRepository.findCheckedAlarmPage(pageRequest, user.getId());
-                Page<AlarmResponse> alarmResponsePage = alarmPage.map(a -> AlarmResponse.builder()
-                        .date(a.getDate())
-                        .content(a.getContent())
-                        .checked(a.getChecked())
-                        .build());
-                return AlarmResponsePage.builder()
-                        .code(SUCCESS_CODE)
-                        .message(SUCCESS_MESSAGE)
-                        .page(alarmResponsePage)
-                        .build();
-            }else{
-                PageRequest pageRequest = PageRequest.of(page - 1, 10);
-                Page<Alarm> alarmPage = alarmRepository.findUncheckedAlarmPage(pageRequest, user.getId());
-                Page<AlarmResponse> alarmResponsePage = alarmPage.map(a -> AlarmResponse.builder()
-                        .date(a.getDate())
-                        .content(a.getContent())
-                        .checked(a.getChecked())
-                        .build());
-                return AlarmResponsePage.builder()
-                        .code(SUCCESS_CODE)
-                        .message(SUCCESS_MESSAGE)
-                        .page(alarmResponsePage)
-                        .build();
-            }
-//        }catch (NotFoundUserException e){
-//            return AlarmResponsePage.builder()
-//                    .code(NOT_FOUND_USER_CODE)
-//                    .message(NOT_FOUND_USER_MESSAGE)
-//                    .build();
-//        }catch (Exception e){
-//            return AlarmResponsePage.builder()
-//                    .code(DB_ERROR_CODE)
-//                    .message(DB_ERROR_MESSAGE)
-//                    .build();
-//        }
+            Page<AlarmResponse> alarmResponsePage = getAlarmResponses(page, user,checked);
+            return AlarmResponsePage.builder()
+                    .code(SUCCESS_CODE)
+                    .message(SUCCESS_MESSAGE)
+                    .page(alarmResponsePage)
+                    .build();
+
     }
 
     public AddAlarmResponse addAlarm(AddAlarmRequest addAlarmRequest, String username) {
 
-//        try {
             User user = userRepository.findByUsername(username).orElseThrow(()-> new NotFoundUserException("no exist User!!"));
             Alarm alarm = Alarm.builder()
                     .date(LocalDateTime.now())
@@ -142,16 +75,25 @@ public class AlarmService {
                     .code(SUCCESS_CODE)
                     .message(SUCCESS_MESSAGE)
                     .build();
-//        }catch (NotFoundUserException e){
-//            return AddAlarmResponse.builder()
-//                    .code(NOT_FOUND_USER_CODE)
-//                    .message(NOT_FOUND_USER_MESSAGE)
-//                    .build();
-//        }catch (Exception e){
-//            return AddAlarmResponse.builder()
-//                    .code(DB_ERROR_CODE)
-//                    .message(DB_ERROR_MESSAGE)
-//                    .build();
-//        }
+    }
+
+    private Page<AlarmResponse> getAlarmResponses(Integer page, User user,boolean checked) {
+        if(checked == true){
+            PageRequest pageRequest = PageRequest.of(page - 1, 10);
+            Page<Alarm> alarmPage = alarmRepository.findCheckedAlarmPage(pageRequest, user.getId());
+            return alarmPage.map(a -> AlarmResponse.builder()
+                    .date(a.getDate())
+                    .content(a.getContent())
+                    .checked(a.getChecked())
+                    .build());
+        }else{
+            PageRequest pageRequest = PageRequest.of(page - 1, 10);
+            Page<Alarm> alarmPage = alarmRepository.findUncheckedAlarmPage(pageRequest, user.getId());
+            return alarmPage.map(a -> AlarmResponse.builder()
+                    .date(a.getDate())
+                    .content(a.getContent())
+                    .checked(a.getChecked())
+                    .build());
+        }
     }
 }

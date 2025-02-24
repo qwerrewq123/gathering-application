@@ -18,41 +18,24 @@ public class AlarmController {
 
     @PatchMapping("/alarm/{id}")
     public ResponseEntity<CheckAlarmResponse> checkAlarm(Long id, @AuthenticationPrincipal String username){
+
         CheckAlarmResponse checkAlarmResponse = alarmService.checkAlarm(id, username);
-        if(checkAlarmResponse.getCode().equals("SU")){
-            return new ResponseEntity<>(checkAlarmResponse, HttpStatus.OK);
-        }else {
-            return new ResponseEntity<>(checkAlarmResponse, HttpStatus.BAD_REQUEST);
-        }
-
-
+        return new ResponseEntity<>(checkAlarmResponse, HttpStatus.OK);
     }
 
     @DeleteMapping("/alarm/{id}")
     public ResponseEntity<DeleteAlarmResponse> deleteAlarm(Long id, @AuthenticationPrincipal String username){
+
         DeleteAlarmResponse deleteAlarmResponse = alarmService.deleteAlarm(id, username);
-        if(deleteAlarmResponse.getCode().equals("SU")){
-            return new ResponseEntity<>(deleteAlarmResponse, HttpStatus.OK);
-        }else {
-            return new ResponseEntity<>(deleteAlarmResponse, HttpStatus.BAD_REQUEST);
-        }
-
-
+        return new ResponseEntity<>(deleteAlarmResponse, HttpStatus.OK);
     }
 
     @GetMapping("/alarm")
     public ResponseEntity<Object> alarmList(@RequestParam int page,
                                             @AuthenticationPrincipal String username,
                                             @RequestParam Boolean checked){
+
         AlarmResponsePage alarmResponsePage = alarmService.alarmList(page, username, checked);
-        if(alarmResponsePage.getCode().equals("SU")){
-            return new ResponseEntity<>(alarmResponsePage, HttpStatus.OK);
-        }else {
-            return new ResponseEntity<>(alarmResponsePage, HttpStatus.BAD_REQUEST);
-        }
-
-
+        return new ResponseEntity<>(alarmResponsePage, HttpStatus.OK);
     }
-
-
 }

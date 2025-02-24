@@ -7,8 +7,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import spring.myproject.domain.error.dto.response.ErrorResponse;
 import spring.myproject.domain.user.controller.UserController;
-import spring.myproject.domain.user.exception.NotFoundUserException;
-import spring.myproject.domain.user.exception.UnCorrectPasswordException;
+import spring.myproject.domain.user.exception.*;
 import spring.myproject.util.AbstractErrorResponse;
 
 import static spring.myproject.util.ConstClass.*;
@@ -31,6 +30,24 @@ public class UserControllerAdvice {
     ResponseEntity<ErrorResponse> handleMessagingException(){
         return new ResponseEntity<>(
                 AbstractErrorResponse.getErrorResponse(FAIL_MESSAGE_CODE, FAIL_MESSAGE_MESSAGE)
+                , HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(ExistUserException.class)
+    ResponseEntity<ErrorResponse> handleExistUserException(){
+        return new ResponseEntity<>(
+                AbstractErrorResponse.getErrorResponse(EXIST_CODE, EXIST_MESSAGE)
+                , HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(NotFoundEmailExeption.class)
+    ResponseEntity<ErrorResponse> handleNotFoundEmailException(){
+        return new ResponseEntity<>(
+                AbstractErrorResponse.getErrorResponse(NOT_EMAIL_CODE, NOT_EMAIL_MESSAGE)
+                , HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(DuplicateEmailExeption.class)
+    ResponseEntity<ErrorResponse> handleDuplicateEmailException(){
+        return new ResponseEntity<>(
+                AbstractErrorResponse.getErrorResponse(DUPLICATE_EMAIL_CODE, DUPLICATE_EMAIL_MESSAGE)
                 , HttpStatus.BAD_REQUEST);
     }
     @ExceptionHandler(Exception.class)

@@ -40,7 +40,6 @@ public class MeetingService {
 
     public AddMeetingResponse addMeeting(AddMeetingRequest addMeetingRequest, String username, Long gatheringId) {
 
-        try {
             User user = userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
             Gathering gathering = gatheringRepository.findById(gatheringId).orElseThrow(() -> new NotFoundGatheringException("no exist Gathering!!"));
             Meeting meeting = Meeting.builder()
@@ -57,31 +56,12 @@ public class MeetingService {
                     .code(SUCCESS_CODE)
                     .message(SUCCESS_MESSAGE)
                     .build();
-        }catch (NotFoundUserException e){
-            return AddMeetingResponse.builder()
-                    .code(NOT_FOUND_USER_CODE)
-                    .message(NOT_FOUND_USER_MESSAGE)
-                    .build();
-        }catch (NotFoundGatheringException e){
-            return AddMeetingResponse.builder()
-                    .code(NOT_FOUND_GATHERING_CODE)
-                    .message(NOT_FOUND_GATHERING_MESSAGE)
-                    .build();
-        }catch (Exception e){
-            return AddMeetingResponse.builder()
-                    .code(DB_ERROR_CODE)
-                    .message(DB_ERROR_MESSAGE)
-                    .build();
-        }
     }
 
     public DeleteMeetingResponse deleteMeeting(String username, Long meetingId) {
 
-
-        try {
             User user = userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
             Meeting meeting = meetingRepository.findById(meetingId).orElseThrow(()->new NotFoundMeeting("no exist Meeting!!"));
-
             boolean authorize = meeting.getCreatedBy().getId() == user.getId();
             if(authorize == false){
                 throw new NotAuthorizeException("no authority!");
@@ -94,79 +74,32 @@ public class MeetingService {
                     .code(SUCCESS_CODE)
                     .message(SUCCESS_MESSAGE)
                     .build();
-        }catch (NotFoundUserException e){
-            return DeleteMeetingResponse.builder()
-                    .code(NOT_FOUND_USER_CODE)
-                    .message(NOT_FOUND_USER_MESSAGE)
-                    .build();
-        }catch (NotFoundMeeting e){
-            return DeleteMeetingResponse.builder()
-                    .code(NOT_FOUND_MEETING_CODE)
-                    .message(NOT_FOUND_MEETING_MESSAGE)
-                    .build();
-        }catch (NotAuthorizeException e){
-            return DeleteMeetingResponse.builder()
-                    .code(NOT_AUTHORIZE_CODE)
-                    .message(NOT_AUTHORIZED_MESSAGE)
-                    .build();
-        }catch (MeetingIsNotEmptyException e){
-            return DeleteMeetingResponse.builder()
-                    .code(MEETING_IS_NOT_EMPTY_CODE)
-                    .message(MEETING_IS_NOT_EMPTY_MESSAGE)
-                    .build();
-        }
     }
 
     public UpdateMeetingResponse updateMeeting(UpdateMeetingRequest updateMeetingRequest, String username, Long meetingId) {
 
-
-        try {
             User user = userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
-
             Meeting meeting = meetingRepository.findById(meetingId).orElseThrow(()->new NotFoundMeeting("no exist Meeting!!"));
-
             boolean authorize = meeting.getCreatedBy().getId() == user.getId();
             if(authorize == false){
                 throw new NotAuthorizeException("no authority!");
             }
-
             meeting.setTitle(updateMeetingRequest.getTitle());
             meeting.setContent(updateMeetingRequest.getContent());
             meeting.setStartDate(updateMeetingRequest.getStartDate());
             meeting.setEndDate(updateMeetingRequest.getEndDate());
-
             return UpdateMeetingResponse.builder()
                     .code(SUCCESS_CODE)
                     .message(SUCCESS_MESSAGE)
                     .build();
-
-        }catch (NotFoundUserException e){
-            return UpdateMeetingResponse.builder()
-                    .code(NOT_FOUND_USER_CODE)
-                    .message(NOT_FOUND_USER_MESSAGE)
-                    .build();
-        }catch (NotFoundMeeting e){
-            return UpdateMeetingResponse.builder()
-                    .code(NOT_FOUND_MEETING_CODE)
-                    .message(NOT_FOUND_MEETING_MESSAGE)
-                    .build();
-        }catch (NotAuthorizeException e){
-            return UpdateMeetingResponse.builder()
-                    .code(NOT_AUTHORIZE_CODE)
-                    .message(NOT_AUTHORIZED_MESSAGE)
-                    .build();
-        }
     }
     public MeetingResponse meetingDetail(Long meetingId, String username) {
 
         User user = userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
-
         List<MeetingQueryResponse> meetingQueryResponses = meetingRepository.findAttendsBy(meetingId);
         if(meetingQueryResponses.size() == 0){
             throw new NotFoundMeeting("no exist Meeting!!");
         }
-
-
         return MeetingResponse.builder()
                 .code("SU")
                 .message("Success")
@@ -182,8 +115,8 @@ public class MeetingService {
     }
 
     public MeetingListResponse meetings(int pageNum, String username, String title) {
-        try {
-            User user = userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
+
+        User user = userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
             PageRequest pageRequest = PageRequest.of(pageNum - 1, 10, Sort.Direction.ASC,"id");
             Page<MeetingQueryListResponse> page = meetingRepository.meetings(pageRequest,title);
             return MeetingListResponse.builder()
@@ -191,23 +124,11 @@ public class MeetingService {
                     .message(SUCCESS_MESSAGE)
                     .page(page)
                     .build();
-        }catch (NotFoundUserException e){
-            return MeetingListResponse.builder()
-                    .code(NOT_FOUND_USER_CODE)
-                    .message(NOT_FOUND_USER_MESSAGE)
-                    .build();
-        }catch (Exception e){
-            return MeetingListResponse.builder()
-                    .code(DB_ERROR_CODE)
-                    .message(DB_ERROR_MESSAGE)
-                    .build();
-        }
     }
 
     private List<String> attendedBy(List<MeetingQueryResponse> meetingQueryResponses){
 
         List<String> attendedBy = new ArrayList<>();
-
         for (MeetingQueryResponse meetingQueryResponse : meetingQueryResponses) {
             if(StringUtils.hasText(meetingQueryResponse.getAttendedBy())){
                 attendedBy.add(meetingQueryResponse.getAttendedBy());

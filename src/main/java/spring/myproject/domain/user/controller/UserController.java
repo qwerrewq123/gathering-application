@@ -16,6 +16,8 @@ import spring.myproject.domain.user.dto.request.IdCheckRequest;
 import spring.myproject.domain.user.dto.request.SignInRequest;
 import spring.myproject.domain.user.dto.request.UserRequest;
 
+import java.io.IOException;
+
 @RestController
 @RequiredArgsConstructor
 public class UserController {
@@ -27,67 +29,31 @@ public class UserController {
     public ResponseEntity<IdCheckResponse> idCheck(@RequestBody IdCheckRequest idCheckRequest) {
 
         IdCheckResponse idCheckResponse = userService.idCheck(idCheckRequest);
-
-        if (idCheckResponse.getCode().equals("SU")) {
-
-            return new ResponseEntity<>(idCheckResponse, HttpStatus.OK);
-        } else {
-
-            return new ResponseEntity<>(idCheckResponse, HttpStatus.BAD_REQUEST);
-        }
-
+        return new ResponseEntity<>(idCheckResponse, HttpStatus.OK);
     }
 
     @PostMapping(value = "/auth/sign-up",consumes = {
             MediaType.MULTIPART_FORM_DATA_VALUE,
             MediaType.APPLICATION_JSON_VALUE
     })
-    public ResponseEntity<SignUpResponse> signUp(@RequestPart("userRequest") UserRequest userRequest, @RequestParam(required = false) MultipartFile file){
+    public ResponseEntity<SignUpResponse> signUp(@RequestPart("userRequest") UserRequest userRequest, @RequestParam(required = false) MultipartFile file) throws IOException {
 
         SignUpResponse signUpResponse = userService.signUp(userRequest, file);
-        if(signUpResponse.getCode().equals("SU")){
-            return new ResponseEntity<>(signUpResponse, HttpStatus.OK);
-        }else{
-            return new ResponseEntity<>(signUpResponse, HttpStatus.BAD_REQUEST);
-        }
+        return new ResponseEntity<>(signUpResponse, HttpStatus.OK);
     }
 
     @PostMapping("/auth/sign-in")
     public ResponseEntity<SignInResponse> signIn(@RequestBody SignInRequest signInRequest, HttpSession session) {
 
         SignInResponse signInResponse = userService.signIn(signInRequest,session);
-        if(signInResponse.getCode().equals("SU")){
-            return new ResponseEntity<>(signInResponse,HttpStatus.OK);
-        }else{
-            return new ResponseEntity<>(signInResponse,HttpStatus.BAD_REQUEST);
-
-        }
-
-
+        return new ResponseEntity<>(signInResponse,HttpStatus.OK);
     }
 
     @PostMapping(value = "/auth/email-certification")
     public ResponseEntity<EmailCertificationResponse> emailCertification(@RequestBody EmailCertificationRequest emailCertificationRequest){
 
         EmailCertificationResponse emailCertificationResponse = userService.emailCertification(emailCertificationRequest);
-        if(emailCertificationResponse.getCode().equals("SU")){
-            asyncService.asyncTask(emailCertificationRequest);
-            return new ResponseEntity<>(emailCertificationResponse,HttpStatus.OK);
-        }else{
-            return new ResponseEntity<>(emailCertificationResponse,HttpStatus.BAD_REQUEST);
-        }
+        asyncService.asyncTask(emailCertificationRequest);
+        return new ResponseEntity<>(emailCertificationResponse,HttpStatus.OK);
     }
-
-    @PostMapping("/logout")
-    public ResponseEntity<LogOutResponse> logout() {
-        SecurityContextHolder.clearContext();
-        return new ResponseEntity<>(
-                LogOutResponse.builder()
-                        .code("SU")
-                        .message("Success logout!")
-                        .build()
-                ,HttpStatus.OK);
-    }
-
-
 }

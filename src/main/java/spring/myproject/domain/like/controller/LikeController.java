@@ -22,13 +22,7 @@ public class LikeController {
     public ResponseEntity<LikeResponse> like(@PathVariable Long gatheringId, @AuthenticationPrincipal String username){
 
         LikeResponse likeResponse = likeService.like(gatheringId, username);
-
-        if(likeResponse.getCode().equals("SU")){
-            return new ResponseEntity<>(likeResponse, HttpStatus.OK);
-        }else{
-            return new ResponseEntity<>(likeResponse, HttpStatus.BAD_REQUEST);
-        }
-
+        return new ResponseEntity<>(likeResponse, HttpStatus.OK);
     }
 
 
@@ -36,12 +30,6 @@ public class LikeController {
     public ResponseEntity<DislikeResponse> dislike(@PathVariable Long gatheringId, @AuthenticationPrincipal String username){
 
         DislikeResponse dislikeResponse = likeService.dislike(gatheringId, username);
-        if(dislikeResponse.getCode().equals("SU")){
-            return new ResponseEntity<>(dislikeResponse, HttpStatus.OK);
-        }else{
-            return new ResponseEntity<>(dislikeResponse, HttpStatus.BAD_REQUEST);
-        }
+        return new ResponseEntity<>(dislikeResponse, HttpStatus.OK);
     }
-
-
 }

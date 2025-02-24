@@ -25,16 +25,10 @@ public class GatheringController {
     @PostMapping("/gathering")
     public ResponseEntity<AddGatheringResponse> addGathering(@RequestPart AddGatheringRequest addGatheringRequest,
                                                @RequestPart(required = false) MultipartFile file,
-                                               @AuthenticationPrincipal String username){
-
+                                               @AuthenticationPrincipal String username) throws IOException {
 
         AddGatheringResponse addGatheringResponse = gatheringService.addGathering(addGatheringRequest, file, username);
-        if(addGatheringResponse.getCode().equals("SU")){
-            return new ResponseEntity<>(addGatheringResponse, HttpStatus.OK);
-        }else{
-            return new ResponseEntity<>(addGatheringResponse, HttpStatus.BAD_REQUEST);
-        }
-
+        return new ResponseEntity<>(addGatheringResponse, HttpStatus.OK);
     }
 
     @PutMapping("/gathering/{gatheringId}")
@@ -42,38 +36,28 @@ public class GatheringController {
                                                @PathVariable Long gatheringId,
                                                @RequestPart(required = false) MultipartFile file,
                                                @AuthenticationPrincipal String username) throws IOException {
-        UpdateGatheringResponse updateGatheringResponse = gatheringService.updateGathering(updateGatheringRequest, file, username, gatheringId);
 
-        if(updateGatheringResponse.getCode().equals("SU")){
-            return new ResponseEntity<>(updateGatheringResponse, HttpStatus.OK);
-        }else{
-            return new ResponseEntity<>(updateGatheringResponse, HttpStatus.BAD_REQUEST);
-        }
+        UpdateGatheringResponse updateGatheringResponse = gatheringService.updateGathering(updateGatheringRequest, file, username, gatheringId);
+        return new ResponseEntity<>(updateGatheringResponse, HttpStatus.OK);
     }
 
 
 
 
     @GetMapping("/gathering/{gatheringId}")
-    public ResponseEntity<GatheringResponse> gatheringDetail(@PathVariable Long gatheringId, @AuthenticationPrincipal String username) {
+    public ResponseEntity<GatheringResponse> gatheringDetail(@PathVariable Long gatheringId, @AuthenticationPrincipal String username) throws IOException {
+
         GatheringResponse gatheringResponse = gatheringService.gatheringDetail(gatheringId,username);
-        if(gatheringResponse.getCode().equals("SU")){
-            return new ResponseEntity<>(gatheringResponse, HttpStatus.OK);
-        }else{
-            return new ResponseEntity<>(gatheringResponse, HttpStatus.BAD_REQUEST);
-        }
+        return new ResponseEntity<>(gatheringResponse, HttpStatus.OK);
     }
 
     @GetMapping("/gatherings")
     public ResponseEntity<GatheringPagingResponse> gatherings(@RequestParam int pageNum,
                                              @RequestParam String title,
                                              @AuthenticationPrincipal String username){
+
         GatheringPagingResponse gatheringPagingResponse = gatheringService.gatherings(pageNum, username, title);
-        if(gatheringPagingResponse.getCode().equals("SU")){
-            return new ResponseEntity<>(gatheringPagingResponse, HttpStatus.OK);
-        }else{
-            return new ResponseEntity<>(gatheringPagingResponse, HttpStatus.BAD_REQUEST);
-        }
+        return new ResponseEntity<>(gatheringPagingResponse, HttpStatus.OK);
     }
 
     @GetMapping("/gatherings/like")
@@ -81,11 +65,7 @@ public class GatheringController {
                                                  @AuthenticationPrincipal String username){
 
         GatheringPagingResponse gatheringPagingResponse = gatheringService.gatheringsLike(pageNum,username);
-        if(gatheringPagingResponse.getCode().equals("SU")){
-            return new ResponseEntity<>(gatheringPagingResponse, HttpStatus.OK);
-        }else{
-            return new ResponseEntity<>(gatheringPagingResponse, HttpStatus.BAD_REQUEST);
-        }
+        return new ResponseEntity<>(gatheringPagingResponse, HttpStatus.OK);
     }
 
 

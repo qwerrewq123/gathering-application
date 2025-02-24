@@ -24,11 +24,7 @@ public class AttendController {
                                             ){
 
         AddAttendResponse addAttendResponse = attendService.addAttend(meetingId, username);
-        if(addAttendResponse.getCode().equals("SU")){
-            return new ResponseEntity<>(addAttendResponse, HttpStatus.OK);
-        }else {
-            return new ResponseEntity<>(addAttendResponse, HttpStatus.BAD_REQUEST);
-        }
+        return new ResponseEntity<>(addAttendResponse, HttpStatus.OK);
     }
 
 
@@ -38,11 +34,7 @@ public class AttendController {
                                             @AuthenticationPrincipal String username){
 
         DisAttendResponse disAttendResponse = attendService.disAttend(meetingId, attendId, username);
-        if(disAttendResponse.getCode().equals("SU")){
-            return new ResponseEntity<>(disAttendResponse, HttpStatus.OK);
-        }else {
-            return new ResponseEntity<>(disAttendResponse, HttpStatus.BAD_REQUEST);
-        }
+        return new ResponseEntity<>(disAttendResponse, HttpStatus.OK);
     }
 
     @PostMapping("/meeting/{meetingId}/permitAttend/{attendId}")
@@ -50,10 +42,6 @@ public class AttendController {
                                                @PathVariable Long attendId,
                                                @AuthenticationPrincipal String username){
         PermitAttendResponse permitAttendResponse = attendService.permitAttend(meetingId, attendId, username);
-        if(permitAttendResponse.getCode().equals("SU")){
-            return new ResponseEntity<>(permitAttendResponse, HttpStatus.OK);
-        }else {
-            return new ResponseEntity<>(permitAttendResponse, HttpStatus.BAD_REQUEST);
-        }
+        return new ResponseEntity<>(permitAttendResponse, HttpStatus.OK);
     }
 }
