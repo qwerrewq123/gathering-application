@@ -1,7 +1,6 @@
 package spring.myproject.domain.meeting.service;
 
 import lombok.RequiredArgsConstructor;
-import org.aspectj.apache.bcel.classfile.ConstantClass;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -18,11 +17,10 @@ import spring.myproject.domain.user.repository.UserRepository;
 import spring.myproject.domain.meeting.dto.request.AddMeetingRequest;
 import spring.myproject.domain.meeting.dto.request.UpdateMeetingRequest;
 import spring.myproject.domain.gathering.exception.NotFoundGatheringException;
-import spring.myproject.domain.meeting.exception.MeetingIsnotEmptyException;
-import spring.myproject.domain.meeting.exception.NotAuthrizeException;
+import spring.myproject.domain.meeting.exception.MeetingIsNotEmptyException;
+import spring.myproject.domain.meeting.exception.NotAuthorizeException;
 import spring.myproject.domain.meeting.exception.NotFoundMeeting;
 import spring.myproject.domain.user.exception.NotFoundUserException;
-import spring.myproject.util.ConstClass;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -86,11 +84,11 @@ public class MeetingService {
 
             boolean authorize = meeting.getCreatedBy().getId() == user.getId();
             if(authorize == false){
-                throw new NotAuthrizeException("no authority!");
+                throw new NotAuthorizeException("no authority!");
             }
             meetingRepository.delete(meeting);
             if(meeting.getAttends().size() >0){
-                throw new MeetingIsnotEmptyException("meeting is not empty!!");
+                throw new MeetingIsNotEmptyException("meeting is not empty!!");
             }
             return DeleteMeetingResponse.builder()
                     .code(SUCCESS_CODE)
@@ -106,12 +104,12 @@ public class MeetingService {
                     .code(NOT_FOUND_MEETING_CODE)
                     .message(NOT_FOUND_MEETING_MESSAGE)
                     .build();
-        }catch (NotAuthrizeException e){
+        }catch (NotAuthorizeException e){
             return DeleteMeetingResponse.builder()
                     .code(NOT_AUTHORIZE_CODE)
                     .message(NOT_AUTHORIZED_MESSAGE)
                     .build();
-        }catch (MeetingIsnotEmptyException e){
+        }catch (MeetingIsNotEmptyException e){
             return DeleteMeetingResponse.builder()
                     .code(MEETING_IS_NOT_EMPTY_CODE)
                     .message(MEETING_IS_NOT_EMPTY_MESSAGE)
@@ -129,7 +127,7 @@ public class MeetingService {
 
             boolean authorize = meeting.getCreatedBy().getId() == user.getId();
             if(authorize == false){
-                throw new NotAuthrizeException("no authority!");
+                throw new NotAuthorizeException("no authority!");
             }
 
             meeting.setTitle(updateMeetingRequest.getTitle());
@@ -152,7 +150,7 @@ public class MeetingService {
                     .code(NOT_FOUND_MEETING_CODE)
                     .message(NOT_FOUND_MEETING_MESSAGE)
                     .build();
-        }catch (NotAuthrizeException e){
+        }catch (NotAuthorizeException e){
             return UpdateMeetingResponse.builder()
                     .code(NOT_AUTHORIZE_CODE)
                     .message(NOT_AUTHORIZED_MESSAGE)

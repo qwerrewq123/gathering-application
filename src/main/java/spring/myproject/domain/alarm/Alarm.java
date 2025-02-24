@@ -6,9 +6,9 @@ import spring.myproject.domain.user.User;
 
 import java.time.LocalDateTime;
 @Getter
+@Setter
 @NoArgsConstructor
 @Entity
-@Setter
 @AllArgsConstructor
 @Builder
 @Table(name = "alarm")

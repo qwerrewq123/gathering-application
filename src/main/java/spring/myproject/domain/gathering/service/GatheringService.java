@@ -19,11 +19,10 @@ import spring.myproject.domain.gathering.dto.request.AddGatheringRequest;
 import spring.myproject.domain.gathering.dto.request.UpdateGatheringRequest;
 import spring.myproject.domain.category.exception.NotFoundCategoryException;
 import spring.myproject.domain.gathering.exception.NotFoundGatheringException;
-import spring.myproject.domain.meeting.exception.NotAuthrizeException;
+import spring.myproject.domain.meeting.exception.NotAuthorizeException;
 import spring.myproject.domain.user.exception.NotFoundUserException;
 import spring.myproject.s3.S3ImageDownloadService;
 import spring.myproject.s3.S3ImageUploadService;
-import spring.myproject.util.ConstClass;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -95,7 +94,7 @@ public class GatheringService {
             Category category = categoryRepository.findByName(updateGatheringRequest.getCategory()).orElseThrow(()-> new NotFoundCategoryException("no exist Category!!"));
             Gathering gathering = gatheringRepository.findById(gatheringId).orElseThrow(()->new NotFoundGatheringException("no exist Gathering!!"));
             boolean authorize = gathering.getCreateBy().getId() == user.getId();
-            if(!authorize) throw new NotAuthrizeException("no authorize!!");
+            if(!authorize) throw new NotAuthorizeException("no authorize!!");
             Image image = null;
             String url = s3ImageUploadService.upload(file);
             if(StringUtils.hasText(url)){
@@ -128,7 +127,7 @@ public class GatheringService {
                     .code(NOT_FOUND_GATHERING_CODE)
                     .message(NOT_FOUND_GATHERING_MESSAGE)
                     .build();
-        }catch (NotAuthrizeException e){
+        }catch (NotAuthorizeException e){
             return UpdateGatheringResponse.builder()
                     .code(NOT_AUTHORIZE_CODE)
                     .message(NOT_AUTHORIZED_MESSAGE)
