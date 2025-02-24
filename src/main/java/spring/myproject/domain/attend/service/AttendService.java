@@ -35,17 +35,9 @@ public class AttendService {
             if(meeting.getCreatedBy().getId()  == meetingId) throw new AutoAttendException("Meeting Opener auto attend");
             Attend checkAttend = attendRepository.findByUserIdAndMeetingId(user.getId(),meetingId);
             if(checkAttend != null) throw new AlreadyAttendExeption("Meeting already attend");
-            Attend attend = Attend.builder()
-                    .accepted(false)
-                    .attendBy(user)
-                    .date(LocalDateTime.now())
-                    .meeting(meeting)
-                    .build();
+            Attend attend = Attend.of(false,meeting,user,LocalDateTime.now());
             attendRepository.save(attend);
-            return AddAttendResponse.builder()
-                    .code(SUCCESS_CODE)
-                    .message(SUCCESS_MESSAGE)
-                    .build();
+            return AddAttendResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE);
     }
 
     public DisAttendResponse disAttend(Long meetingId, Long attendId, String username) {
@@ -59,10 +51,7 @@ public class AttendService {
                 throw new NotWithdrawException("Opener cannot  disAttend Meeting!!");
             }
             attendRepository.delete(attend);
-            return DisAttendResponse.builder()
-                    .code(SUCCESS_CODE)
-                    .message(SUCCESS_MESSAGE)
-                    .build();
+            return DisAttendResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE);
     }
 
     public PermitAttendResponse permitAttend(Long meetingId, Long attendId, String username) {
@@ -72,10 +61,7 @@ public class AttendService {
             Attend attend = attendRepository.findById(attendId).orElseThrow(() -> new NotFoundAttend("no exist Attend!!"));
             if(attend.getAccepted() == true) throw new AlreadyAttendExeption("already attend!!");
             if(meeting.getCreatedBy().getId()  == meetingId) throw new AlwaysPermitException("opener always permitted");
-            attend.setAccepted(true);
-            return PermitAttendResponse.builder()
-                    .code(SUCCESS_CODE)
-                    .message(SUCCESS_MESSAGE)
-                    .build();
+            attend.changeAccepted(true);
+            return PermitAttendResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE);
     }
 }

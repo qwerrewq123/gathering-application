@@ -36,17 +36,9 @@ public class EnrollmentService {
                     () -> new NotFoundGatheringException("no exist Gathering!!"));
             Enrollment exist = enrollmentRepository.existEnrollment(gatheringId, user.getId());
             if(exist != null) throw new AlreadyEnrollmentException("Already enrolled;");
-            Enrollment enrollment = Enrollment.builder()
-                    .date(LocalDateTime.now())
-                    .enrolledBy(user)
-                    .gathering(gathering)
-                    .accepted(true)
-                    .build();
+            Enrollment enrollment = Enrollment.of(true,gathering,user,LocalDateTime.now());
             enrollmentRepository.save(enrollment);
-            return EnrollGatheringResponse.builder()
-                    .code(SUCCESS_CODE)
-                    .message(SUCCESS_MESSAGE)
-                    .build();
+            return EnrollGatheringResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE);
     }
     public DisEnrollGatheringResponse disEnrollGathering(Long gatheringId, String username) {
 
@@ -56,9 +48,6 @@ public class EnrollmentService {
             Enrollment enrollment = enrollmentRepository.findEnrollment(gatheringId, user.getId()).orElseThrow(
                     () ->  new NotFoundEnrollmentException("no exist Enrollment!!"));
             enrollmentRepository.delete(enrollment);
-            return DisEnrollGatheringResponse.builder()
-                    .code(SUCCESS_CODE)
-                    .message(SUCCESS_MESSAGE)
-                    .build();
+            return DisEnrollGatheringResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE);
     }
 }

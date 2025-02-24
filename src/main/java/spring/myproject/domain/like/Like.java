@@ -26,4 +26,11 @@ public class Like {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "gathering_id")
     private Gathering gathering;
+
+    public static Like of(Gathering gathering, User user) {
+        return Like.builder()
+                .gathering(gathering)
+                .likedBy(user)
+                .build();
+    }
 }

@@ -16,4 +16,8 @@ public class GatheringPagingResponse {
     private String message;
     Page<GatheringElement> gatheringElementPage;
 
+    public static GatheringPagingResponse of(String code, String message,Page<GatheringElement> page) {
+        return new GatheringPagingResponse(code, message,page);
+    }
+
 }

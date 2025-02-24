@@ -12,4 +12,8 @@ import lombok.Data;
 public class DisEnrollGatheringResponse {
     private String code;
     private String message;
+
+    public static DisEnrollGatheringResponse of(String code, String message) {
+        return new DisEnrollGatheringResponse(code, message);
+    }
 }

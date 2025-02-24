@@ -12,7 +12,7 @@ import java.util.List;
 
 public interface GatheringRepository extends JpaRepository<Gathering,Long> {
 
-    @Query("select new spring.myproject.dto.response.gathering." +
+    @Query("select new spring.myproject.domain.gathering.dto.response." +
             "GatheringPagingQueryDto(g.id,g.title,g.content,g.registerDate,ca.name,cr.username,im.url,gc.count) " +
             "from Gathering  g " +
             "left join  g.category ca " +
@@ -22,7 +22,7 @@ public interface GatheringRepository extends JpaRepository<Gathering,Long> {
             "where g.title like %:title%")
     Page<GatheringPagingQueryDto> findPaging(Pageable pageable, String title);
 
-    @Query("select new spring.myproject.dto.response.gathering." +
+    @Query("select new spring.myproject.domain.gathering.dto.response." +
             "GatheringPagingQueryDto(g.id,g.title,g.content,g.registerDate,ca.name,cr.username,im.url,gc.count) " +
             "from Like l  " +
             "join l.gathering g " +
@@ -33,7 +33,7 @@ public interface GatheringRepository extends JpaRepository<Gathering,Long> {
             "where l.likedBy.id = :userId")
     Page<GatheringPagingQueryDto> findLikePaging(Pageable pageable, Long userId);
 
-    @Query("select new spring.myproject.dto.response.gathering." +
+    @Query("select new spring.myproject.domain.gathering.dto.response." +
             "GatheringQueryDto(g.id,g.title,g.content,g.registerDate,ca.name,cr.username,u.username,im.url,gc.count) " +
             "from Recommend r " +
             "join r.gathering g " +
@@ -45,7 +45,7 @@ public interface GatheringRepository extends JpaRepository<Gathering,Long> {
     List<GatheringQueryDto> findRecommendPaging();
 
     @Query("select " +
-            "new spring.myproject.dto.response.gathering." +
+            "new spring.myproject.domain.gathering.dto.response." +
             "GatheringQueryDto(g.id,g.title,g.content,g.registerDate,ca.name,cr.username,u.username,im.url,gc.count) " +
             "from Gathering g " +
             "left join g.enrollments e " +

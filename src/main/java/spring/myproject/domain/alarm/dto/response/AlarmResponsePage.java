@@ -16,4 +16,7 @@ public class AlarmResponsePage {
     private String message;
     private Page<AlarmResponse> page;
 
+    public static AlarmResponsePage of(String code, String message, Page<AlarmResponse> page) {
+        return new AlarmResponsePage(code,message,page);
+    }
 }

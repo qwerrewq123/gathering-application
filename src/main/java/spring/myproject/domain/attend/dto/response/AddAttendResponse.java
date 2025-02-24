@@ -12,4 +12,8 @@ import lombok.Data;
 public class AddAttendResponse {
     private String code;
     private String message;
+
+    public static AddAttendResponse of(String code, String message) {
+        return new AddAttendResponse(code, message);
+    }
 }

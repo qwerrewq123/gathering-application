@@ -12,7 +12,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @Getter
-@Setter
 @Entity
 public class Attend {
 
@@ -30,5 +29,17 @@ public class Attend {
     private User attendBy;
 
     private LocalDateTime date;
+
+    public static Attend of(boolean accepted, Meeting meeting, User attendBy, LocalDateTime date) {
+        return Attend.builder()
+                .accepted(accepted)
+                .meeting(meeting)
+                .attendBy(attendBy)
+                .date(date)
+                .build();
+    }
+    public void changeAccepted(boolean accepted) {
+        this.accepted = accepted;
+    }
 
 }

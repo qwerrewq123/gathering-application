@@ -32,4 +32,13 @@ public class Enrollment {
 
     private LocalDateTime date;
 
+    public static Enrollment of(boolean accepted, Gathering gathering, User enrolledBy,LocalDateTime date) {
+        return Enrollment.builder()
+                .accepted(accepted)
+                .gathering(gathering)
+                .enrolledBy(enrolledBy)
+                .date(date)
+                .build();
+    }
+
 }

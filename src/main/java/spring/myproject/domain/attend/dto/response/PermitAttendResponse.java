@@ -12,4 +12,8 @@ import lombok.Data;
 public class PermitAttendResponse {
     private String code;
     private String message;
+
+    public static PermitAttendResponse of(String code, String message) {
+        return new PermitAttendResponse(code, message);
+    }
 }

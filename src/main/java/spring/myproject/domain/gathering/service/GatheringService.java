@@ -57,20 +57,10 @@ public class GatheringService {
                 }
             }
             imageRepository.save(image);
-            Gathering gathering = Gathering.builder()
-                    .title(addGatheringRequest.getTitle())
-                    .content(addGatheringRequest.getContent())
-                    .createBy(user)
-                    .category(category)
-                    .registerDate(LocalDateTime.now())
-                    .gatheringImage(image)
-                    .build();
+            Gathering gathering = Gathering.of(addGatheringRequest,user,category,image);
             gatheringCountService.makeCount(gathering);
             gatheringRepository.save(gathering);
-            return AddGatheringResponse.builder()
-                    .code(SUCCESS_CODE)
-                    .message(SUCCESS_MESSAGE)
-                    .build();
+            return AddGatheringResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE);
     }
 
     public UpdateGatheringResponse updateGathering(UpdateGatheringRequest updateGatheringRequest, MultipartFile file, String username,Long gatheringId) throws IOException {
@@ -90,20 +80,13 @@ public class GatheringService {
                 }
             }
             imageRepository.save(image);
-            gathering.setGatheringImage(image);
-            gathering.setCategory(category);
-            gathering.setContent(updateGatheringRequest.getContent());
-            gathering.setTitle(updateGatheringRequest.getTitle());
-            gathering.setRegisterDate(LocalDateTime.now());
-            return UpdateGatheringResponse.builder()
-                    .code(SUCCESS_CODE)
-                    .message(SUCCESS_MESSAGE)
-                    .build();
+            gathering.changeGathering(image,category,updateGatheringRequest);
+            return UpdateGatheringResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE);
     }
 
     public GatheringResponse gatheringDetail(Long gatheringId, String username) throws IOException {
 
-            User user = userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
+            userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
             List<GatheringQueryDto> gatheringQueryDtos = gatheringRepository.findGatheringAndCount(gatheringId);
             if(gatheringQueryDtos.size() == 0) throw new NotFoundGatheringException("no exist Gathering!!!");
             gatheringCountService.addCount(gatheringQueryDtos.getFirst().getId());
@@ -112,7 +95,6 @@ public class GatheringService {
 
     public GatheringPagingResponse gatherings(int pageNum, String username, String title) {
 
-        try {
             PageRequest pageRequest = PageRequest.of(pageNum - 1, 10, Sort.Direction.ASC,"id");
             Page<GatheringPagingQueryDto> gatheringPage = gatheringRepository.findPaging(pageRequest, title);
             Page<GatheringElement> gatheringElementPage = gatheringPage.map(
@@ -141,22 +123,11 @@ public class GatheringService {
                         }
                     }
             );
-            return GatheringPagingResponse.builder()
-                    .code(SUCCESS_CODE)
-                    .message(SUCCESS_MESSAGE)
-                    .gatheringElementPage(gatheringElementPage)
-                    .build();
-        }catch (Exception e){
-            return GatheringPagingResponse.builder()
-                    .code(DB_ERROR_CODE)
-                    .message(DB_ERROR_MESSAGE)
-                    .build();
-        }
+            return GatheringPagingResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE,gatheringElementPage);
     }
 
     public GatheringPagingResponse gatheringsLike(int pageNum, String username) {
 
-        try {
             User user = userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
             PageRequest pageRequest = PageRequest.of(pageNum - 1, 10, Sort.Direction.ASC,"id");
             Long userId = user.getId();
@@ -187,17 +158,7 @@ public class GatheringService {
                         }
                     }
             );
-            return GatheringPagingResponse.builder()
-                    .code(SUCCESS_CODE)
-                    .message(SUCCESS_MESSAGE)
-                    .gatheringElementPage(gatheringElementPage)
-                    .build();
-        }catch (Exception e){
-            return GatheringPagingResponse.builder()
-                    .code(DB_ERROR_CODE)
-                    .message(DB_ERROR_MESSAGE)
-                    .build();
-        }
+            return GatheringPagingResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE,gatheringElementPage);
     }
 
     private GatheringResponse getGatheringResponse(List<GatheringQueryDto> gatheringQueryDtos) throws IOException {

@@ -15,7 +15,6 @@ import spring.myproject.domain.gathering.exception.NotFoundGatheringException;
 import spring.myproject.domain.like.exception.AlreadyLikeGathering;
 import spring.myproject.domain.like.exception.NotFoundLikeException;
 import spring.myproject.domain.user.exception.NotFoundUserException;
-import spring.myproject.util.ConstClass;
 
 import java.util.Optional;
 
@@ -38,25 +37,16 @@ public class LikeService {
             Optional<Like> optionalLike = likeRepository.findLike(userId, gatheringId);
             Gathering gathering = gatheringRepository.findById(gatheringId).orElseThrow(()-> new NotFoundGatheringException("no exist Gathering!!"));
             if(optionalLike.isPresent()) throw new AlreadyLikeGathering("Already Like Gathering!!");
-            likeRepository.save(Like.builder()
-                    .gathering(gathering)
-                    .likedBy(user)
-                    .build());
-            return LikeResponse.builder()
-                    .code(SUCCESS_CODE)
-                    .message(SUCCESS_MESSAGE)
-                    .build();
+            likeRepository.save(Like.of(gathering,user));
+            return LikeResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE);
     }
     public DislikeResponse dislike(Long gatheringId, String username) {
 
             User user = userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
             Long userId = user.getId();
             Like like = likeRepository.findLike(userId, gatheringId).orElseThrow(()-> new NotFoundLikeException("no exist Like"));
-            Gathering gathering = gatheringRepository.findById(gatheringId).orElseThrow(()-> new NotFoundGatheringException("no exist Gathering!!"));
+            gatheringRepository.findById(gatheringId).orElseThrow(()-> new NotFoundGatheringException("no exist Gathering!!"));
             likeRepository.delete(like);
-            return DislikeResponse.builder()
-                    .code(SUCCESS_CODE)
-                    .message(SUCCESS_MESSAGE)
-                    .build();
+            return DislikeResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE);
     }
 }

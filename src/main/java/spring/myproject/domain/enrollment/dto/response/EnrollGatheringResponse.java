@@ -12,4 +12,8 @@ import lombok.Data;
 public class EnrollGatheringResponse {
     private String code;
     private String message;
+
+    public static EnrollGatheringResponse of(String code, String message) {
+        return new EnrollGatheringResponse(code, message);
+    }
 }

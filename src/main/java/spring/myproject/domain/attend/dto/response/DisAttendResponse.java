@@ -12,4 +12,8 @@ import lombok.Data;
 public class DisAttendResponse {
     private String code;
     private String message;
+
+    public static DisAttendResponse of(String code, String message) {
+        return new DisAttendResponse(code, message);
+    }
 }

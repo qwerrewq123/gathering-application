@@ -1,0 +1,33 @@
+spring:
+  application:
+    name: MyProject
+  profiles:
+    active: aws
+  datasource:
+    url: jdbc:mysql://localhost:3306/gathering?characterEncoding=UTF-8&serverTimezone=UTC
+    username: root
+    password: 0000
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    properties:
+      hibernate.format_sql: true
+      hibernate.show_sql: true
+      hibernate.hbm2ddl.auto: validate
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: preejer8013@gmail.com
+    password: mvep okhv abar kkmx
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+server:
+  port: 80
+fcm:
+  firebase_config_path: firebase/gathering-project-dcf1a-firebase-adminsdk-fbsvc-061788000f.json
+secret-key: secretKeysecretKeysecretKeysecretKeysecretKeysecretKeysecretKeysecretKeysecretKey
+file:
+  dir: C:/upload
