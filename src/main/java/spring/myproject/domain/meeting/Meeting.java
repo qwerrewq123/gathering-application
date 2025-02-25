@@ -22,20 +22,15 @@ public class Meeting {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String title;
-
     private LocalDateTime boardDate;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
     private String content;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User createdBy;
-
     @OneToMany(mappedBy = "meeting")
     private List<Attend> attends = new ArrayList<>();
-
     @ManyToOne(fetch = FetchType.LAZY)
     private Gathering gathering;
-
 }

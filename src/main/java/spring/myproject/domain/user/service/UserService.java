@@ -49,7 +49,7 @@ public class UserService {
 
     public IdCheckResponse idCheck(IdCheckRequest idCheckRequest) {
 
-        boolean idCheck = !userRepository.existsByUsername(idCheckRequest.getUsername());
+        boolean idCheck = !userRepository.existByUsername(idCheckRequest.getUsername());
         if(!idCheck) throw new ExistUserException("user Exist!!");
         return IdCheckResponse.builder()
                 .code(SUCCESS_CODE)

@@ -19,17 +19,13 @@ public class Attend {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Boolean accepted;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "meeting_id")
     private Meeting meeting;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User attendBy;
-
     private LocalDateTime date;
-
     public static Attend of(boolean accepted, Meeting meeting, User attendBy, LocalDateTime date) {
         return Attend.builder()
                 .accepted(accepted)

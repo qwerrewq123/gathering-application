@@ -1,4 +1,4 @@
-package spring.myproject.config;
+package spring.myproject.security;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

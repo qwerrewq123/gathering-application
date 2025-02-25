@@ -31,6 +31,7 @@ public class RecommendService {
 
     public RecommendResponse recommend(String username) {
 
+        try {
             User user = userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
             List<GatheringQueryDto> gatheringQueryDtos = gatheringRepository.findRecommendPaging();
             List<GatheringResponse> gatheringResponses = getGatheringResponses(gatheringQueryDtos);
@@ -39,6 +40,17 @@ public class RecommendService {
                     .message(SUCCESS_MESSAGE)
                     .gatherings(gatheringResponses)
                     .build();
+        }catch (NotFoundUserException e){
+            return RecommendResponse.builder()
+                    .code(NOT_FOUND_USER_CODE)
+                    .message(NOT_FOUND_USER_MESSAGE)
+                    .build();
+        }catch (Exception e){
+            return RecommendResponse.builder()
+                    .code(DB_ERROR_CODE)
+                    .message(DB_ERROR_MESSAGE)
+                    .build();
+        }
     }
 
     private List<GatheringResponse> getGatheringResponses(List<GatheringQueryDto> gatheringQueryDtos){

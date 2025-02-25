@@ -21,13 +21,12 @@ public class GatheringCountService {
         gatheringCountRepository.addCount(gatheringId);
 
     }
-
+    //TODO : 단방향으로 해서 등록시 조회수 1이 되는 이슈 해결해야됨
     public void makeCount(Gathering gathering){
 
         gatheringCountRepository.save(
                 GatheringCount.builder()
                         .count(1)
-                        .gathering(gathering)
                         .build()
         );
     }

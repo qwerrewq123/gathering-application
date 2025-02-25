@@ -7,7 +7,9 @@ import spring.myproject.domain.gathering.GatheringCount;
 
 public interface GatheringCountRepository extends JpaRepository<GatheringCount,Long> {
 
-    @Query("update GatheringCount g set g.count = g.count +1 where g.gathering.id =:gatheringId")
+    @Query("update GatheringCount gc set gc.count = gc.count+1 " +
+            "where gc.id = (select g.id from Gathering g where g.gatheringCount.id = gc.id)")
     @Modifying
     void addCount(Long gatheringId);
+
 }

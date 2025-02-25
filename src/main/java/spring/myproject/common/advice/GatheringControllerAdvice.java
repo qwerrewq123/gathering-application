@@ -1,4 +1,4 @@
-package spring.myproject.advice;
+package spring.myproject.common.advice;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

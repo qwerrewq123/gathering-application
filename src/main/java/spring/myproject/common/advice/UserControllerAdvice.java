@@ -1,4 +1,4 @@
-package spring.myproject.advice;
+package spring.myproject.common.advice;
 
 import jakarta.mail.MessagingException;
 import org.springframework.http.HttpStatus;

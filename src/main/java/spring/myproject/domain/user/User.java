@@ -12,7 +12,6 @@ import java.io.Serializable;
 @Table(name="user")
 @Builder
 @AllArgsConstructor
-@Setter
 @Entity
 public class User implements Serializable {
 
@@ -28,7 +27,5 @@ public class User implements Serializable {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "image_id")
     private Image profileImage;
-
-
 
 }
