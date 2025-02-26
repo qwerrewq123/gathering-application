@@ -62,9 +62,9 @@ class UserRepositoryTest {
         userRepository.save(user4);
         em.flush();
         List<User> userList1 = userRepository.findByEmail("email1");
-        List<User> userList2 = userRepository.findByEmail("email1");
-        List<User> userList3 = userRepository.findByEmail("email1");
-        List<User> userList4 = userRepository.findByEmail("email1");
+        List<User> userList2 = userRepository.findByEmail("email2");
+        List<User> userList3 = userRepository.findByEmail("email3");
+        List<User> userList4 = userRepository.findByEmail("email4");
 
         assertThat(userList1.size()).isEqualTo(1);
         assertThat(userList2.size()).isEqualTo(1);

@@ -26,6 +26,7 @@ public class ConstClass {
     public static String UNCORRECT_CODE = "UC";
     public static String DB_ERROR_CODE = "DE";
     public static String FAIL_MESSAGE_CODE = "FM";
+    public static String METHOD_NOT_ALLOWED_CODE = "MN";
 
     public static String NOT_FOUND_ALARM_MESSAGE = "Not Found Alarm!!";
     public static String AUTO_ATTEND_MESSAGE = "Auto Attend Meeting";
@@ -51,4 +52,5 @@ public class ConstClass {
     public static String UNCORRECT_MESSAGE = "UnCorrect Password";
     public static String DB_ERROR_MESSAGE = "Database Error";
     public static String FAIL_MESSAGE_MESSAGE = "Fail Messaging From SMTP";
+    public static String METHOD_NOT_ALLOWED_MESSAGE = "Method Not Allowed";
 }
