@@ -37,5 +37,8 @@ public class Attend {
     public void changeAccepted(boolean accepted) {
         this.accepted = accepted;
     }
+    public void addMeeting(Meeting meeting){
+        this.meeting = meeting;
+    }
 
 }

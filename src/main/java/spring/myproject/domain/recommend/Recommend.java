@@ -1,12 +1,16 @@
 package spring.myproject.domain.recommend;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import spring.myproject.domain.gathering.Gathering;
 
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity
 @Table(name = "recommend")
 public class Recommend {
@@ -21,7 +25,11 @@ public class Recommend {
 
     private Long count;
 
-    private void reset(Recommend recommend){
+    public void reset(Recommend recommend){
         this.count = 0L;
     }
+    public void setCount(Long count){
+        this.count=count;
+    }
+
 }

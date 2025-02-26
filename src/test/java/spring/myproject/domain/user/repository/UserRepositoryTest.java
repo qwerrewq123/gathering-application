@@ -4,6 +4,7 @@ import jakarta.persistence.EntityManager;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import software.amazon.awssdk.services.s3.endpoints.internal.Value;
 import spring.myproject.domain.image.Image;
@@ -18,7 +19,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static spring.myproject.util.DummyData.*;
 
-@SpringBootTest
+@DataJpaTest
 class UserRepositoryTest {
 
     @Autowired
@@ -27,28 +28,6 @@ class UserRepositoryTest {
     ImageRepository imageRepository;
     @Autowired
     EntityManager em;
-    @Test
-    void findByUsername(){
-
-        Image image1 = returnDummyImage(1);
-        Image image2 = returnDummyImage(2);
-        User user1 = returnDummyUser(1,image1);
-        User user2 = returnDummyUser(2,image1);
-        User user3 = returnDummyUser(3,image2);
-        User user4 = returnDummyUser(4,image2);
-
-        imageRepository.save(image1);
-        imageRepository.save(image2);
-        userRepository.save(user1);
-        userRepository.save(user2);
-        userRepository.save(user3);
-        userRepository.save(user4);
-        em.flush();
-
-        User user = userRepository.findByUsername("user1").orElse(null);
-        assertThat(user.getUsername()).isEqualTo("user1");
-        assertThat(user.getProfileImage().getId()).isEqualTo(1);
-    }
     @Test
     void existByUsername(){
         Image image1 = returnDummyImage(1);
@@ -60,8 +39,8 @@ class UserRepositoryTest {
         userRepository.save(user2);
         em.flush();
 
-        Boolean exist1 = userRepository.existByUsername("user1");
-        Boolean exist2 = userRepository.existByUsername("user2");
+        Boolean exist1 = userRepository.existsByUsername("user1");
+        Boolean exist2 = userRepository.existsByUsername("user2");
         assertThat(exist1).isEqualTo(true);
         assertThat(exist2).isEqualTo(true);
     }

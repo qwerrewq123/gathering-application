@@ -40,5 +40,8 @@ public class Enrollment {
                 .date(date)
                 .build();
     }
+    public void enrollGathering(Gathering gathering){
+        this.gathering = gathering;
+    }
 
 }

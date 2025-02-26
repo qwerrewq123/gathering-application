@@ -13,7 +13,7 @@ spring:
       hibernate.format_sql: true
       hibernate.show_sql: true
       hibernate:
-        ddl-auto: validate
+        ddl-auto: create
         dialect: org.hibernate.dialect.MySQL8Dialect
   mail:
     host: smtp.gmail.com

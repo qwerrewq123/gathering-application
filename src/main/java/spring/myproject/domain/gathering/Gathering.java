@@ -40,7 +40,8 @@ public class Gathering {
     @JoinColumn(name = "image_id")
     private Image gatheringImage;
 
-    @OneToOne(mappedBy = "gathering",fetch = FetchType.LAZY,optional = false)
+    @OneToOne(fetch = FetchType.LAZY,optional = false)
+    @JoinColumn(name = "gathering_id")
     private GatheringCount gatheringCount;
 
     @OneToMany(mappedBy = "gathering")
@@ -64,5 +65,10 @@ public class Gathering {
                 .gatheringImage(image)
                 .build();
     }
-
+    public void enroll(List<Enrollment> enrollments){
+        for (Enrollment enrollment : enrollments) {
+            enrollment.enrollGathering(this);
+        }
+        this.enrollments = enrollments;
+    }
 }

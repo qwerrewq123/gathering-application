@@ -33,4 +33,11 @@ public class Meeting {
     private List<Attend> attends = new ArrayList<>();
     @ManyToOne(fetch = FetchType.LAZY)
     private Gathering gathering;
+
+    public void attend(List<Attend> attends){
+        for (Attend attend : attends) {
+            attend.addMeeting(this);
+        }
+        this.attends = attends;
+    }
 }

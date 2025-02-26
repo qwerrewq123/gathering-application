@@ -43,13 +43,10 @@ public class UserService {
     private final EmailProvider emailProvider;
     private final S3ImageUploadService s3ImageUploadService;
     private final JwtProvider jwtProvider;
-    @Value("${file.dir}")
-    private String fileDir;
-
 
     public IdCheckResponse idCheck(IdCheckRequest idCheckRequest) {
 
-        boolean idCheck = !userRepository.existByUsername(idCheckRequest.getUsername());
+        boolean idCheck = !userRepository.existsByUsername(idCheckRequest.getUsername());
         if(!idCheck) throw new ExistUserException("user Exist!!");
         return IdCheckResponse.builder()
                 .code(SUCCESS_CODE)

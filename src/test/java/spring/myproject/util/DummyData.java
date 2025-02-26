@@ -1,12 +1,15 @@
 package spring.myproject.util;
 
+import spring.myproject.domain.alarm.Alarm;
 import spring.myproject.domain.attend.Attend;
 import spring.myproject.domain.category.Category;
 import spring.myproject.domain.enrollment.Enrollment;
 import spring.myproject.domain.gathering.Gathering;
 import spring.myproject.domain.gathering.GatheringCount;
 import spring.myproject.domain.image.Image;
+import spring.myproject.domain.like.Like;
 import spring.myproject.domain.meeting.Meeting;
+import spring.myproject.domain.recommend.Recommend;
 import spring.myproject.domain.user.User;
 
 import java.time.LocalDateTime;
@@ -32,7 +35,7 @@ public class DummyData {
                 .build();
     }
     public static Gathering returnDummyGathering(int i, Category category, User createdBy, Image gatheringImage,
-                                                 GatheringCount gatheringCount, List<Enrollment> enrollments){
+                                                 GatheringCount gatheringCount){
         return Gathering.builder()
                 .title(String.format("title%d",i))
                 .content(String.format("content%d",i))
@@ -41,7 +44,15 @@ public class DummyData {
                 .createBy(createdBy)
                 .gatheringImage(gatheringImage)
                 .gatheringCount(gatheringCount)
-                .enrollments(enrollments)
+                .enrollments(null)
+                .build();
+    }
+    public static Enrollment returnDummyEnrollment(User enrolledBy){
+        return Enrollment.builder()
+                .date(LocalDateTime.now())
+                .accepted(true)
+                .gathering(null)
+                .enrolledBy(enrolledBy)
                 .build();
     }
     public static Category returnDummyCategory(int i){
@@ -49,20 +60,12 @@ public class DummyData {
                 .name(String.format("category%d",i))
                 .build();
     }
-    public static GatheringCount returnDummyGatheringCount(int i){
+    public static GatheringCount returnDummyGatheringCount(){
         return GatheringCount.builder()
-                .count(i)
+                .count(1)
                 .build();
     }
-    public static Enrollment returnDummyEnrollment(Gathering gathering,User enrolledBy){
-        return Enrollment.builder()
-                .date(LocalDateTime.now())
-                .accepted(true)
-                .gathering(gathering)
-                .enrolledBy(enrolledBy)
-                .build();
-    }
-    public static Meeting returnDummyMeeting(int i, User createdBy, List<Attend> attends, Gathering gathering){
+    public static Meeting returnDummyMeeting(int i, User createdBy, Gathering gathering){
         return Meeting.builder()
                 .boardDate(LocalDateTime.now())
                 .startDate(LocalDateTime.now())
@@ -70,10 +73,37 @@ public class DummyData {
                 .title(String.format("title%d",i))
                 .content(String.format("content%d",i))
                 .createdBy(createdBy)
-                .attends(attends)
+                .attends(null)
                 .gathering(gathering)
                 .build();
     }
-    public static Attend returnDummyAttend()
+    public static Attend returnDummyAttend(User attendBy){
+        return Attend.builder()
+                .accepted(false)
+                .meeting(null)
+                .attendBy(attendBy)
+                .date(LocalDateTime.now())
+                .build();
+    }
+    public static Alarm returnDummyAlarm(int i, User user){
+        return Alarm.builder()
+                .user(user)
+                .checked(false)
+                .content(String.format("content%d",i))
+                .date(LocalDateTime.now())
+                .build();
+    }
+    public static Recommend returnRecommend(Gathering gathering){
+        return Recommend.builder()
+                .count(1L)
+                .gathering(gathering)
+                .build();
+    }
+    public static Like returnLike(User likedBy, Gathering gathering){
+        return Like.builder()
+                .likedBy(likedBy)
+                .gathering(gathering)
+                .build();
+    }
 
 }
