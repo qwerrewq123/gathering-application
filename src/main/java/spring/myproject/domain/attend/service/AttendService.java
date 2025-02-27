@@ -13,7 +13,7 @@ import spring.myproject.domain.user.repository.UserRepository;
 import spring.myproject.domain.attend.dto.response.AddAttendResponse;
 import spring.myproject.domain.attend.dto.response.DisAttendResponse;
 import spring.myproject.domain.attend.dto.response.PermitAttendResponse;
-import spring.myproject.domain.meeting.exception.NotFoundMeeting;
+import spring.myproject.domain.meeting.exception.NotFoundMeetingExeption;
 import spring.myproject.domain.user.exception.NotFoundUserException;
 
 import java.time.LocalDateTime;
@@ -31,7 +31,7 @@ public class AttendService {
     public AddAttendResponse addAttend(Long meetingId, String username) {
 
             User user = userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
-            Meeting meeting = meetingRepository.findById(meetingId).orElseThrow(()->new NotFoundMeeting("no exist Meeting!!"));
+            Meeting meeting = meetingRepository.findById(meetingId).orElseThrow(()->new NotFoundMeetingExeption("no exist Meeting!!"));
             if(meeting.getCreatedBy().getId()  == meetingId) throw new AutoAttendException("Meeting Opener auto attend");
             Attend checkAttend = attendRepository.findByUserIdAndMeetingId(user.getId(),meetingId);
             if(checkAttend != null) throw new AlreadyAttendExeption("Meeting already attend");
@@ -43,7 +43,7 @@ public class AttendService {
     public DisAttendResponse disAttend(Long meetingId, Long attendId, String username) {
 
             userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
-            Meeting meeting = meetingRepository.findById(meetingId).orElseThrow(()->new NotFoundMeeting("no exist Meeting!!"));
+            Meeting meeting = meetingRepository.findById(meetingId).orElseThrow(()->new NotFoundMeetingExeption("no exist Meeting!!"));
             Attend attend = attendRepository.findById(attendId).orElseThrow(() -> {
                 throw new AlreadyAttendExeption("Already Attend Meeting!!");
             });
@@ -57,7 +57,7 @@ public class AttendService {
     public PermitAttendResponse permitAttend(Long meetingId, Long attendId, String username) {
 
             userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
-            Meeting meeting = meetingRepository.findById(meetingId).orElseThrow(()->new NotFoundMeeting("no exist Meeting!!"));
+            Meeting meeting = meetingRepository.findById(meetingId).orElseThrow(()->new NotFoundMeetingExeption("no exist Meeting!!"));
             Attend attend = attendRepository.findById(attendId).orElseThrow(() -> new NotFoundAttend("no exist Attend!!"));
             if(attend.getAccepted() == true) throw new AlreadyAttendExeption("already attend!!");
             if(meeting.getCreatedBy().getId()  == meetingId) throw new AlwaysPermitException("opener always permitted");

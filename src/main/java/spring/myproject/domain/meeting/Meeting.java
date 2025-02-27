@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import spring.myproject.domain.attend.Attend;
 import spring.myproject.domain.gathering.Gathering;
+import spring.myproject.domain.image.Image;
 import spring.myproject.domain.user.User;
 
 import java.time.LocalDateTime;
@@ -33,6 +34,9 @@ public class Meeting {
     private List<Attend> attends = new ArrayList<>();
     @ManyToOne(fetch = FetchType.LAZY)
     private Gathering gathering;
+    @OneToOne
+    @JoinColumn(name = "meeting_image")
+    private Image image;
 
     public void attend(List<Attend> attends){
         for (Attend attend : attends) {

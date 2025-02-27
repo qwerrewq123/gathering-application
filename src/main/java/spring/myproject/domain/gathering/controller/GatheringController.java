@@ -60,6 +60,7 @@ public class GatheringController {
         return new ResponseEntity<>(gatheringPagingResponse, HttpStatus.OK);
     }
 
+
     @GetMapping("/gatherings/like")
     public ResponseEntity<GatheringPagingResponse> gatheringsLike(@RequestParam int pageNum,
                                                  @AuthenticationPrincipal String username){

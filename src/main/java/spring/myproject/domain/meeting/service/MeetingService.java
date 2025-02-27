@@ -19,7 +19,7 @@ import spring.myproject.domain.meeting.dto.request.UpdateMeetingRequest;
 import spring.myproject.domain.gathering.exception.NotFoundGatheringException;
 import spring.myproject.domain.meeting.exception.MeetingIsNotEmptyException;
 import spring.myproject.domain.meeting.exception.NotAuthorizeException;
-import spring.myproject.domain.meeting.exception.NotFoundMeeting;
+import spring.myproject.domain.meeting.exception.NotFoundMeetingExeption;
 import spring.myproject.domain.user.exception.NotFoundUserException;
 
 import java.time.LocalDateTime;
@@ -61,7 +61,7 @@ public class MeetingService {
     public DeleteMeetingResponse deleteMeeting(String username, Long meetingId) {
 
             User user = userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
-            Meeting meeting = meetingRepository.findById(meetingId).orElseThrow(()->new NotFoundMeeting("no exist Meeting!!"));
+            Meeting meeting = meetingRepository.findById(meetingId).orElseThrow(()->new NotFoundMeetingExeption("no exist Meeting!!"));
             boolean authorize = meeting.getCreatedBy().getId() == user.getId();
             if(authorize == false){
                 throw new NotAuthorizeException("no authority!");
@@ -79,7 +79,7 @@ public class MeetingService {
     public UpdateMeetingResponse updateMeeting(UpdateMeetingRequest updateMeetingRequest, String username, Long meetingId) {
 
             User user = userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
-            Meeting meeting = meetingRepository.findById(meetingId).orElseThrow(()->new NotFoundMeeting("no exist Meeting!!"));
+            Meeting meeting = meetingRepository.findById(meetingId).orElseThrow(()->new NotFoundMeetingExeption("no exist Meeting!!"));
             boolean authorize = meeting.getCreatedBy().getId() == user.getId();
             if(authorize == false){
                 throw new NotAuthorizeException("no authority!");
@@ -98,7 +98,7 @@ public class MeetingService {
         User user = userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
         List<MeetingQueryResponse> meetingQueryResponses = meetingRepository.findAttendsBy(meetingId);
         if(meetingQueryResponses.size() == 0){
-            throw new NotFoundMeeting("no exist Meeting!!");
+            throw new NotFoundMeetingExeption("no exist Meeting!!");
         }
         return MeetingResponse.builder()
                 .code("SU")

@@ -19,7 +19,9 @@ public interface GatheringRepository extends JpaRepository<Gathering,Long> {
             "left join  g.createBy cr " +
             "left join  g.gatheringImage im " +
             "left join  g.gatheringCount gc " +
-            "where g.title like %:title%")
+            "where g.title like concat('%', :title, '%')" +
+            "group by ca.name"
+            )
     Page<GatheringPagingQueryDto> findPaging(Pageable pageable, String title);
 
     @Query("select new spring.myproject.domain.gathering.dto.response." +

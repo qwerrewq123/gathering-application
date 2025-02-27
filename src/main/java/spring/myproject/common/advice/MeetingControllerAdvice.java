@@ -9,7 +9,7 @@ import spring.myproject.domain.gathering.exception.NotFoundGatheringException;
 import spring.myproject.domain.meeting.controller.MeetingController;
 import spring.myproject.domain.meeting.exception.MeetingIsNotEmptyException;
 import spring.myproject.domain.meeting.exception.NotAuthorizeException;
-import spring.myproject.domain.meeting.exception.NotFoundMeeting;
+import spring.myproject.domain.meeting.exception.NotFoundMeetingExeption;
 import spring.myproject.domain.user.exception.NotFoundUserException;
 import spring.myproject.util.AbstractErrorResponse;
 
@@ -29,7 +29,7 @@ public class MeetingControllerAdvice {
                 AbstractErrorResponse.getErrorResponse(NOT_FOUND_GATHERING_CODE, NOT_FOUND_GATHERING_MESSAGE)
                 , HttpStatus.BAD_REQUEST);
     }
-    @ExceptionHandler(NotFoundMeeting.class)
+    @ExceptionHandler(NotFoundMeetingExeption.class)
     ResponseEntity<ErrorResponse> handleNotFoundMeetingException(){
         return new ResponseEntity<>(
                 AbstractErrorResponse.getErrorResponse(NOT_FOUND_MEETING_CODE, NOT_FOUND_MEETING_MESSAGE)

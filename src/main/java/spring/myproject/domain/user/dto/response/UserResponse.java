@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import spring.myproject.domain.user.User;
 
 @Data
 @Builder
@@ -19,4 +20,15 @@ public class UserResponse {
     private String hobby;
     private String image;
 
+    public static UserResponse of(User user){
+        return UserResponse.builder()
+                .username(user.getUsername())
+                .password(user.getPassword())
+                .email(user.getEmail())
+                .address(user.getAddress())
+                .age(user.getAge())
+                .hobby(user.getHobby())
+                .image(user.getProfileImage().getUrl())
+                .build();
+    }
 }

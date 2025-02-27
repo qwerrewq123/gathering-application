@@ -41,6 +41,12 @@ public class UserController {
         SignUpResponse signUpResponse = userService.signUp(userRequest, file);
         return new ResponseEntity<>(signUpResponse, HttpStatus.OK);
     }
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<UserResponse> fetchUser(@PathVariable("userId") Long userId) {
+        UserResponse userResponse = userService.fetchUser(userId);
+        return new ResponseEntity<>(userResponse, HttpStatus.OK);
+
+    }
 
     @PostMapping("/auth/sign-in")
     public ResponseEntity<SignInResponse> signIn(@RequestBody SignInRequest signInRequest, HttpSession session) {

@@ -13,16 +13,13 @@ import org.springframework.web.multipart.MultipartFile;
 import spring.myproject.domain.image.Image;
 import spring.myproject.domain.image.repository.ImageRepository;
 import spring.myproject.domain.user.User;
+import spring.myproject.domain.user.dto.response.*;
 import spring.myproject.domain.user.exception.*;
 import spring.myproject.domain.user.repository.UserRepository;
 import spring.myproject.domain.user.dto.request.EmailCertificationRequest;
 import spring.myproject.domain.user.dto.request.IdCheckRequest;
 import spring.myproject.domain.user.dto.request.SignInRequest;
 import spring.myproject.domain.user.dto.request.UserRequest;
-import spring.myproject.domain.user.dto.response.EmailCertificationResponse;
-import spring.myproject.domain.user.dto.response.IdCheckResponse;
-import spring.myproject.domain.user.dto.response.SignInResponse;
-import spring.myproject.domain.user.dto.response.SignUpResponse;
 import spring.myproject.provider.EmailProvider;
 import spring.myproject.provider.JwtProvider;
 import spring.myproject.s3.S3ImageUploadService;
@@ -119,5 +116,10 @@ public class UserService {
     private String certificationNumber(){
         int number = (int) (Math.random() * 9000) + 1000;
         return String.valueOf(number);
+    }
+
+    public UserResponse fetchUser(Long userId) {
+        User foundUser = userRepository.findById(userId).orElseThrow(() -> new NotFoundUserException("not Found User"));
+        return UserResponse.of(foundUser);
     }
 }

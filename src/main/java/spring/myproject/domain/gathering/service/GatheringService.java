@@ -95,7 +95,7 @@ public class GatheringService {
 
     public GatheringPagingResponse gatherings(int pageNum, String username, String title) {
 
-            PageRequest pageRequest = PageRequest.of(pageNum - 1, 10, Sort.Direction.ASC,"id");
+            PageRequest pageRequest = PageRequest.of(pageNum - 1, 8, Sort.Direction.ASC,"id");
             Page<GatheringPagingQueryDto> gatheringPage = gatheringRepository.findPaging(pageRequest, title);
             Page<GatheringElement> gatheringElementPage = gatheringPage.map(
                     g -> {

@@ -4,11 +4,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import spring.myproject.domain.alarm.exception.NotFoundAlarmException;
 import spring.myproject.domain.attend.controller.AttendController;
 import spring.myproject.domain.attend.exception.*;
 import spring.myproject.domain.error.dto.response.ErrorResponse;
-import spring.myproject.domain.meeting.exception.NotFoundMeeting;
+import spring.myproject.domain.meeting.exception.NotFoundMeetingExeption;
 import spring.myproject.domain.user.exception.NotFoundUserException;
 import spring.myproject.util.AbstractErrorResponse;
 
@@ -24,7 +23,7 @@ public class AttendControllerAdvice {
                 AbstractErrorResponse.getErrorResponse(NOT_FOUND_USER_CODE, NOT_FOUND_USER_MESSAGE)
                 , HttpStatus.BAD_REQUEST);
     }
-    @ExceptionHandler(NotFoundMeeting.class)
+    @ExceptionHandler(NotFoundMeetingExeption.class)
     ResponseEntity<ErrorResponse> handleNotFoundMeetingException(){
         return new ResponseEntity<>(
                 AbstractErrorResponse.getErrorResponse(NOT_FOUND_MEETING_CODE, NOT_FOUND_ENROLLMENT_MESSAGE)
