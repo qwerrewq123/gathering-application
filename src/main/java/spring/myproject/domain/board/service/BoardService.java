@@ -9,24 +9,26 @@ import org.springframework.web.multipart.MultipartFile;
 import spring.myproject.domain.board.Board;
 import spring.myproject.domain.board.dto.request.AddBoardRequest;
 import spring.myproject.domain.board.dto.response.AddBoardResponse;
-import spring.myproject.domain.board.dto.response.FetchBoardResponse;
-import spring.myproject.domain.board.dto.response.FetchBoardsResponse;
-import spring.myproject.domain.board.dto.response.QueryBoardDto;
+import spring.myproject.domain.board.dto.response.BoardResponse;
+import spring.myproject.domain.board.dto.response.BoardsResponse;
+import spring.myproject.domain.board.dto.response.BoardsQuery;
 import spring.myproject.domain.board.exception.NotFoundBoardException;
 import spring.myproject.domain.board.repository.BoardRepository;
+import spring.myproject.domain.enrollment.repository.EnrollmentRepository;
+import spring.myproject.domain.gathering.Gathering;
+import spring.myproject.domain.gathering.exception.NotFoundGatheringException;
+import spring.myproject.domain.gathering.repository.GatheringRepository;
 import spring.myproject.domain.image.Image;
 import spring.myproject.domain.image.repository.ImageRepository;
-import spring.myproject.domain.meeting.Meeting;
 import spring.myproject.domain.meeting.exception.NotAuthorizeException;
-import spring.myproject.domain.meeting.exception.NotFoundMeetingExeption;
-import spring.myproject.domain.meeting.repository.MeetingRepository;
 import spring.myproject.domain.user.User;
 import spring.myproject.domain.user.exception.NotFoundUserException;
 import spring.myproject.domain.user.repository.UserRepository;
-import spring.myproject.s3.S3ImageDownloadService;
 import spring.myproject.s3.S3ImageUploadService;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import static spring.myproject.util.ConstClass.*;
 
@@ -36,42 +38,49 @@ public class BoardService {
 
     private final BoardRepository boardRepository;
     private final UserRepository userRepository;
-    private final MeetingRepository meetingRepository;
     private final S3ImageUploadService s3ImageUploadService;
-    private final S3ImageDownloadService s3ImageDownloadService;
+    private final GatheringRepository gatheringRepository;
+    private final EnrollmentRepository enrollmentRepository;
     private final ImageRepository imageRepository;
 
-    public FetchBoardResponse fetchBoard(Long boardId, String username) {
-        User user = userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
+    public BoardResponse fetchBoard(Long gatheringId, Long boardId, String username) {
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new NotFoundUserException("no exist User!!"));
+        Gathering gathering = gatheringRepository.findById(gatheringId).orElseThrow(() -> new NotFoundGatheringException("no exist Gathering!!"));
+        if(enrollmentRepository.findByGatheringAndEnrolledBy(gathering,user).isEmpty()){
+            throw new NotAuthorizeException("no Authorize to add board");
+        }
         Board fetchBoard = boardRepository.fetchBoard(boardId).orElseThrow(()-> new NotFoundBoardException("no found Board!!"));
-        FetchBoardResponse fetchBoardResponse = FetchBoardResponse.of(fetchBoard,SUCCESS_CODE,SUCCESS_MESSAGE);
+        BoardResponse fetchBoardResponse = BoardResponse.of(fetchBoard,SUCCESS_CODE,SUCCESS_MESSAGE);
         return fetchBoardResponse;
     }
 
-    public AddBoardResponse addBoard(String username, AddBoardRequest addBoardRequest, MultipartFile file,Long meetingId) throws IOException {
+    public AddBoardResponse addBoard(String username, AddBoardRequest addBoardRequest, List<MultipartFile> files, Long gatheringId) throws IOException {
         User user = userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
-        Meeting meeting = meetingRepository.findById(meetingId).orElseThrow(() -> new NotFoundMeetingExeption("no exist Meeting!!"));
-        if(!meeting.getAttends().contains(user)){
+        Gathering gathering = gatheringRepository.findById(gatheringId).orElseThrow(() -> new NotFoundGatheringException("no exist Gathering!!"));
+        if(enrollmentRepository.findByGatheringAndEnrolledBy(gathering,user).isEmpty()){
             throw new NotAuthorizeException("no Authorize to add board");
         }
-        Image image = null;
-        if(!file.isEmpty()){
-            String url = s3ImageUploadService.upload(file);
-            if(StringUtils.hasText(url)){
-                image = Image.builder()
-                        .url(url)
-                        .build();
+        List<Image> images = new ArrayList<>();
+        for(MultipartFile file : files){
+            if(!file.isEmpty()){
+                String url = s3ImageUploadService.upload(file);
+                if(StringUtils.hasText(url)){
+                    Image image = Image.builder()
+                            .url(url)
+                            .build();
+                    images.add(image);
+                }
             }
         }
-        imageRepository.save(image);
-        Board board = AddBoardRequest.of(addBoardRequest,user,meeting);
+        imageRepository.saveAll(images);
+        Board board = AddBoardRequest.of(addBoardRequest,user,gathering);
         boardRepository.save(board);
         return AddBoardResponse.of(SUCCESS_CODE, SUCCESS_MESSAGE);
     }
 
-    public FetchBoardsResponse fetchBoards(String username,Integer pageNum) {
-        PageRequest pageRequest = PageRequest.of(pageNum, 5);
-        Page<QueryBoardDto> page = boardRepository.fetchBoards(pageRequest);
-        return FetchBoardsResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE,page);
+    public BoardsResponse fetchBoards(Long gatheringId, String username, Integer pageNum, Integer pageSize) {
+        PageRequest pageRequest = PageRequest.of(pageNum, pageSize);
+        Page<BoardsQuery> page = boardRepository.fetchBoards(pageRequest);
+        return BoardsResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE,page);
     }
 }

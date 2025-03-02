@@ -15,20 +15,17 @@ import spring.myproject.domain.category.repository.CategoryRepository;
 import spring.myproject.domain.enrollment.Enrollment;
 import spring.myproject.domain.enrollment.repository.EnrollmentRepository;
 import spring.myproject.domain.gathering.Gathering;
-import spring.myproject.domain.gathering.GatheringCount;
-import spring.myproject.domain.gathering.repository.GatheringCountRepository;
 import spring.myproject.domain.gathering.repository.GatheringRepository;
 import spring.myproject.domain.image.Image;
 import spring.myproject.domain.image.repository.ImageRepository;
 import spring.myproject.domain.meeting.Meeting;
-import spring.myproject.domain.meeting.dto.response.MeetingQueryListResponse;
-import spring.myproject.domain.meeting.dto.response.MeetingQueryResponse;
+import spring.myproject.domain.meeting.dto.response.MeetingsQuery;
+import spring.myproject.domain.meeting.dto.response.MeetingDetailQuery;
 import spring.myproject.domain.user.User;
 import spring.myproject.domain.user.repository.UserRepository;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static spring.myproject.util.DummyData.*;
 import static spring.myproject.util.DummyData.returnDummyEnrollment;
 
@@ -40,8 +37,6 @@ class MeetingRepositoryTest {
     ImageRepository imageRepository;
     @Autowired
     UserRepository userRepository;
-    @Autowired
-    GatheringCountRepository gatheringCountRepository;
     @Autowired
     GatheringRepository gatheringRepository;
     @Autowired
@@ -83,7 +78,7 @@ class MeetingRepositoryTest {
         attendRepository.saveAll(List.of(attend1,attend2));
         em.flush();
 
-        List<MeetingQueryResponse> attendsBy = meetingRepository.findAttendsBy(meeting.getId());
+        List<MeetingDetailQuery> attendsBy = meetingRepository.findAttendsBy(meeting.getId());
 
         Assertions.assertThat(attendsBy.size()).isEqualTo(2 );
     }
@@ -112,7 +107,7 @@ class MeetingRepositoryTest {
         meetingRepository.saveAll(List.of(meeting1,meeting2,meeting3));
         em.flush();
 
-        Page<MeetingQueryListResponse> page = meetingRepository.meetings(PageRequest.of(0, 10), "title");
+        Page<MeetingsQuery> page = meetingRepository.meetings(PageRequest.of(0, 10), "title");
 
         Assertions.assertThat(page.getTotalElements()).isEqualTo(3);
     }

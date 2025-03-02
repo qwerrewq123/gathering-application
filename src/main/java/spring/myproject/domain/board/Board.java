@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import spring.myproject.domain.gathering.Gathering;
 import spring.myproject.domain.image.Image;
 import spring.myproject.domain.meeting.Meeting;
 import spring.myproject.domain.user.User;
@@ -24,12 +25,11 @@ public class Board {
     @JoinColumn(name = "user_id")
     User user;
     @OneToOne
-    @JoinColumn(name = "meeting_id")
-    Meeting meeting;
-    @OneToOne
-    @JoinColumn(name = "Image_url")
-    Image image;
+    @JoinColumn(name = "gathering_id")
+    Gathering gathering;
+
     private String title;
+    private String content;
     private String description;
     private LocalDateTime registerDate;
 }

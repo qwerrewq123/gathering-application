@@ -37,6 +37,7 @@ public class Meeting {
     @OneToOne
     @JoinColumn(name = "meeting_image")
     private Image image;
+    private int count;
 
     public void attend(List<Attend> attends){
         for (Attend attend : attends) {

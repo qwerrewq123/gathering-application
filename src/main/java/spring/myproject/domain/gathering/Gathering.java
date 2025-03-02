@@ -6,7 +6,6 @@ import spring.myproject.domain.category.Category;
 import spring.myproject.domain.enrollment.Enrollment;
 import spring.myproject.domain.gathering.dto.request.AddGatheringRequest;
 import spring.myproject.domain.gathering.dto.request.UpdateGatheringRequest;
-import spring.myproject.domain.gathering.dto.response.GatheringElement;
 import spring.myproject.domain.image.Image;
 import spring.myproject.domain.user.User;
 
@@ -35,14 +34,11 @@ public class Gathering {
     @JoinColumn(name = "user_id")
     private User createBy;
 
+    private int count;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "image_id")
     private Image gatheringImage;
-
-    @OneToOne(fetch = FetchType.LAZY,optional = false)
-    @JoinColumn(name = "gathering_id")
-    private GatheringCount gatheringCount;
 
     @OneToMany(mappedBy = "gathering")
     List<Enrollment> enrollments = new ArrayList<>();
@@ -63,6 +59,7 @@ public class Gathering {
                 .category(category)
                 .registerDate(LocalDateTime.now())
                 .gatheringImage(image)
+                .count(1)
                 .build();
     }
     public void enroll(List<Enrollment> enrollments){

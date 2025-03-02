@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class GatheringQueryDto {
+public class GatheringsQuery {
 
     private Long id;
     private String title;
@@ -19,7 +19,6 @@ public class GatheringQueryDto {
     private LocalDateTime registerDate;
     private String category;
     private String createdBy;
-    private String participatedBy;
     private String url;
-    private Integer count;
+    private int count;
 }

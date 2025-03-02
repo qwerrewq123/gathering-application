@@ -3,6 +3,8 @@ package spring.myproject.domain.enrollment.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import spring.myproject.domain.enrollment.Enrollment;
+import spring.myproject.domain.gathering.Gathering;
+import spring.myproject.domain.user.User;
 
 import java.util.Optional;
 
@@ -17,4 +19,5 @@ public interface EnrollmentRepository extends JpaRepository<Enrollment,Long> {
     Optional<Enrollment> findEnrollment(Long gatheringId, Long userId);
 
 
+    Optional<Enrollment> findByGatheringAndEnrolledBy(Gathering gathering, User enrolledBy);
 }

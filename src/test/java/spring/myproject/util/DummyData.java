@@ -5,7 +5,6 @@ import spring.myproject.domain.attend.Attend;
 import spring.myproject.domain.category.Category;
 import spring.myproject.domain.enrollment.Enrollment;
 import spring.myproject.domain.gathering.Gathering;
-import spring.myproject.domain.gathering.GatheringCount;
 import spring.myproject.domain.image.Image;
 import spring.myproject.domain.like.Like;
 import spring.myproject.domain.meeting.Meeting;
@@ -13,7 +12,6 @@ import spring.myproject.domain.recommend.Recommend;
 import spring.myproject.domain.user.User;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 public class DummyData {
 

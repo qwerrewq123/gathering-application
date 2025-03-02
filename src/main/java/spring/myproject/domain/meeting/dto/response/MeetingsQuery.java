@@ -1,4 +1,4 @@
-package spring.myproject.domain.gathering.dto.response;
+package spring.myproject.domain.meeting.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
@@ -11,14 +11,14 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class GatheringElement {
+public class MeetingsQuery {
 
     private Long id;
     private String title;
-    private String content;
-    private LocalDateTime registerDate;
-    private String category;
     private String createdBy;
-    private String image;
+    private LocalDateTime boardDate;
+    private LocalDateTime startDate;
+    private LocalDateTime endDate;
+    private String content;
     private int count;
 }

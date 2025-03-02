@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import spring.myproject.domain.board.Board;
+import spring.myproject.domain.gathering.Gathering;
 import spring.myproject.domain.meeting.Meeting;
 import spring.myproject.domain.user.User;
 
@@ -19,12 +20,12 @@ public class AddBoardRequest {
     private String title;
     private String description;
 
-    public static Board of(AddBoardRequest addBoardRequest, User user, Meeting meeting) {
+    public static Board of(AddBoardRequest addBoardRequest, User user, Gathering gathering) {
         return Board.builder()
                 .title(addBoardRequest.getTitle())
                 .description(addBoardRequest.getDescription())
                 .user(user)
-                .meeting(meeting)
+                .gathering(gathering)
                 .registerDate(LocalDateTime.now())
                 .build();
     }

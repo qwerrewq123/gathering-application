@@ -5,20 +5,12 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import spring.myproject.domain.attend.Attend;
-import spring.myproject.domain.attend.repository.AttendRepository;
 import spring.myproject.domain.category.Category;
 import spring.myproject.domain.category.repository.CategoryRepository;
-import spring.myproject.domain.enrollment.Enrollment;
-import spring.myproject.domain.enrollment.repository.EnrollmentRepository;
 import spring.myproject.domain.gathering.Gathering;
-import spring.myproject.domain.gathering.GatheringCount;
-import spring.myproject.domain.gathering.repository.GatheringCountRepository;
 import spring.myproject.domain.gathering.repository.GatheringRepository;
 import spring.myproject.domain.image.Image;
 import spring.myproject.domain.image.repository.ImageRepository;
-import spring.myproject.domain.meeting.Meeting;
-import spring.myproject.domain.meeting.repository.MeetingRepository;
 import spring.myproject.domain.recommend.Recommend;
 import spring.myproject.domain.recommend.repository.RecommendRepository;
 import spring.myproject.domain.user.User;
@@ -27,7 +19,6 @@ import spring.myproject.domain.user.repository.UserRepository;
 import java.util.List;
 
 import static spring.myproject.util.DummyData.*;
-import static spring.myproject.util.DummyData.returnDummyAttend;
 
 @SpringBootTest
 public class RecommendRepositoryTest {

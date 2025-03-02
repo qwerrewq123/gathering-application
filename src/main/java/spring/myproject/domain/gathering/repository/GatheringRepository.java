@@ -1,63 +1,65 @@
 package spring.myproject.domain.gathering.repository;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import spring.myproject.domain.gathering.Gathering;
-import spring.myproject.domain.gathering.dto.response.GatheringPagingQueryDto;
-import spring.myproject.domain.gathering.dto.response.GatheringQueryDto;
+import spring.myproject.domain.gathering.dto.response.GatheringsQuery;
+import spring.myproject.domain.gathering.dto.response.GatheringDetailQuery;
 
 import java.util.List;
 
 public interface GatheringRepository extends JpaRepository<Gathering,Long> {
-
-    @Query("select new spring.myproject.domain.gathering.dto.response." +
-            "GatheringPagingQueryDto(g.id,g.title,g.content,g.registerDate,ca.name,cr.username,im.url,gc.count) " +
-            "from Gathering  g " +
-            "left join  g.category ca " +
-            "left join  g.createBy cr " +
-            "left join  g.gatheringImage im " +
-            "left join  g.gatheringCount gc " +
-            "where g.title like concat('%', :title, '%')" +
-            "group by ca.name"
-            )
-    Page<GatheringPagingQueryDto> findPaging(Pageable pageable, String title);
-
-    @Query("select new spring.myproject.domain.gathering.dto.response." +
-            "GatheringPagingQueryDto(g.id,g.title,g.content,g.registerDate,ca.name,cr.username,im.url,gc.count) " +
-            "from Like l  " +
-            "join l.gathering g " +
-            "left join g.category ca " +
-            "left join g.createBy cr " +
-            "left join g.gatheringImage im " +
-            "left join g.gatheringCount gc " +
-            "where l.likedBy.id = :userId")
-    Page<GatheringPagingQueryDto> findLikePaging(Pageable pageable, Long userId);
-
-    @Query("select new spring.myproject.domain.gathering.dto.response." +
-            "GatheringQueryDto(g.id,g.title,g.content,g.registerDate,ca.name,cr.username,u.username,im.url,gc.count) " +
-            "from Recommend r " +
-            "join r.gathering g " +
-            "left join Enrollment e on e.gathering.id = g.id left join User u on u.id = e.enrolledBy.id " +
-            "join g.category ca " +
-            "join g.createBy cr " +
-            "join g.gatheringImage im " +
-            "join g.gatheringCount gc")
-    List<GatheringQueryDto> findRecommendPaging();
-
     @Query("select " +
             "new spring.myproject.domain.gathering.dto.response." +
-            "GatheringQueryDto(g.id,g.title,g.content,g.registerDate,ca.name,cr.username,u.username,im.url,gc.count) " +
+            "GatheringDetailQuery(g.id,g.title,g.content,g.registerDate,ca.name,cr.username,u.username,im.url,g.count) " +
             "from Gathering g " +
             "left join g.enrollments e " +
             "left join e.enrolledBy u " +
             "left join g.createBy cr " +
             "left join g.category ca " +
             "left join g.gatheringImage im " +
-            "left join g.gatheringCount gc " +
             "where g.id = :gatheringId")
-    List<GatheringQueryDto> findGatheringAndCount(Long gatheringId);
+    List<GatheringDetailQuery> gatheringDetail(Long gatheringId);
 
 
+    @Query("select new spring.myproject.domain.gathering.dto.response." +
+            "GatheringsQuery(g.id,g.title,g.content,g.registerDate,ca.name,cr.username,im.url,g.count) " +
+            "from Gathering  g " +
+            "left join  g.category ca " +
+            "left join  g.createBy cr " +
+            "left join  g.gatheringImage im " +
+            "where g.title like concat('%', :title, '%')")
+    Page<GatheringsQuery> gatherings(Pageable pageable, String title);
+
+    @Query("select new spring.myproject.domain.gathering.dto.response." +
+            "GatheringsQuery(g.id,g.title,g.content,g.registerDate,ca.name,cr.username,im.url,g.count) " +
+            "from Like l  " +
+            "join l.gathering g " +
+            "left join g.category ca " +
+            "left join g.createBy cr " +
+            "left join g.gatheringImage im " +
+            "where l.likedBy.id = :userId")
+    Page<GatheringsQuery> gatheringsLike(Pageable pageable, Long userId);
+
+    @Query("select new spring.myproject.domain.gathering.dto.response." +
+            "GatheringsQuery(g.id,g.title,g.content,g.registerDate,ca.name,cr.username,im.url,g.count) " +
+            "from Recommend r " +
+            "join r.gathering g " +
+            "join g.category ca " +
+            "join g.createBy cr " +
+            "left join g.gatheringImage im")
+    List<GatheringDetailQuery> gatherinsRecommend();
+
+    @Query("select new spring.myproject.domain.gathering.dto.response." +
+            "GatheringsQuery(g.id,g.title,g.content,g.registerDate,ca.name,cr.username,im.url,g.count) " +
+            "from Gathering  g " +
+            "left join  g.category ca " +
+            "left join  g.createBy cr " +
+            "left join  g.gatheringImage im " +
+            "where ca.name =:category"
+    )
+    Page<GatheringsQuery> gatheringsCategory(PageRequest pageRequest, String category);
 }

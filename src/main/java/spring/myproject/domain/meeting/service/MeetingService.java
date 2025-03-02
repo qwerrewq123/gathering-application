@@ -7,6 +7,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+import spring.myproject.domain.attend.Attend;
+import spring.myproject.domain.attend.repository.AttendRepository;
 import spring.myproject.domain.gathering.Gathering;
 import spring.myproject.domain.gathering.repository.GatheringRepository;
 import spring.myproject.domain.meeting.Meeting;
@@ -37,7 +39,7 @@ public class MeetingService {
     private final UserRepository userRepository;
     private final MeetingRepository meetingRepository;
     private final GatheringRepository gatheringRepository;
-
+    private final AttendRepository attendRepository;
     public AddMeetingResponse addMeeting(AddMeetingRequest addMeetingRequest, String username, Long gatheringId) {
 
             User user = userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
@@ -50,9 +52,15 @@ public class MeetingService {
                     .startDate(addMeetingRequest.getStartDate())
                     .endDate(addMeetingRequest.getEndDate())
                     .gathering(gathering)
+                    .count(1)
                     .build();
-            meetingRepository.save(meeting);
-            return AddMeetingResponse.builder()
+        Attend attend = Attend.builder()
+                .meeting(meeting)
+                .accepted(true)
+                .attendBy(user).build();
+        meetingRepository.save(meeting);
+        attendRepository.save(attend);
+        return AddMeetingResponse.builder()
                     .code(SUCCESS_CODE)
                     .message(SUCCESS_MESSAGE)
                     .build();
@@ -88,6 +96,7 @@ public class MeetingService {
             meeting.setContent(updateMeetingRequest.getContent());
             meeting.setStartDate(updateMeetingRequest.getStartDate());
             meeting.setEndDate(updateMeetingRequest.getEndDate());
+            meeting.setBoardDate(LocalDateTime.now());
             return UpdateMeetingResponse.builder()
                     .code(SUCCESS_CODE)
                     .message(SUCCESS_MESSAGE)
@@ -95,41 +104,41 @@ public class MeetingService {
     }
     public MeetingResponse meetingDetail(Long meetingId, String username) {
 
-        User user = userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
-        List<MeetingQueryResponse> meetingQueryResponses = meetingRepository.findAttendsBy(meetingId);
-        if(meetingQueryResponses.size() == 0){
+        userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
+        List<MeetingDetailQuery> meetingDetailQueries = meetingRepository.meetingDetail(meetingId);
+        if(meetingDetailQueries.size() == 0){
             throw new NotFoundMeetingExeption("no exist Meeting!!");
         }
         return MeetingResponse.builder()
                 .code("SU")
                 .message("Success")
-                .id(meetingQueryResponses.getLast().getId())
-                .title(meetingQueryResponses.getFirst().getTitle())
-                .content(meetingQueryResponses.getFirst().getContent())
-                .boardDate(meetingQueryResponses.getFirst().getBoardDate())
-                .startDate(meetingQueryResponses.getFirst().getStartDate())
-                .endDate(meetingQueryResponses.getFirst().getEndDate())
-                .createdBy(meetingQueryResponses.getFirst().getCreatedBy())
-                .attendedBy(attendedBy(meetingQueryResponses))
+                .id(meetingDetailQueries.getLast().getId())
+                .title(meetingDetailQueries.getFirst().getTitle())
+                .content(meetingDetailQueries.getFirst().getContent())
+                .boardDate(meetingDetailQueries.getFirst().getBoardDate())
+                .startDate(meetingDetailQueries.getFirst().getStartDate())
+                .endDate(meetingDetailQueries.getFirst().getEndDate())
+                .createdBy(meetingDetailQueries.getFirst().getCreatedBy())
+                .attendedBy(attendedBy(meetingDetailQueries))
                 .build();
     }
 
-    public MeetingListResponse meetings(int pageNum, String username, String title) {
+    public MeetingsResponse meetings(int pageNum, int pageSize, String username, String title) {
 
-        User user = userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
-            PageRequest pageRequest = PageRequest.of(pageNum - 1, 10, Sort.Direction.ASC,"id");
-            Page<MeetingQueryListResponse> page = meetingRepository.meetings(pageRequest,title);
-            return MeetingListResponse.builder()
+            userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
+            PageRequest pageRequest = PageRequest.of(pageNum - 1, pageSize, Sort.Direction.ASC,"id");
+            Page<MeetingsQuery> page = meetingRepository.meetings(pageRequest,title);
+            return MeetingsResponse.builder()
                     .code(SUCCESS_CODE)
                     .message(SUCCESS_MESSAGE)
                     .page(page)
                     .build();
     }
 
-    private List<String> attendedBy(List<MeetingQueryResponse> meetingQueryResponses){
+    private List<String> attendedBy(List<MeetingDetailQuery> meetingDetailQueries){
 
         List<String> attendedBy = new ArrayList<>();
-        for (MeetingQueryResponse meetingQueryResponse : meetingQueryResponses) {
+        for (MeetingDetailQuery meetingQueryResponse : meetingDetailQueries) {
             if(StringUtils.hasText(meetingQueryResponse.getAttendedBy())){
                 attendedBy.add(meetingQueryResponse.getAttendedBy());
             }

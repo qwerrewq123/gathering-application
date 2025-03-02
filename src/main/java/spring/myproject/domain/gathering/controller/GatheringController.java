@@ -41,9 +41,6 @@ public class GatheringController {
         return new ResponseEntity<>(updateGatheringResponse, HttpStatus.OK);
     }
 
-
-
-
     @GetMapping("/gathering/{gatheringId}")
     public ResponseEntity<GatheringResponse> gatheringDetail(@PathVariable Long gatheringId, @AuthenticationPrincipal String username) throws IOException {
 
@@ -59,21 +56,24 @@ public class GatheringController {
         GatheringPagingResponse gatheringPagingResponse = gatheringService.gatherings(pageNum, username, title);
         return new ResponseEntity<>(gatheringPagingResponse, HttpStatus.OK);
     }
+    @GetMapping("/gathering")
+    public ResponseEntity<GatheringPagingResponse> gatheringCategory(@RequestParam String category,
+                                                               @RequestParam Integer pageNum,
+                                                               @RequestParam Integer pageSize,
+                                                               @AuthenticationPrincipal String username
+                                                               ){
 
-
-    @GetMapping("/gatherings/like")
-    public ResponseEntity<GatheringPagingResponse> gatheringsLike(@RequestParam int pageNum,
-                                                 @AuthenticationPrincipal String username){
-
-        GatheringPagingResponse gatheringPagingResponse = gatheringService.gatheringsLike(pageNum,username);
+        GatheringPagingResponse gatheringPagingResponse = gatheringService.gatheringCategory(category,pageNum,pageSize,username);
         return new ResponseEntity<>(gatheringPagingResponse, HttpStatus.OK);
     }
 
 
+    @GetMapping("/gatherings/like")
+    public ResponseEntity<GatheringPagingResponse> gatheringsLike(@RequestParam int pageNum,
+                                                                  @RequestParam Integer pageSize,
+                                                 @AuthenticationPrincipal String username){
 
-
-
-
-
-
+        GatheringPagingResponse gatheringPagingResponse = gatheringService.gatheringsLike(pageNum,pageSize,username);
+        return new ResponseEntity<>(gatheringPagingResponse, HttpStatus.OK);
+    }
 }

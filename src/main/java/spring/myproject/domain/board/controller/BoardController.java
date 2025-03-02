@@ -7,11 +7,12 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import spring.myproject.domain.board.dto.request.AddBoardRequest;
 import spring.myproject.domain.board.dto.response.AddBoardResponse;
-import spring.myproject.domain.board.dto.response.FetchBoardResponse;
-import spring.myproject.domain.board.dto.response.FetchBoardsResponse;
+import spring.myproject.domain.board.dto.response.BoardResponse;
+import spring.myproject.domain.board.dto.response.BoardsResponse;
 import spring.myproject.domain.board.service.BoardService;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -19,25 +20,27 @@ public class BoardController {
 
     private final BoardService boardService;
 
-    @GetMapping("/board/{boardId}")
+    @GetMapping("/gathering/{gatheringId}/board/{boardId}")
     public ResponseEntity<Object> fetchBoard(@PathVariable Long boardId,
+                                             @PathVariable Long gatheringId,
                                              @AuthenticationPrincipal String username){
-        FetchBoardResponse fetchBoardResponse = boardService.fetchBoard(boardId,username);
+        BoardResponse fetchBoardResponse = boardService.fetchBoard(gatheringId,boardId,username);
         return ResponseEntity.ok(fetchBoardResponse);
     }
-    @PostMapping("/board/meeting/{meetingId}")
+    @PostMapping("/gathering/{gatheringId}/board/")
     public ResponseEntity<Object> addBoard(@AuthenticationPrincipal String username,
+                                           @PathVariable Long gatheringId,
                                            @RequestPart AddBoardRequest addBoardRequest,
-                                           @RequestPart("file") MultipartFile file,
-                                           Long meetingId) throws IOException {
-        AddBoardResponse addBoardResponse = boardService.addBoard(username,addBoardRequest,file,meetingId);
+                                           @RequestPart("file") List<MultipartFile> files) throws IOException {
+        AddBoardResponse addBoardResponse = boardService.addBoard(username,addBoardRequest,files,gatheringId);
         return ResponseEntity.ok(addBoardResponse);
     }
-    @GetMapping("/boards")
+    @GetMapping("/gathering/{gatheringId}/boards")
     public ResponseEntity<Object> fetchBoards(@AuthenticationPrincipal String username,
+                                              @PathVariable Long gatheringId,
                                               @RequestParam String title,
-                                              Integer pageNum){
-        FetchBoardsResponse fetchBoardsResponse = boardService.fetchBoards(username,pageNum);
+                                              Integer pageNum, Integer pageSize){
+        BoardsResponse fetchBoardsResponse = boardService.fetchBoards(gatheringId,username,pageNum,pageSize);
         return ResponseEntity.ok(fetchBoardsResponse);
 
     }

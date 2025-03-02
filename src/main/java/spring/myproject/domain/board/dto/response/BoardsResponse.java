@@ -10,14 +10,14 @@ import org.springframework.data.domain.Page;
 @AllArgsConstructor
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class FetchBoardsResponse {
+public class BoardsResponse {
 
     private String code;
     private String message;
-    private Page<QueryBoardDto> page;
+    private Page<BoardsQuery> page;
 
-    public static FetchBoardsResponse of(String code, String meesage, Page<QueryBoardDto> page) {
-        return FetchBoardsResponse.builder()
+    public static BoardsResponse of(String code, String meesage, Page<BoardsQuery> page) {
+        return BoardsResponse.builder()
                 .code(code)
                 .message(meesage)
                 .page(page)

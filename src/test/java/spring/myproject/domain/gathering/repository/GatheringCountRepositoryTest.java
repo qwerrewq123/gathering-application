@@ -1,16 +1,13 @@
 package spring.myproject.domain.gathering.repository;
 
 import jakarta.persistence.EntityManager;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import spring.myproject.domain.category.Category;
 import spring.myproject.domain.category.repository.CategoryRepository;
-import spring.myproject.domain.enrollment.repository.EnrollmentRepository;
 import spring.myproject.domain.gathering.Gathering;
-import spring.myproject.domain.gathering.GatheringCount;
-import spring.myproject.domain.gathering.dto.response.GatheringQueryDto;
+import spring.myproject.domain.gathering.dto.response.GatheringDetailQuery;
 import spring.myproject.domain.image.Image;
 import spring.myproject.domain.image.repository.ImageRepository;
 import spring.myproject.domain.user.User;
@@ -19,7 +16,6 @@ import spring.myproject.domain.user.repository.UserRepository;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 import static spring.myproject.util.DummyData.*;
 import static spring.myproject.util.DummyData.returnDummyGathering;
 
@@ -53,7 +49,7 @@ class GatheringCountRepositoryTest {
         em.flush();
 
         gatheringCountRepository.addCount(gathering.getId());
-        List<GatheringQueryDto> gatheringAndCount = gatheringRepository.findGatheringAndCount(gathering.getId());
+        List<GatheringDetailQuery> gatheringAndCount = gatheringRepository.findGatheringAndCount(gathering.getId());
 
         assertThat(gatheringAndCount.getFirst().getCount()).isEqualTo(2);
 

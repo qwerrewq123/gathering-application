@@ -10,10 +10,10 @@ import org.springframework.data.domain.Page;
 @Builder
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class MeetingListResponse {
+public class MeetingsResponse {
 
     private String code;
     private String message;
-    private Page<MeetingQueryListResponse> page;
+    private Page<MeetingsQuery> page;
 
 }

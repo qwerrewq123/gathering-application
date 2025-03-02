@@ -32,7 +32,6 @@ public class AttendService {
 
             User user = userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
             Meeting meeting = meetingRepository.findById(meetingId).orElseThrow(()->new NotFoundMeetingExeption("no exist Meeting!!"));
-            if(meeting.getCreatedBy().getId()  == meetingId) throw new AutoAttendException("Meeting Opener auto attend");
             Attend checkAttend = attendRepository.findByUserIdAndMeetingId(user.getId(),meetingId);
             if(checkAttend != null) throw new AlreadyAttendExeption("Meeting already attend");
             Attend attend = Attend.of(false,meeting,user,LocalDateTime.now());
@@ -45,12 +44,18 @@ public class AttendService {
             userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
             Meeting meeting = meetingRepository.findById(meetingId).orElseThrow(()->new NotFoundMeetingExeption("no exist Meeting!!"));
             Attend attend = attendRepository.findById(attendId).orElseThrow(() -> {
-                throw new AlreadyAttendExeption("Already Attend Meeting!!");
+                throw new NotFoundAttend("Not Found Attend!!");
             });
             if(meeting.getCreatedBy().getId()  == meetingId){
-                throw new NotWithdrawException("Opener cannot  disAttend Meeting!!");
+                if(meeting.getCount()>1){
+                    throw new NotWithdrawException("Opener cannot  disAttend Meeting!!");
+                }else{
+                    attendRepository.delete(attend);
+                    meetingRepository.delete(meeting);
+                }
+            }else{
+                attendRepository.delete(attend);
             }
-            attendRepository.delete(attend);
             return DisAttendResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE);
     }
 
@@ -60,7 +65,6 @@ public class AttendService {
             Meeting meeting = meetingRepository.findById(meetingId).orElseThrow(()->new NotFoundMeetingExeption("no exist Meeting!!"));
             Attend attend = attendRepository.findById(attendId).orElseThrow(() -> new NotFoundAttend("no exist Attend!!"));
             if(attend.getAccepted() == true) throw new AlreadyAttendExeption("already attend!!");
-            if(meeting.getCreatedBy().getId()  == meetingId) throw new AlwaysPermitException("opener always permitted");
             attend.changeAccepted(true);
             return PermitAttendResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE);
     }

@@ -11,9 +11,8 @@ import spring.myproject.domain.category.repository.CategoryRepository;
 import spring.myproject.domain.enrollment.Enrollment;
 import spring.myproject.domain.enrollment.repository.EnrollmentRepository;
 import spring.myproject.domain.gathering.Gathering;
-import spring.myproject.domain.gathering.GatheringCount;
-import spring.myproject.domain.gathering.dto.response.GatheringPagingQueryDto;
-import spring.myproject.domain.gathering.dto.response.GatheringQueryDto;
+import spring.myproject.domain.gathering.dto.response.GatheringsQuery;
+import spring.myproject.domain.gathering.dto.response.GatheringDetailQuery;
 import spring.myproject.domain.image.Image;
 import spring.myproject.domain.image.repository.ImageRepository;
 import spring.myproject.domain.user.User;
@@ -57,7 +56,7 @@ public class GatheringRepositoryTest {
         gatheringRepository.saveAll(List.of(gathering1,gathering2,gathering3));
         em.flush();
 
-        Page<GatheringPagingQueryDto> page = gatheringRepository.findPaging(PageRequest.of(0, 10), "title");
+        Page<GatheringsQuery> page = gatheringRepository.findPaging(PageRequest.of(0, 10), "title");
 
         assertThat(page.getTotalElements()).isEqualTo(3);
     }
@@ -93,7 +92,7 @@ public class GatheringRepositoryTest {
         enrollmentRepository.saveAll(List.of(enrollment1,enrollment2));
         em.flush();
 
-        List<GatheringQueryDto> gatheringAndCount = gatheringRepository.findGatheringAndCount(gathering.getId());
+        List<GatheringDetailQuery> gatheringAndCount = gatheringRepository.findGatheringAndCount(gathering.getId());
 
         assertThat(gatheringAndCount.size()).isEqualTo(2);
     }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import spring.myproject.domain.user.Role;
 import spring.myproject.domain.user.User;
 
 @Data
@@ -18,6 +19,7 @@ public class UserResponse {
     private String address;
     private Integer age;
     private String hobby;
+    private Role role;
     private String image;
 
     public static UserResponse of(User user){
@@ -28,6 +30,7 @@ public class UserResponse {
                 .address(user.getAddress())
                 .age(user.getAge())
                 .hobby(user.getHobby())
+                .role(user.getRole())
                 .image(user.getProfileImage().getUrl())
                 .build();
     }

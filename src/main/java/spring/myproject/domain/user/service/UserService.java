@@ -12,6 +12,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import spring.myproject.domain.image.Image;
 import spring.myproject.domain.image.repository.ImageRepository;
+import spring.myproject.domain.user.Role;
 import spring.myproject.domain.user.User;
 import spring.myproject.domain.user.dto.response.*;
 import spring.myproject.domain.user.exception.*;
@@ -68,6 +69,7 @@ public class UserService {
                     .address(userRequest.getAddress())
                     .username(userRequest.getUsername())
                     .password(passwordEncoder.encode(userRequest.getPassword()))
+                    .role(Role.USER)
                     .profileImage(image)
                     .build();
             userRepository.save(user);

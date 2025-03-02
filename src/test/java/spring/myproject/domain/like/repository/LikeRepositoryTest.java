@@ -8,20 +8,16 @@ import org.springframework.boot.test.context.SpringBootTest;
 import spring.myproject.domain.category.Category;
 import spring.myproject.domain.category.repository.CategoryRepository;
 import spring.myproject.domain.gathering.Gathering;
-import spring.myproject.domain.gathering.GatheringCount;
-import spring.myproject.domain.gathering.repository.GatheringCountRepository;
 import spring.myproject.domain.gathering.repository.GatheringRepository;
 import spring.myproject.domain.image.Image;
 import spring.myproject.domain.image.repository.ImageRepository;
 import spring.myproject.domain.like.Like;
-import spring.myproject.domain.recommend.Recommend;
 import spring.myproject.domain.user.User;
 import spring.myproject.domain.user.repository.UserRepository;
 
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static spring.myproject.util.DummyData.*;
 
 @SpringBootTest

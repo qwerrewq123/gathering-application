@@ -54,10 +54,11 @@ public class MeetingController {
 
     @GetMapping("/meetings")
     public ResponseEntity<Object> meetings(@RequestParam int pageNum,
+                                            @RequestParam int pageSize,
                                             @RequestParam String title,
                                             @AuthenticationPrincipal String username){
 
-        MeetingListResponse meetingListResponse = meetingService.meetings(pageNum, username, title);
-        return new ResponseEntity<>(meetingListResponse, HttpStatus.OK);
+        MeetingsResponse meetingsResponse = meetingService.meetings(pageNum, pageSize,username, title);
+        return new ResponseEntity<>(meetingsResponse, HttpStatus.OK);
     }
 }
