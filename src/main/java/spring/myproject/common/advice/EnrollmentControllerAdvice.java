@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import spring.myproject.domain.enrollment.controller.EnrollmentController;
 import spring.myproject.domain.enrollment.exception.AlreadyEnrollmentException;
 import spring.myproject.domain.enrollment.exception.NotFoundEnrollmentException;
-import spring.myproject.domain.error.dto.response.ErrorResponse;
+import spring.myproject.common.dto.response.ErrorResponse;
 import spring.myproject.domain.gathering.exception.NotFoundGatheringException;
 import spring.myproject.domain.user.exception.NotFoundUserException;
 import spring.myproject.util.AbstractErrorResponse;

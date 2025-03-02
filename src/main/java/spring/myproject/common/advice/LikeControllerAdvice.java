@@ -4,7 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import spring.myproject.domain.error.dto.response.ErrorResponse;
+import spring.myproject.common.dto.response.ErrorResponse;
 import spring.myproject.domain.gathering.exception.NotFoundGatheringException;
 import spring.myproject.domain.like.controller.LikeController;
 import spring.myproject.domain.like.exception.AlreadyLikeGathering;

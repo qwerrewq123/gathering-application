@@ -5,8 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.server.MethodNotAllowedException;
-import spring.myproject.domain.error.dto.response.ErrorResponse;
-import spring.myproject.domain.user.exception.NotFoundUserException;
+import spring.myproject.common.dto.response.ErrorResponse;
 import spring.myproject.util.AbstractErrorResponse;
 
 import static spring.myproject.util.ConstClass.*;

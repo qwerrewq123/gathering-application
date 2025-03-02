@@ -4,7 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import spring.myproject.domain.error.dto.response.ErrorResponse;
+import spring.myproject.common.dto.response.ErrorResponse;
 import spring.myproject.domain.recommend.controller.RecommendController;
 import spring.myproject.domain.user.exception.NotFoundUserException;
 import spring.myproject.util.AbstractErrorResponse;

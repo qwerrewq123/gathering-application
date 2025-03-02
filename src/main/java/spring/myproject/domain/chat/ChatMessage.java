@@ -5,27 +5,25 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import spring.myproject.domain.user.User;
-
 
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Getter
-@Table(name = "chat_room")
-public class ChatRoom {
+@Table(name = "chat_message")
+public class ChatMessage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false)
-    private String name;
+    private String content;
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User createdBy;
-    private int count;
-    public void changeCount(){
-        count--;
-    }
+    @JoinColumn(name = "chat_room_id")
+    ChatRoom chatRoom;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "chat_participant_id")
+    ChatParticipant chatParticipant;
 
 }

@@ -1,4 +1,4 @@
-package spring.myproject.domain.error.dto.response;
+package spring.myproject.common.dto.response;
 
 import lombok.Builder;
 import lombok.Data;

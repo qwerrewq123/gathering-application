@@ -20,13 +20,12 @@ public class Fail {
     private Long id;
     private String message;
     private Boolean processed;
-    @OneToOne(optional = false)
-    private User user;
+    private String clientId;
 
-    public static Fail of(User user, String message) {
+    public static Fail of(String clientId, String message) {
         return Fail.builder()
                 .message(message)
-                .user(user)
+                .clientId(clientId)
                 .processed(false)
                 .build();
     }

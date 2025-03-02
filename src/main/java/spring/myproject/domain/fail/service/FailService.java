@@ -16,6 +16,6 @@ public class FailService {
 
     public void insertFail(User user) {
         String message = "email send Fail";
-        failRepository.save(Fail.of(user, message));
+        failRepository.save(Fail.of("clientId", message));
     }
 }

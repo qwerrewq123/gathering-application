@@ -1,6 +1,6 @@
 package spring.myproject.util;
 
-import spring.myproject.domain.error.dto.response.ErrorResponse;
+import spring.myproject.common.dto.response.ErrorResponse;
 
 public class AbstractErrorResponse {
 

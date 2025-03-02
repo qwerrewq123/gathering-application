@@ -11,13 +11,12 @@
 #    driver-class-name: com.mysql.cj.jdbc.Driver
 #
 #  jpa:
-#    properties:
-#      hibernate:
-#        format_sql: true
-#        show_sql: true
-#        dialect: org.hibernate.dialect.MySQL8Dialect
+#    database: mysql
+#    database-platform: org.hibernate.dialect.MySQL8Dialect
+#    generate-ddl: false
 #    hibernate:
-#      ddl-auto: none
+#      ddl-auto: validate
+#    show-sql: true
 #
 #  mail:
 #    host: smtp.gmail.com
@@ -37,7 +36,9 @@
 #fcm:
 #  firebase_config_path: firebase/gathering-project-dcf1a-firebase-adminsdk-fbsvc-061788000f.json
 #
-#secret-key: secretKeysecretKeysecretKeysecretKeysecretKeysecretKeysecretKeysecretKeysecretKey
+#jwt:
+#  secretKey: Y2hhdHNlcnZlcnNlY3JldGFjY2Vzc3Rva2VuY2hhdHNlcnZlcnNlY3JldGFjY2Vzc3Rva2VuY2hhdHNlcnZlcnNlY3JldGFjY2Vzc3Rva2Vu
+#  expiration: 3000
 #
 #file:
 #  dir: C:/upload
