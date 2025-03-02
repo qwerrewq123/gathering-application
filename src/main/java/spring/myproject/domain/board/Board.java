@@ -1,4 +1,4 @@
-package spring.myproject.board;
+package spring.myproject.domain.board;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

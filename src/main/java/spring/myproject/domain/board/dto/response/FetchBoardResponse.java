@@ -1,11 +1,10 @@
-package spring.myproject.board.dto.response;
+package spring.myproject.domain.board.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import spring.myproject.board.Board;
-import spring.myproject.domain.user.User;
+import spring.myproject.domain.board.Board;
 
 import java.time.LocalDateTime;
 

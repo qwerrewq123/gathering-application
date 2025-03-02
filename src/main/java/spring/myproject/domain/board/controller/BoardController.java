@@ -1,15 +1,17 @@
-package spring.myproject.board.controller;
+package spring.myproject.domain.board.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import spring.myproject.board.dto.request.AddBoardRequest;
-import spring.myproject.board.dto.response.AddBoardResponse;
-import spring.myproject.board.dto.response.FetchBoardResponse;
-import spring.myproject.board.dto.response.FetchBoardsResponse;
-import spring.myproject.board.service.BoardService;
+import spring.myproject.domain.board.dto.request.AddBoardRequest;
+import spring.myproject.domain.board.dto.response.AddBoardResponse;
+import spring.myproject.domain.board.dto.response.FetchBoardResponse;
+import spring.myproject.domain.board.dto.response.FetchBoardsResponse;
+import spring.myproject.domain.board.service.BoardService;
+
+import java.io.IOException;
 
 @RestController
 @RequiredArgsConstructor
@@ -27,7 +29,7 @@ public class BoardController {
     public ResponseEntity<Object> addBoard(@AuthenticationPrincipal String username,
                                            @RequestPart AddBoardRequest addBoardRequest,
                                            @RequestPart("file") MultipartFile file,
-                                           Long meetingId){
+                                           Long meetingId) throws IOException {
         AddBoardResponse addBoardResponse = boardService.addBoard(username,addBoardRequest,file,meetingId);
         return ResponseEntity.ok(addBoardResponse);
     }

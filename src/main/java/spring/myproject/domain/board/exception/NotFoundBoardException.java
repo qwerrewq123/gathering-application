@@ -1,4 +1,4 @@
-package spring.myproject.board.exception;
+package spring.myproject.domain.board.exception;
 
 public class NotFoundBoardException extends RuntimeException {
     public NotFoundBoardException(String message) {

@@ -88,12 +88,14 @@ public class UserService {
 
             User user = userRepository.findByUsername(signInRequest.getUsername()).orElseThrow(() -> new NotFoundUserException("not Found User"));
             boolean matches = passwordEncoder.matches(signInRequest.getPassword(), user.getPassword());
-            checkPassword(matches);
-            String token = jwtProvider.create(user.getUsername());
+            if(!matches){
+                throw new UnCorrectPasswordException("doesn't match Password!");
+            }
+            String token = jwtProvider.createToken(user.getUsername(),user.getRole().toString());
             return SignInResponse.builder()
                     .code(SUCCESS_CODE)
                     .message(SUCCESS_MESSAGE)
-                    .token(token)
+                    .accessToken(token)
                     .build();
     }
 
@@ -108,11 +110,7 @@ public class UserService {
                         .message(SUCCESS_MESSAGE)
                         .build();
     }
-    private void checkPassword(boolean matches) {
-        if(!matches){
-            throw new UnCorrectPasswordException("doesn't match Password!");
-        }
-    }
+
     private String certificationNumber(){
         int number = (int) (Math.random() * 9000) + 1000;
         return String.valueOf(number);

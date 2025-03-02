@@ -7,6 +7,7 @@ import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.spec.SecretKeySpec;
 import java.awt.*;
 import java.nio.charset.StandardCharsets;
 
@@ -19,49 +20,29 @@ import java.util.Date;
 public class JwtProvider {
 
 
-    @Value("${secret-key}")
-    private String secretKey;
+    private final  String secretKey;
+    private final int expiration;
+    private final Key SECRET_KEY;
 
-    public String create(String userId){
+    public JwtProvider(@Value("${jwt.secretKey}") String secretKey, @Value("${jwt.expiration}") int expiration) {
+        this.secretKey = secretKey;
+        this.expiration = expiration;
+        this.SECRET_KEY = new SecretKeySpec(java.util.Base64.getDecoder().decode(secretKey), SignatureAlgorithm.HS512.getJcaName());
+    }
 
-        Date expiredDate = Date.from(Instant.now().plus(10, ChronoUnit.HOURS));
 
-        Key key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8)) ;
-
-        String jwt = Jwts.builder()
-                .signWith(key, SignatureAlgorithm.HS256)
-                .setSubject(userId).setIssuedAt(new Date()).setExpiration(expiredDate)
+    public String createToken(String username, String role){
+        Claims claims = Jwts.claims().setSubject(username);
+        claims.put("role", role);
+        Date now = new Date();
+        String token = Jwts.builder()
+                .setClaims(claims)
+                .setIssuedAt(now)
+                .setExpiration(new Date(now.getTime()+expiration*60*1000L))
+                .signWith(SECRET_KEY)
                 .compact();
-
-        return jwt;
+        return token;
     }
 
-    public String validate(String jwt){
-
-        Claims claims = null;
-        String subject =null;
-
-        Key key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8)) ;
-
-
-        try{
-
-            claims = Jwts.parserBuilder().setSigningKey(key)
-                    .build()
-                    .parseClaimsJws(jwt).getBody();
-
-            subject = claims.getSubject();
-
-
-        } catch(Exception exception){
-            exception.printStackTrace();
-            return null;
-
-        }
-
-        return subject;
-
-
-    }
 
 }

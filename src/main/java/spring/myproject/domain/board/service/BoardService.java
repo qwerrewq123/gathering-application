@@ -1,4 +1,4 @@
-package spring.myproject.board.service;
+package spring.myproject.domain.board.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -6,14 +6,14 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
-import spring.myproject.board.Board;
-import spring.myproject.board.dto.request.AddBoardRequest;
-import spring.myproject.board.dto.response.AddBoardResponse;
-import spring.myproject.board.dto.response.FetchBoardResponse;
-import spring.myproject.board.dto.response.FetchBoardsResponse;
-import spring.myproject.board.dto.response.QueryBoardDto;
-import spring.myproject.board.exception.NotFoundBoardException;
-import spring.myproject.board.repository.BoardRepository;
+import spring.myproject.domain.board.Board;
+import spring.myproject.domain.board.dto.request.AddBoardRequest;
+import spring.myproject.domain.board.dto.response.AddBoardResponse;
+import spring.myproject.domain.board.dto.response.FetchBoardResponse;
+import spring.myproject.domain.board.dto.response.FetchBoardsResponse;
+import spring.myproject.domain.board.dto.response.QueryBoardDto;
+import spring.myproject.domain.board.exception.NotFoundBoardException;
+import spring.myproject.domain.board.repository.BoardRepository;
 import spring.myproject.domain.image.Image;
 import spring.myproject.domain.image.repository.ImageRepository;
 import spring.myproject.domain.meeting.Meeting;
@@ -25,7 +25,6 @@ import spring.myproject.domain.user.exception.NotFoundUserException;
 import spring.myproject.domain.user.repository.UserRepository;
 import spring.myproject.s3.S3ImageDownloadService;
 import spring.myproject.s3.S3ImageUploadService;
-import spring.myproject.util.ConstClass;
 
 import java.io.IOException;
 

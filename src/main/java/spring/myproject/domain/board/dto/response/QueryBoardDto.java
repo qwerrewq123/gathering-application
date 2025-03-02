@@ -1,4 +1,4 @@
-package spring.myproject.board.dto.response;
+package spring.myproject.domain.board.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

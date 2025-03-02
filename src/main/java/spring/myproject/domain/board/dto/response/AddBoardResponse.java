@@ -1,9 +1,8 @@
-package spring.myproject.board.dto.response;
+package spring.myproject.domain.board.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @AllArgsConstructor

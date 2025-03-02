@@ -1,10 +1,10 @@
-package spring.myproject.board.dto.request;
+package spring.myproject.domain.board.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import spring.myproject.board.Board;
+import spring.myproject.domain.board.Board;
 import spring.myproject.domain.meeting.Meeting;
 import spring.myproject.domain.user.User;
 
