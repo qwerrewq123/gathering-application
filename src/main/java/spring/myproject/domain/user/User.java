@@ -25,6 +25,7 @@ public class User implements Serializable {
     private Integer age;
     private String hobby;
     private Role role;
+    private String nickname;
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "image_id")
     private Image profileImage;

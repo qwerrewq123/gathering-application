@@ -14,13 +14,10 @@ import spring.myproject.domain.image.Image;
 import spring.myproject.domain.image.repository.ImageRepository;
 import spring.myproject.domain.user.Role;
 import spring.myproject.domain.user.User;
+import spring.myproject.domain.user.dto.request.*;
 import spring.myproject.domain.user.dto.response.*;
 import spring.myproject.domain.user.exception.*;
 import spring.myproject.domain.user.repository.UserRepository;
-import spring.myproject.domain.user.dto.request.EmailCertificationRequest;
-import spring.myproject.domain.user.dto.request.IdCheckRequest;
-import spring.myproject.domain.user.dto.request.SignInRequest;
-import spring.myproject.domain.user.dto.request.UserRequest;
 import spring.myproject.provider.EmailProvider;
 import spring.myproject.provider.JwtProvider;
 import spring.myproject.s3.S3ImageUploadService;
@@ -51,6 +48,16 @@ public class UserService {
                 .message(SUCCESS_MESSAGE)
                 .build();
     }
+    public NicknameCheckResponse nicknameCheck(NicknameCheckRequest nicknameCheckRequest) {
+        boolean nicknameCheck = !userRepository.existsByNickname(nicknameCheckRequest.getNickname());
+        if(!nicknameCheck) throw new ExistUserException("user Exist!!");
+        return NicknameCheckResponse.builder()
+                .code(SUCCESS_CODE)
+                .message(SUCCESS_MESSAGE)
+                .build();
+        return null;
+    }
+
     public SignUpResponse signUp(UserRequest userRequest, MultipartFile file){
 
         try {
@@ -71,6 +78,7 @@ public class UserService {
                     .password(passwordEncoder.encode(userRequest.getPassword()))
                     .role(Role.USER)
                     .profileImage(image)
+                    .nickname(userRequest.getNickname())
                     .build();
             userRepository.save(user);
             return SignUpResponse.builder()

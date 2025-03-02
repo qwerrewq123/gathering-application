@@ -9,12 +9,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import spring.myproject.async.AsyncService;
+import spring.myproject.domain.user.dto.request.*;
 import spring.myproject.domain.user.dto.response.*;
 import spring.myproject.domain.user.service.UserService;
-import spring.myproject.domain.user.dto.request.EmailCertificationRequest;
-import spring.myproject.domain.user.dto.request.IdCheckRequest;
-import spring.myproject.domain.user.dto.request.SignInRequest;
-import spring.myproject.domain.user.dto.request.UserRequest;
 
 import java.io.IOException;
 
@@ -30,6 +27,12 @@ public class UserController {
 
         IdCheckResponse idCheckResponse = userService.idCheck(idCheckRequest);
         return new ResponseEntity<>(idCheckResponse, HttpStatus.OK);
+    }
+    @PostMapping("/auth/nickname-check")
+    public ResponseEntity<IdCheckResponse> nicknameCheck(@RequestBody NicknameCheckRequest nicknameCheckRequest) {
+
+        NicknameCheckResponse nicknameCheckResponse = userService.nicknameCheck(nicknameCheckRequest);
+        return new ResponseEntity<>(nicknameCheckResponse, HttpStatus.OK);
     }
 
     @PostMapping(value = "/auth/sign-up",consumes = {

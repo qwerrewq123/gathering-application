@@ -15,8 +15,8 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     Optional<Board> fetchBoard(Long boardId);
 
     @Query("select new spring.myproject.domain.board.dto.response." +
-            "BoardsQuery(b.title,b.description,u.username,i.url,b.content,b.registerDate) " +
+            "BoardsQuery(b.title,b.description,u.username,b.content,b.registerDate) " +
             "from Board b " +
-            "join b.user u left join fetch Image i on i.board.id = b.id")
+            "join b.user u")
     Page<BoardsQuery> fetchBoards(Pageable pageable);
 }

@@ -10,4 +10,5 @@ public class AbstractErrorResponse {
                 .message(message)
                 .build();
     }
+
 }

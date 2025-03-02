@@ -13,7 +13,6 @@ public class BoardsQuery {
     private String title;
     private String description;
     private String username;
-    private String imageUrl;
     private String content;
     private LocalDateTime registerDate;
 }

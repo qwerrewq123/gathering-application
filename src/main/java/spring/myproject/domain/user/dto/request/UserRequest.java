@@ -15,5 +15,6 @@ public class UserRequest {
     private String address;
     private Integer age;
     private String hobby;
+    private String nickname;
 
 }

@@ -42,7 +42,7 @@ public class BoardService {
     private final GatheringRepository gatheringRepository;
     private final EnrollmentRepository enrollmentRepository;
     private final ImageRepository imageRepository;
-
+    //TODO : 이미지 불러오기 처리
     public BoardResponse fetchBoard(Long gatheringId, Long boardId, String username) {
         User user = userRepository.findByUsername(username).orElseThrow(() -> new NotFoundUserException("no exist User!!"));
         Gathering gathering = gatheringRepository.findById(gatheringId).orElseThrow(() -> new NotFoundGatheringException("no exist Gathering!!"));
