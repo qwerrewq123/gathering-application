@@ -37,7 +37,7 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .httpBasic(HttpBasicConfigurer::disable)
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/**").permitAll()
+                        .requestMatchers("/auth/id-check","/auth/nickname-check","/auth/email-certification","/auth/sign-in","/auth/sign-up").permitAll()
                         .anyRequest().authenticated())
                 .exceptionHandling(exceptionHandle -> exceptionHandle.authenticationEntryPoint(failedAuthenticationEntryPoint))
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
@@ -50,7 +50,7 @@ public class SecurityConfig {
         configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*");
         configuration.addAllowedOrigin("*");
-        configuration.setAllowCredentials(true);
+//        configuration.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**",configuration);
         return source;

@@ -55,7 +55,7 @@ public class UserService {
                 .code(SUCCESS_CODE)
                 .message(SUCCESS_MESSAGE)
                 .build();
-        return null;
+
     }
 
     public SignUpResponse signUp(UserRequest userRequest, MultipartFile file){

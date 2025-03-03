@@ -9,8 +9,9 @@ import spring.myproject.domain.chat.ChatRoom;
 import spring.myproject.domain.chat.dto.response.ChatRoomResponse;
 
 public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
+    //TODO : 할것
     @Query("select new spring.myproject.domain.chat.dto.response." +
-            "ChatRoomResponse(c.name,c.count,u.username) from ChatRoom c join fetch c.createdBy u")
+            "ChatRoomResponse(c.name,c.count,u.username) from ChatRoom c join  c.createdBy u")
     Page<ChatRoomResponse> fetchChatRooms(Pageable pageable);
 
     @Query("select new spring.myproject.domain.chat.dto.response." +

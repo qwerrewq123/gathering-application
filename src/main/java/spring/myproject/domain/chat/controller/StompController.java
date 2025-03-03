@@ -7,7 +7,7 @@ import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Controller;
 import spring.myproject.domain.chat.service.ChatService;
 
-@Controller
+//@Controller
 @RequiredArgsConstructor
 public class StompController {
 

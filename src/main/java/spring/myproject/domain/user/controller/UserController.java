@@ -29,7 +29,7 @@ public class UserController {
         return new ResponseEntity<>(idCheckResponse, HttpStatus.OK);
     }
     @PostMapping("/auth/nickname-check")
-    public ResponseEntity<IdCheckResponse> nicknameCheck(@RequestBody NicknameCheckRequest nicknameCheckRequest) {
+    public ResponseEntity<NicknameCheckResponse> nicknameCheck(@RequestBody NicknameCheckRequest nicknameCheckRequest) {
 
         NicknameCheckResponse nicknameCheckResponse = userService.nicknameCheck(nicknameCheckRequest);
         return new ResponseEntity<>(nicknameCheckResponse, HttpStatus.OK);
@@ -39,7 +39,7 @@ public class UserController {
             MediaType.MULTIPART_FORM_DATA_VALUE,
             MediaType.APPLICATION_JSON_VALUE
     })
-    public ResponseEntity<SignUpResponse> signUp(@RequestPart("userRequest") UserRequest userRequest, @RequestParam(required = false) MultipartFile file) throws IOException {
+    public ResponseEntity<SignUpResponse> signUp(@RequestPart("userRequest") UserRequest userRequest, @RequestPart(required = false,name = "file") MultipartFile file) throws IOException {
 
         SignUpResponse signUpResponse = userService.signUp(userRequest, file);
         return new ResponseEntity<>(signUpResponse, HttpStatus.OK);
