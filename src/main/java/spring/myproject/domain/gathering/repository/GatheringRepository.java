@@ -26,7 +26,7 @@ public interface GatheringRepository extends JpaRepository<Gathering,Long> {
             "where g.id = :gatheringId")
     List<GatheringDetailQuery> gatheringDetail(Long gatheringId);
 
-
+    //TODO : 조회수 기준 asc -> desc로 수정!!
     @Query(value = "select id,title,content,registerDate,category,createdBy,url,count from ( " +
             "  select g.id as id, g.title as title, g.content as content, g.register_date as registerDate, ca.name as category, " +
             "         cr.username as createdBy, im.url as url, g.count as count, " +
