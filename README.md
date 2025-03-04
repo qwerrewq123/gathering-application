@@ -73,7 +73,7 @@
 - JPA 페이징 관련 이슈
     - [JPA 페이징](https://velog.io/@ccccssung/JPA-%ED%8E%98%EC%9D%B4%EC%A7%95-%EC%9D%B4%EC%8A%88)
 - k6와 복합인덱스를 활용한 성능 측정 및 쿼리 튜닝
-    - [k6와 CloudWtach](https://velog.io/@ccccssung/k6%EC%99%80-%EB%B3%B5%ED%95%A9%EC%9D%B8%EB%8D%B1%EC%8A%A4%EB%A5%BC-%ED%99%9C%EC%9A%A9%ED%95%9C-%EC%84%B1%EB%8A%A5-%EC%B8%A1%EC%A0%95-%EB%B0%8F-%EC%BF%BC%EB%A6%AC-%ED%8A%9C%EB%8B%9D)
+    - [k6와 쿼리튜닝](https://velog.io/@ccccssung/k6%EC%99%80-%EB%B3%B5%ED%95%A9%EC%9D%B8%EB%8D%B1%EC%8A%A4%EB%A5%BC-%ED%99%9C%EC%9A%A9%ED%95%9C-%EC%84%B1%EB%8A%A5-%EC%B8%A1%EC%A0%95-%EB%B0%8F-%EC%BF%BC%EB%A6%AC-%ED%8A%9C%EB%8B%9D)
 
     
 
