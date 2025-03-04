@@ -50,7 +50,6 @@ public class UserController {
     public ResponseEntity<UserResponse> fetchUser(@PathVariable("userId") Long userId) {
         UserResponse userResponse = userService.fetchUser(userId);
         return new ResponseEntity<>(userResponse, HttpStatus.OK);
-
     }
 
     @PostMapping("/auth/sign-in")
@@ -68,7 +67,7 @@ public class UserController {
         return new ResponseEntity<>(emailCertificationResponse,HttpStatus.OK);
     }
 
-    @PostMapping(value = "/auth/generateTOken")
+    @PostMapping(value = "/auth/generateToken")
     public ResponseEntity<GenerateTokenResponse> generateToken(@CookieValue(value = "refreshToken", required = false) String refreshToken){
         GenerateTokenResponse generateTokenResponse = userService.generateToken(refreshToken);
         return new ResponseEntity<>(generateTokenResponse,HttpStatus.OK);

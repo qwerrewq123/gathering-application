@@ -1,5 +1,6 @@
 package spring.myproject.common.advice;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -15,7 +16,7 @@ import spring.myproject.util.AbstractErrorResponse;
 import java.io.IOException;
 
 import static spring.myproject.util.ConstClass.*;
-
+@Slf4j
 @RestControllerAdvice(basePackageClasses = GatheringController.class)
 public class GatheringControllerAdvice {
     @ExceptionHandler(NotFoundUserException.class)
@@ -49,7 +50,8 @@ public class GatheringControllerAdvice {
                 , HttpStatus.BAD_REQUEST);
     }
     @ExceptionHandler(Exception.class)
-    ResponseEntity<ErrorResponse> handleException(){
+    ResponseEntity<ErrorResponse> handleException(Exception e){
+        log.error(e.getMessage(), e);
         return new ResponseEntity<>(
                 AbstractErrorResponse.getErrorResponse(DB_ERROR_CODE, DB_ERROR_MESSAGE)
                 , HttpStatus.BAD_REQUEST);

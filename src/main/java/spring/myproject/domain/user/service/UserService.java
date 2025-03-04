@@ -129,7 +129,7 @@ public class UserService {
     public EmailCertificationResponse emailCertification(EmailCertificationRequest emailCertificationRequest) {
 
             List<User> users = userRepository.findByEmail(emailCertificationRequest.getEmail());
-            if(users.size() == 0) throw new NotFoundEmailExeption("Not Found Email");
+            if(users.isEmpty()) throw new NotFoundEmailExeption("Not Found Email");
             if(users.size()>1) throw new DuplicateEmailExeption("Duplicate Email");
             emailProvider.sendCertificationMail(emailCertificationRequest.getEmail(), certificationNumber());
             return EmailCertificationResponse.builder()
