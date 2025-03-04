@@ -1,9 +1,15 @@
 package spring.myproject.domain.user.service;
 
+import com.google.common.net.HttpHeaders;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -21,10 +27,12 @@ import spring.myproject.domain.user.repository.UserRepository;
 import spring.myproject.provider.EmailProvider;
 import spring.myproject.provider.JwtProvider;
 import spring.myproject.s3.S3ImageUploadService;
+import spring.myproject.util.CookieUtil;
 
 import java.util.List;
 
 import static spring.myproject.util.ConstClass.*;
+import static spring.myproject.util.CookieUtil.*;
 
 @Service
 @RequiredArgsConstructor
@@ -38,6 +46,11 @@ public class UserService {
     private final EmailProvider emailProvider;
     private final S3ImageUploadService s3ImageUploadService;
     private final JwtProvider jwtProvider;
+    @Value("${jwt.refresh.expiration}")
+    private int refreshExpiration;
+    @Value("${jwt.secretKey}")
+    private String secretKey;
+
 
     public IdCheckResponse idCheck(IdCheckRequest idCheckRequest) {
 
@@ -94,7 +107,7 @@ public class UserService {
         }
     }
 
-    public SignInResponse signIn(SignInRequest signInRequest, HttpSession session) {
+    public SignInResponse signIn(SignInRequest signInRequest, HttpServletResponse response) {
 
             User user = userRepository.findByUsername(signInRequest.getUsername()).orElseThrow(() -> new NotFoundUserException("not Found User"));
             boolean matches = passwordEncoder.matches(signInRequest.getPassword(), user.getPassword());
@@ -103,12 +116,13 @@ public class UserService {
             }
             String accessToken = jwtProvider.createAccessToken(user.getUsername(),user.getRole().toString());
             String refreshToken = jwtProvider.createRefreshToken(user.getUsername(),user.getRole().toString());
+            Cookie cookie = getCookie("refreshToken", refreshToken,refreshExpiration);
+            response.addCookie(cookie);
             user.changeRefreshToken(refreshToken);
             return SignInResponse.builder()
                     .code(SUCCESS_CODE)
                     .message(SUCCESS_MESSAGE)
                     .accessToken(accessToken)
-                    .refreshToken(refreshToken)
                     .build();
     }
 
@@ -133,4 +147,11 @@ public class UserService {
         User foundUser = userRepository.findById(userId).orElseThrow(() -> new NotFoundUserException("not Found User"));
         return UserResponse.of(foundUser);
     }
+
+    public GenerateTokenResponse generateToken(String refreshToken) {
+
+        return null;
+    }
+
+
 }

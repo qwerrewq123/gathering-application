@@ -29,6 +29,7 @@ import spring.myproject.s3.S3ImageUploadService;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static spring.myproject.util.ConstClass.*;
 
@@ -82,41 +83,17 @@ public class GatheringService {
 
             userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
             List<GatheringDetailQuery> gatheringDetailQueries = gatheringRepository.gatheringDetail(gatheringId);
-            if(gatheringDetailQueries.size() == 0) throw new NotFoundGatheringException("no exist Gathering!!!");
+            if(gatheringDetailQueries.isEmpty()) throw new NotFoundGatheringException("no exist Gathering!!!");
             return getGatheringResponse(gatheringDetailQueries);
     }
 
-    public GatheringPagingResponse gatherings(int pageNum, String username, String title) {
+    public TotalGatheringsResponse gatherings(String username, String title) {
             userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
-            PageRequest pageRequest = PageRequest.of(pageNum - 1, 8, Sort.Direction.ASC,"id");
-            Page<GatheringsQuery> gatheringPage = gatheringRepository.gatherings(pageRequest, title);
-            Page<GatheringsResponse> gatheringElementPage = gatheringPage.map(
-                    g -> {
-                        try {
-                            return GatheringsResponse.builder()
-                                    .id(g.getId())
-                                    .title(g.getTitle())
-                                    .createdBy(g.getCreatedBy())
-                                    .registerDate(g.getRegisterDate())
-                                    .category(g.getCategory())
-                                    .content(g.getContent())
-                                    .image(s3ImageDownloadService.getFileBase64CodeFromS3(g.getUrl()))
-                                    .count(g.getCount())
-                                    .build();
-                        } catch (IOException e) {
-                            return GatheringsResponse.builder()
-                                    .id(g.getId())
-                                    .title(g.getTitle())
-                                    .createdBy(g.getCreatedBy())
-                                    .registerDate(g.getRegisterDate())
-                                    .category(g.getCategory())
-                                    .content(g.getContent())
-                                    .count(g.getCount())
-                                    .build();
-                        }
-                    }
-            );
-            return GatheringPagingResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE,gatheringElementPage);
+            List<GatheringsQuery> gatherings = gatheringRepository.gatherings(title);
+            List<TotalGatheringsElement> totalGatheringsElements = toGatheringsResponseList(gatherings);
+            Map<String, CategoryTotalGatherings> map = categorizeByCategory(totalGatheringsElements);
+            return createTotalGatherings(map);
+
     }
 
     public GatheringPagingResponse gatheringCategory(String category, Integer pageNum, Integer pageSize, String username) {
@@ -133,8 +110,8 @@ public class GatheringService {
                         .content(g.getContent())
                         .count(g.getCount());
                 try {
-                    String imageBase64 = s3ImageDownloadService.getFileBase64CodeFromS3(g.getUrl());
-                    builder.image(imageBase64);
+                    byte[] imageBytes = s3ImageDownloadService.getFileByteArrayFromS3(g.getUrl());
+                    builder.image(imageBytes);
                 } catch (IOException e) {
                     builder.image(null);
                 }
@@ -146,7 +123,7 @@ public class GatheringService {
     public GatheringPagingResponse gatheringsLike(int pageNum, int pageSize, String username) {
 
             User user = userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
-            PageRequest pageRequest = PageRequest.of(pageNum - 1, pageSize, Sort.Direction.ASC,"id");
+            PageRequest pageRequest = PageRequest.of(pageNum - 1, pageSize, Sort.Direction.DESC,"id");
             Long userId = user.getId();
             Page<GatheringsQuery> gatheringsQueryPage = gatheringRepository.gatheringsLike(pageRequest, userId);
             Page<GatheringsResponse> page = gatheringsQueryPage.map(g -> {
@@ -159,8 +136,8 @@ public class GatheringService {
                         .content(g.getContent())
                         .count(g.getCount());
                 try {
-                    String imageBase64 = s3ImageDownloadService.getFileBase64CodeFromS3(g.getUrl());
-                    builder.image(imageBase64);
+                    byte[] imageBytes = s3ImageDownloadService.getFileByteArrayFromS3(g.getUrl());
+                    builder.image(imageBytes);
                 } catch (IOException e) {
                     builder.image(null);
                 }
@@ -191,7 +168,7 @@ public class GatheringService {
                 .registerDate(gatheringDetailQueries.getFirst().getRegisterDate())
                 .category(gatheringDetailQueries.getFirst().getCategory())
                 .createdBy(gatheringDetailQueries.getFirst().getCreatedBy())
-                .image(s3ImageDownloadService.getFileBase64CodeFromS3(gatheringDetailQueries.getFirst().getUrl()))
+                .image(getUrl(gatheringDetailQueries.getFirst().getUrl()))
                 .count(gatheringDetailQueries.getFirst().getCount())
                 .participatedBy(new ArrayList<>())
                 .build();
@@ -202,5 +179,64 @@ public class GatheringService {
             }
         }
         return gatheringResponse;
+    }
+    private TotalGatheringsElement toGatheringsResponse(GatheringsQuery gatheringsQuery) {
+
+        TotalGatheringsElement.TotalGatheringsElementBuilder builder = TotalGatheringsElement.builder();
+        builder.id(gatheringsQuery.getId())
+                .title(gatheringsQuery.getTitle())
+                .content(gatheringsQuery.getContent())
+                .registerDate(gatheringsQuery.getRegisterDate())
+                .category(gatheringsQuery.getCategory())
+                .createdBy(gatheringsQuery.getCreatedBy())
+                .count(gatheringsQuery.getCount());
+        try {
+            builder.image(s3ImageDownloadService.getFileByteArrayFromS3(gatheringsQuery.getUrl()));
+        } catch (Exception e) {
+            builder.image(null);
+        }
+        return builder.build();
+    }
+
+    private List<TotalGatheringsElement> toGatheringsResponseList(List<GatheringsQuery> gatheringsQueryList) {
+        return gatheringsQueryList.stream()
+                .map(this::toGatheringsResponse)
+                .collect(Collectors.toList());
+    }
+    public Map<String, CategoryTotalGatherings> categorizeByCategory(List<TotalGatheringsElement> totalGatheringsElements) {
+        return totalGatheringsElements.stream()
+                .collect(Collectors.groupingBy(
+                        TotalGatheringsElement::getCategory,
+                        Collectors.collectingAndThen(
+                                Collectors.toList(),
+                                this::processCategoryElements
+                        )
+                ));
+    }
+
+    private CategoryTotalGatherings processCategoryElements(List<TotalGatheringsElement> elements) {
+        boolean hasNext = elements.size() >= 9;
+        if (hasNext) {
+            elements = elements.subList(0, 8);
+        }
+
+        return CategoryTotalGatherings.builder()
+                .totalGatherings(elements)
+                .hasNext(hasNext)
+                .build();
+    }
+
+    private TotalGatheringsResponse createTotalGatherings(Map<String, CategoryTotalGatherings> categoryMap) {
+        return TotalGatheringsResponse.builder()
+                .code(SUCCESS_CODE)
+                .message(SUCCESS_MESSAGE)
+                .map(categoryMap)
+                .build();
+    }
+
+
+
+    private String getUrl(String fileUrl){
+        return "http://localhost/image"+fileUrl;
     }
 }

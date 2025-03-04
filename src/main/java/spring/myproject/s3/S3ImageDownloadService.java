@@ -35,28 +35,16 @@ public class S3ImageDownloadService {
         this.s3Client = s3Client;
     }
 
-    public String getFileBase64CodeFromS3(String fileName) throws IOException {
-        // S3 객체 요청
+    public byte[] getFileByteArrayFromS3(String fileName) throws IOException {
         GetObjectRequest getObjectRequest = GetObjectRequest.builder()
                 .bucket(bucket)
                 .key(fileName)
                 .build();
-
         InputStream inputStream = s3Client.getObject(getObjectRequest);
-
-        File tempFile = new File(System.getProperty("java.io.tmpdir"), fileName);
-
-        Files.copy(inputStream, tempFile.toPath());
-
-        return encodeFileToBase64(tempFile);
+        byte[] fileBytes = inputStream.readAllBytes();
+        inputStream.close();
+        return fileBytes;
     }
 
-    private String encodeFileToBase64(File tempFile) throws IOException {
 
-        byte[] fileBytes  = Files.readAllBytes(tempFile.toPath());
-        String encodeUrl = Base64.getEncoder().encodeToString(fileBytes);
-        tempFile.delete();
-        return encodeUrl;
-
-    }
 }

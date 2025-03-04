@@ -1,5 +1,6 @@
 package spring.myproject.domain.chat.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -24,6 +25,7 @@ import static spring.myproject.util.ConstClass.SUCCESS_MESSAGE;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class ChatService {
 
     private final ChatRoomRepository chatRoomRepository;

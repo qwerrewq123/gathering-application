@@ -1,5 +1,7 @@
 package spring.myproject.domain.user.controller;
 
+import com.google.api.client.auth.oauth2.RefreshTokenRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -52,9 +54,9 @@ public class UserController {
     }
 
     @PostMapping("/auth/sign-in")
-    public ResponseEntity<SignInResponse> signIn(@RequestBody SignInRequest signInRequest, HttpSession session) {
+    public ResponseEntity<SignInResponse> signIn(@RequestBody SignInRequest signInRequest, HttpServletResponse response) {
 
-        SignInResponse signInResponse = userService.signIn(signInRequest,session);
+        SignInResponse signInResponse = userService.signIn(signInRequest,response);
         return new ResponseEntity<>(signInResponse,HttpStatus.OK);
     }
 
@@ -64,5 +66,11 @@ public class UserController {
         EmailCertificationResponse emailCertificationResponse = userService.emailCertification(emailCertificationRequest);
         asyncService.asyncTask(emailCertificationRequest);
         return new ResponseEntity<>(emailCertificationResponse,HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/auth/generateTOken")
+    public ResponseEntity<GenerateTokenResponse> generateToken(@CookieValue(value = "refreshToken", required = false) String refreshToken){
+        GenerateTokenResponse generateTokenResponse = userService.generateToken(refreshToken);
+        return new ResponseEntity<>(generateTokenResponse,HttpStatus.OK);
     }
 }

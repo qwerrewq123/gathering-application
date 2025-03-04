@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import spring.myproject.domain.board.Board;
+import spring.myproject.s3.S3ImageDownloadService;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -19,20 +20,21 @@ public class BoardResponse {
     private String message;
     private String title;
     private String description;
-    private List<String> imageUrls;
+    private List<byte[]> imageUrls;
     private String username;
-    private String userImageUrl;
+    private byte[] userImageUrl;
     private LocalDateTime registerDate;
-    public static BoardResponse of(Board fetchBoard, String code, String message) {
+
+    public static BoardResponse of(List<BoardQuery> boardQueries,List<byte[]> imageUrls, byte[] userImageUrl ,String code, String message) {
         return BoardResponse.builder()
                 .code(code)
                 .message(message)
-                .title(fetchBoard.getTitle())
-                .description(fetchBoard.getDescription())
-                .registerDate(fetchBoard.getRegisterDate())
-                .imageUrls(new ArrayList<>())
-                .username(fetchBoard.getUser().getUsername())
-                .userImageUrl(fetchBoard.getUser().getProfileImage().getUrl())
+                .title(boardQueries.getFirst().getTitle())
+                .description(boardQueries.getFirst().getDescription())
+                .registerDate(boardQueries.getFirst().getRegisterDate())
+                .imageUrls(imageUrls)
+                .username(boardQueries.getFirst().getUsername())
+                .userImageUrl(userImageUrl)
                 .build();
 
     }

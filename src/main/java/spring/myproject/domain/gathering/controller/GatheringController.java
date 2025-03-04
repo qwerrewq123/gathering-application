@@ -6,13 +6,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import spring.myproject.domain.gathering.dto.response.*;
 import spring.myproject.domain.gathering.service.GatheringService;
 import spring.myproject.domain.gathering.dto.request.AddGatheringRequest;
 import spring.myproject.domain.gathering.dto.request.UpdateGatheringRequest;
-import spring.myproject.domain.gathering.dto.response.AddGatheringResponse;
-import spring.myproject.domain.gathering.dto.response.GatheringPagingResponse;
-import spring.myproject.domain.gathering.dto.response.GatheringResponse;
-import spring.myproject.domain.gathering.dto.response.UpdateGatheringResponse;
 
 import java.io.IOException;
 
@@ -49,12 +46,11 @@ public class GatheringController {
     }
 
     @GetMapping("/gatherings")
-    public ResponseEntity<GatheringPagingResponse> gatherings(@RequestParam int pageNum,
-                                             @RequestParam String title,
+    public ResponseEntity<TotalGatheringsResponse> gatherings(@RequestParam String title,
                                              @AuthenticationPrincipal String username){
 
-        GatheringPagingResponse gatheringPagingResponse = gatheringService.gatherings(pageNum, username, title);
-        return new ResponseEntity<>(gatheringPagingResponse, HttpStatus.OK);
+        TotalGatheringsResponse totalGatheringsResponse = gatheringService.gatherings(username, title);
+        return new ResponseEntity<>(totalGatheringsResponse, HttpStatus.OK);
     }
     @GetMapping("/gathering")
     public ResponseEntity<GatheringPagingResponse> gatheringCategory(@RequestParam String category,

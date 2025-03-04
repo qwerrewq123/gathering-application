@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import spring.myproject.domain.board.Board;
+import spring.myproject.domain.gathering.Gathering;
 
 @Getter
 @NoArgsConstructor
@@ -21,4 +22,7 @@ public class Image {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "board_id")
     Board board;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "entire_image_id")
+    private Gathering gathering;
 }

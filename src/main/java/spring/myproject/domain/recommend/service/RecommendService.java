@@ -1,5 +1,6 @@
 package spring.myproject.domain.recommend.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import spring.myproject.domain.gathering.repository.GatheringRepository;
@@ -23,6 +24,7 @@ import static spring.myproject.util.ConstClass.*;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class RecommendService {
 
     private final GatheringRepository gatheringRepository;

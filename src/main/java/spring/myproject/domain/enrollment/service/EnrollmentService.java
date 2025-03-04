@@ -36,6 +36,7 @@ public class EnrollmentService {
                     () -> new NotFoundGatheringException("no exist Gathering!!"));
             Enrollment exist = enrollmentRepository.existEnrollment(gatheringId, user.getId());
             if(exist != null) throw new AlreadyEnrollmentException("Already enrolled;");
+            gathering.changeCount(gathering.getCount()+1);
             Enrollment enrollment = Enrollment.of(true,gathering,user,LocalDateTime.now());
             enrollmentRepository.save(enrollment);
             return EnrollGatheringResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE);
@@ -43,10 +44,11 @@ public class EnrollmentService {
     public DisEnrollGatheringResponse disEnrollGathering(Long gatheringId, String username) {
 
             User user = userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
-            gatheringRepository.findById(gatheringId).orElseThrow(
-                    () ->  new NotFoundGatheringException("no exist Gathering!!"));
+            Gathering gathering = gatheringRepository.findById(gatheringId).orElseThrow(
+                () -> new NotFoundGatheringException("no exist Gathering!!"));
             Enrollment enrollment = enrollmentRepository.findEnrollment(gatheringId, user.getId()).orElseThrow(
                     () ->  new NotFoundEnrollmentException("no exist Enrollment!!"));
+            gathering.changeCount(gathering.getCount()-11);
             enrollmentRepository.delete(enrollment);
             return DisEnrollGatheringResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE);
     }

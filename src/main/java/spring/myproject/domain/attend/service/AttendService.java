@@ -34,6 +34,7 @@ public class AttendService {
             Meeting meeting = meetingRepository.findById(meetingId).orElseThrow(()->new NotFoundMeetingExeption("no exist Meeting!!"));
             Attend checkAttend = attendRepository.findByUserIdAndMeetingId(user.getId(),meetingId);
             if(checkAttend != null) throw new AlreadyAttendExeption("Meeting already attend");
+            meeting.changeCount(meeting.getCount()+1);
             Attend attend = Attend.of(false,meeting,user,LocalDateTime.now());
             attendRepository.save(attend);
             return AddAttendResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE);
@@ -54,6 +55,7 @@ public class AttendService {
                     meetingRepository.delete(meeting);
                 }
             }else{
+                meeting.changeCount(meeting.getCount()-1);
                 attendRepository.delete(attend);
             }
             return DisAttendResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE);
