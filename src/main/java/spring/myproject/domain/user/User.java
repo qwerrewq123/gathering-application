@@ -29,5 +29,10 @@ public class User implements Serializable {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "image_id")
     private Image profileImage;
+    private String refreshToken;
+
+    public void changeRefreshToken(String refreshToken){
+        this.refreshToken = refreshToken;
+    }
 
 }

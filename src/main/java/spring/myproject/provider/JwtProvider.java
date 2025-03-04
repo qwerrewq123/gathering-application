@@ -21,24 +21,41 @@ public class JwtProvider {
 
 
     private final  String secretKey;
-    private final int expiration;
+    private final int accessExpiration;
+    private final int refreshExpiration;
     private final Key SECRET_KEY;
 
-    public JwtProvider(@Value("${jwt.secretKey}") String secretKey, @Value("${jwt.access.expiration}") int expiration) {
+    public JwtProvider(@Value("${jwt.secretKey}") String secretKey,
+                       @Value("${jwt.access.expiration}") int accessExpiration,
+                       @Value("${jwt.refresh.expiration}") int refreshExpiration) {
         this.secretKey = secretKey;
-        this.expiration = expiration;
+        this.accessExpiration = accessExpiration;
+        this.refreshExpiration = refreshExpiration;
         this.SECRET_KEY = new SecretKeySpec(java.util.Base64.getDecoder().decode(secretKey), SignatureAlgorithm.HS512.getJcaName());
     }
 
 
-    public String createToken(String username, String role){
+    public String createAccessToken(String username, String role){
         Claims claims = Jwts.claims().setSubject(username);
         claims.put("role", role);
         Date now = new Date();
         String token = Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(now)
-                .setExpiration(new Date(now.getTime()+expiration*60*1000L))
+                .setExpiration(new Date(now.getTime()+accessExpiration*60*1000L))
+                .signWith(SECRET_KEY)
+                .compact();
+        return token;
+    }
+
+    public String createRefreshToken(String username, String role){
+        Claims claims = Jwts.claims().setSubject(username);
+        claims.put("role", role);
+        Date now = new Date();
+        String token = Jwts.builder()
+                .setClaims(claims)
+                .setIssuedAt(now)
+                .setExpiration(new Date(now.getTime()+refreshExpiration*60*1000L))
                 .signWith(SECRET_KEY)
                 .compact();
         return token;

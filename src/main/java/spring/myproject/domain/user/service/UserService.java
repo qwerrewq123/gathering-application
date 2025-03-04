@@ -101,11 +101,14 @@ public class UserService {
             if(!matches){
                 throw new UnCorrectPasswordException("doesn't match Password!");
             }
-            String token = jwtProvider.createToken(user.getUsername(),user.getRole().toString());
+            String accessToken = jwtProvider.createAccessToken(user.getUsername(),user.getRole().toString());
+            String refreshToken = jwtProvider.createRefreshToken(user.getUsername(),user.getRole().toString());
+            user.changeRefreshToken(refreshToken);
             return SignInResponse.builder()
                     .code(SUCCESS_CODE)
                     .message(SUCCESS_MESSAGE)
-                    .accessToken(token)
+                    .accessToken(accessToken)
+                    .refreshToken(refreshToken)
                     .build();
     }
 

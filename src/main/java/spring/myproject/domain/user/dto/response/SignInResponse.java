@@ -14,4 +14,5 @@ public class SignInResponse {
     private String code;
     private String message;
     private String accessToken;
+    private String refreshToken;
 }
