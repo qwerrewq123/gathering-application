@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
+import spring.myproject.async.AsyncService;
 import spring.myproject.domain.image.Image;
 import spring.myproject.domain.image.repository.ImageRepository;
 import spring.myproject.domain.user.Role;
@@ -46,6 +47,7 @@ public class UserService {
     private final EmailProvider emailProvider;
     private final S3ImageUploadService s3ImageUploadService;
     private final JwtProvider jwtProvider;
+    private final AsyncService asyncService;
     @Value("${jwt.refresh.expiration}")
     private int refreshExpiration;
     @Value("${jwt.secretKey}")
@@ -131,17 +133,13 @@ public class UserService {
             List<User> users = userRepository.findByEmail(emailCertificationRequest.getEmail());
             if(users.isEmpty()) throw new NotFoundEmailExeption("Not Found Email");
             if(users.size()>1) throw new DuplicateEmailExeption("Duplicate Email");
-            emailProvider.sendCertificationMail(emailCertificationRequest.getEmail(), certificationNumber());
+            asyncService.asyncTask(emailCertificationRequest);
             return EmailCertificationResponse.builder()
                         .code(SUCCESS_CODE)
                         .message(SUCCESS_MESSAGE)
                         .build();
     }
 
-    private String certificationNumber(){
-        int number = (int) (Math.random() * 9000) + 1000;
-        return String.valueOf(number);
-    }
 
     public UserResponse fetchUser(Long userId) {
         User foundUser = userRepository.findById(userId).orElseThrow(() -> new NotFoundUserException("not Found User"));

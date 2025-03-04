@@ -1,5 +1,6 @@
 package spring.myproject.domain.board.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -32,6 +33,7 @@ import static spring.myproject.util.ConstClass.*;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class BoardService {
 
     private final BoardRepository boardRepository;
@@ -77,8 +79,8 @@ public class BoardService {
                 }
             }
         }
-        imageRepository.saveAll(images);
         boardRepository.save(board);
+        imageRepository.saveAll(images);
         return AddBoardResponse.of(SUCCESS_CODE, SUCCESS_MESSAGE);
     }
 

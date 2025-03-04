@@ -59,7 +59,7 @@ public class GatheringService {
                         .date(LocalDateTime.now())
                         .enrolledBy(user)
                         .build();
-            imageRepository.save(image);
+            if(image!=null) imageRepository.save(image);
             gatheringRepository.save(gathering);
             enrollmentRepository.save(enrollment);
             return AddGatheringResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE);
@@ -74,7 +74,7 @@ public class GatheringService {
             if(!authorize) throw new NotAuthorizeException("no authorize!!");
             Image image = null;
             image = saveImage(image,file);
-            imageRepository.save(image);
+            if(image!=null) imageRepository.save(image);
             gathering.changeGathering(image,category,updateGatheringRequest);
             return UpdateGatheringResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE);
     }
@@ -89,11 +89,27 @@ public class GatheringService {
 
     public TotalGatheringsResponse gatherings(String username, String title) {
             userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
-            List<GatheringsQuery> gatherings = gatheringRepository.gatherings(title);
+            List<EntireGatheringsQuery> entireGatheringsQueries = gatheringRepository.gatherings(title);
+            List<GatheringsQuery> gatherings = toGatheringQueriesList(entireGatheringsQueries);
             List<TotalGatheringsElement> totalGatheringsElements = toGatheringsResponseList(gatherings);
             Map<String, CategoryTotalGatherings> map = categorizeByCategory(totalGatheringsElements);
             return createTotalGatherings(map);
 
+    }
+
+    private List<GatheringsQuery> toGatheringQueriesList(List<EntireGatheringsQuery> entireGatheringsQueries) {
+        return entireGatheringsQueries.stream()
+                .map(query -> GatheringsQuery.builder()
+                        .id(query.getId())
+                        .title(query.getTitle())
+                        .content(query.getContent())
+                        .registerDate(query.getRegisterDate())
+                        .category(query.getCategory())
+                        .createdBy(query.getCreatedBy())
+                        .url(query.getUrl())
+                        .count(query.getCount())
+                        .build())
+                .collect(Collectors.toList());
     }
 
     public GatheringPagingResponse gatheringCategory(String category, Integer pageNum, Integer pageSize, String username) {

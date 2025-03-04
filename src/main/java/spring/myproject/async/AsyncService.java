@@ -9,6 +9,7 @@ import spring.myproject.provider.EmailProvider;
 @Service
 @RequiredArgsConstructor
 public class AsyncService {
+
     private final EmailProvider emailProvider;
 
     @Async("customAsyncExecutor")

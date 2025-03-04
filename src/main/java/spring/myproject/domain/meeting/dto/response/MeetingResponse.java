@@ -24,4 +24,5 @@ public class MeetingResponse {
     private LocalDateTime startDate;
     private LocalDateTime endDate;
     private String content;
+    private String url;
 }

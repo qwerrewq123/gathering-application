@@ -5,10 +5,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import spring.myproject.common.Username;
 import spring.myproject.domain.meeting.dto.response.*;
 import spring.myproject.domain.meeting.service.MeetingService;
 import spring.myproject.domain.meeting.dto.request.AddMeetingRequest;
 import spring.myproject.domain.meeting.dto.request.UpdateMeetingRequest;
+
+import java.io.IOException;
 
 
 @RestController
@@ -18,16 +22,17 @@ public class MeetingController {
     private final MeetingService meetingService;
 
     @PostMapping("/meeting/{gatheringId}")
-    public ResponseEntity<AddMeetingResponse> addMeeting(@RequestBody AddMeetingRequest addMeetingRequest,
+    public ResponseEntity<AddMeetingResponse> addMeeting(@RequestPart AddMeetingRequest addMeetingRequest,
+                                                         @RequestPart MultipartFile file,
                                                          @PathVariable Long gatheringId,
-                                                         @AuthenticationPrincipal String username){
+                                                         @Username String username) throws IOException {
 
-        AddMeetingResponse addMeetingResponse = meetingService.addMeeting(addMeetingRequest, username, gatheringId);
+        AddMeetingResponse addMeetingResponse = meetingService.addMeeting(addMeetingRequest, username, gatheringId,file);
         return new ResponseEntity<>(addMeetingResponse, HttpStatus.OK);
     }
 
     @DeleteMapping("/meeting/{meetingId}")
-    public ResponseEntity<Object> deleteMeeting(@AuthenticationPrincipal String username,
+    public ResponseEntity<Object> deleteMeeting(@Username String username,
                                                 @PathVariable Long meetingId){
 
 
@@ -36,18 +41,19 @@ public class MeetingController {
     }
 
     @PatchMapping("/updateMeeting/{meetingId}")
-    public ResponseEntity<Object> updateMeeting(@RequestBody UpdateMeetingRequest updateMeetingRequest,
-                                                @AuthenticationPrincipal String username,
-                                                @PathVariable Long meetingId){
+    public ResponseEntity<Object> updateMeeting(@RequestPart UpdateMeetingRequest updateMeetingRequest,
+                                                @RequestPart MultipartFile file,
+                                                @Username String username,
+                                                @PathVariable Long meetingId) throws IOException {
 
 
-        UpdateMeetingResponse updateMeetingResponse = meetingService.updateMeeting(updateMeetingRequest, username, meetingId);
+        UpdateMeetingResponse updateMeetingResponse = meetingService.updateMeeting(updateMeetingRequest, username, meetingId,file);
         return new ResponseEntity<>(updateMeetingResponse, HttpStatus.OK);
     }
 
     @GetMapping("/meeting/{meetingId}")
     public ResponseEntity<MeetingResponse> meetingDetail(@PathVariable Long meetingId,
-                                                         @AuthenticationPrincipal String username){
+                                                         @Username String username){
             MeetingResponse meetingResponse = meetingService.meetingDetail(meetingId,username);
             return new ResponseEntity<>(meetingResponse, HttpStatus.OK);
     }
@@ -55,8 +61,8 @@ public class MeetingController {
     @GetMapping("/meetings")
     public ResponseEntity<Object> meetings(@RequestParam int pageNum,
                                             @RequestParam int pageSize,
-                                            @RequestParam String title,
-                                            @AuthenticationPrincipal String username){
+                                            @RequestParam(defaultValue = "") String title,
+                                            @Username String username){
 
         MeetingsResponse meetingsResponse = meetingService.meetings(pageNum, pageSize,username, title);
         return new ResponseEntity<>(meetingsResponse, HttpStatus.OK);

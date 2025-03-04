@@ -48,7 +48,7 @@ public class EnrollmentService {
                 () -> new NotFoundGatheringException("no exist Gathering!!"));
             Enrollment enrollment = enrollmentRepository.findEnrollment(gatheringId, user.getId()).orElseThrow(
                     () ->  new NotFoundEnrollmentException("no exist Enrollment!!"));
-            gathering.changeCount(gathering.getCount()-11);
+            gathering.changeCount(gathering.getCount()-1);
             enrollmentRepository.delete(enrollment);
             return DisEnrollGatheringResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE);
     }

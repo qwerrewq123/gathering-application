@@ -17,7 +17,7 @@ public class AsyncConfig {
         executor.setCorePoolSize(10);
         executor.setMaxPoolSize(30);
         executor.setQueueCapacity(100);
-        executor.setThreadNamePrefix("CustomExecutor-");
+        executor.setThreadNamePrefix("CustomExecutor");
         executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
         executor.initialize();
         return executor;

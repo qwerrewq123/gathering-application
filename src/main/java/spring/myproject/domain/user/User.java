@@ -24,6 +24,8 @@ public class User implements Serializable {
     private String address;
     private Integer age;
     private String hobby;
+    //TODO : 주석해제해야됨
+    //@Enumerated(EnumType.STRING)
     private Role role;
     private String nickname;
     @OneToOne(fetch = FetchType.LAZY)

@@ -7,6 +7,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
+import spring.myproject.common.Username;
 import spring.myproject.domain.enrollment.service.EnrollmentService;
 import spring.myproject.domain.enrollment.dto.response.DisEnrollGatheringResponse;
 import spring.myproject.domain.enrollment.dto.response.EnrollGatheringResponse;
@@ -18,7 +19,7 @@ public class EnrollmentController {
     private final EnrollmentService enrollmentService;
     @PostMapping("/gathering/{gatheringId}/participate")
     public ResponseEntity<EnrollGatheringResponse> enrollGathering(@PathVariable Long gatheringId,
-                                                       @AuthenticationPrincipal String username){
+                                                       @Username String username){
 
         EnrollGatheringResponse enrollGatheringResponse = enrollmentService.enrollGathering(gatheringId, username);
         return new ResponseEntity<>(enrollGatheringResponse, HttpStatus.OK);
@@ -26,7 +27,7 @@ public class EnrollmentController {
 
     @PostMapping("/gathering/{gatheringId}/disParticipate")
     public ResponseEntity<DisEnrollGatheringResponse> disEnrollGathering(@PathVariable Long gatheringId,
-                                                           @AuthenticationPrincipal String username){
+                                                           @Username String username){
 
         DisEnrollGatheringResponse disEnrollGatheringResponse = enrollmentService.disEnrollGathering(gatheringId, username);
         return new ResponseEntity<>(disEnrollGatheringResponse, HttpStatus.OK);

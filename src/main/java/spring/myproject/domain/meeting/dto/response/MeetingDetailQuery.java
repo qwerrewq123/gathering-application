@@ -22,4 +22,5 @@ public class MeetingDetailQuery {
     private LocalDateTime endDate;
     private String content;
     private int count;
+    private String url;
 }

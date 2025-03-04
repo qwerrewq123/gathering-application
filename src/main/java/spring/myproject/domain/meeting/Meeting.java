@@ -34,10 +34,11 @@ public class Meeting {
     private List<Attend> attends = new ArrayList<>();
     @ManyToOne(fetch = FetchType.LAZY)
     private Gathering gathering;
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY,optional = false)
     @JoinColumn(name = "image_id")
     private Image image;
     private int count;
+
     public void changeCount(int count){
         this.count = count;
     }

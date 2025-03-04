@@ -7,6 +7,7 @@ import spring.myproject.domain.gathering.Gathering;
 import spring.myproject.domain.gathering.repository.GatheringRepository;
 import spring.myproject.domain.like.Like;
 import spring.myproject.domain.like.repository.LikeRepository;
+import spring.myproject.domain.meeting.exception.NotAuthorizeException;
 import spring.myproject.domain.user.User;
 import spring.myproject.domain.user.repository.UserRepository;
 import spring.myproject.domain.like.dto.response.DislikeResponse;
@@ -46,7 +47,12 @@ public class LikeService {
             Long userId = user.getId();
             Like like = likeRepository.findLike(userId, gatheringId).orElseThrow(()-> new NotFoundLikeException("no exist Like"));
             gatheringRepository.findById(gatheringId).orElseThrow(()-> new NotFoundGatheringException("no exist Gathering!!"));
+            Long likedId = like.getLikedBy().getId();
+            if(likedId.equals(userId)) {
+                throw new NotAuthorizeException("no Authorize!1");
+            }
             likeRepository.delete(like);
             return DislikeResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE);
     }
+
 }
