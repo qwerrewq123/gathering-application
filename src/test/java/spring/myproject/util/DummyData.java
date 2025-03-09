@@ -32,8 +32,7 @@ public class DummyData {
                 .profileImage(image)
                 .build();
     }
-    public static Gathering returnDummyGathering(int i, Category category, User createdBy, Image gatheringImage,
-                                                 GatheringCount gatheringCount){
+    public static Gathering returnDummyGathering(int i, Category category, User createdBy, Image gatheringImage){
         return Gathering.builder()
                 .title(String.format("title%d",i))
                 .content(String.format("content%d",i))
@@ -41,7 +40,7 @@ public class DummyData {
                 .category(category)
                 .createBy(createdBy)
                 .gatheringImage(gatheringImage)
-                .gatheringCount(gatheringCount)
+                .count(i)
                 .enrollments(null)
                 .build();
     }
@@ -58,11 +57,7 @@ public class DummyData {
                 .name(String.format("category%d",i))
                 .build();
     }
-    public static GatheringCount returnDummyGatheringCount(){
-        return GatheringCount.builder()
-                .count(1)
-                .build();
-    }
+
     public static Meeting returnDummyMeeting(int i, User createdBy, Gathering gathering){
         return Meeting.builder()
                 .boardDate(LocalDateTime.now())

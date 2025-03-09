@@ -23,6 +23,11 @@ public class ChatParticipant {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "chat_room_id")
     ChatRoom chatRoom;
+    boolean status;
+
+    public void changeStatus(boolean status) {
+        this.status = status;
+    }
 
 
 }

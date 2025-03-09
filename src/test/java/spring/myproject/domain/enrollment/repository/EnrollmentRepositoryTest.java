@@ -30,8 +30,6 @@ class EnrollmentRepositoryTest {
     @Autowired
     UserRepository userRepository;
     @Autowired
-    GatheringCountRepository gatheringCountRepository;
-    @Autowired
     GatheringRepository gatheringRepository;
     @Autowired
     EnrollmentRepository enrollmentRepository;
@@ -45,15 +43,13 @@ class EnrollmentRepositoryTest {
         User user1 = returnDummyUser(1, userImage);
         User user2 = returnDummyUser(2, userImage);
         User user3 = returnDummyUser(3, userImage);
-        GatheringCount gatheringCount = returnDummyGatheringCount();
-        Gathering gathering = returnDummyGathering(1, category, user1, gatheringImage, gatheringCount);
+        Gathering gathering = returnDummyGathering(1, category, user1, gatheringImage);
         Enrollment enrollment1 = returnDummyEnrollment(user2);
         Enrollment enrollment2 = returnDummyEnrollment(user3);
         gathering.enroll(List.of(enrollment1,enrollment2));
         categoryRepository.save(category);
         imageRepository.saveAll(List.of(userImage,gatheringImage));
         userRepository.saveAll(List.of(user1,user2));
-        gatheringCountRepository.save(gatheringCount);
         gatheringRepository.saveAll(List.of(gathering));
         enrollmentRepository.saveAll(List.of(enrollment1,enrollment2));
         em.flush();
@@ -72,15 +68,13 @@ class EnrollmentRepositoryTest {
         User user1 = returnDummyUser(1, userImage);
         User user2 = returnDummyUser(2, userImage);
         User user3 = returnDummyUser(3, userImage);
-        GatheringCount gatheringCount = returnDummyGatheringCount();
-        Gathering gathering = returnDummyGathering(1, category, user1, gatheringImage, gatheringCount);
+        Gathering gathering = returnDummyGathering(1, category, user1, gatheringImage);
         Enrollment enrollment1 = returnDummyEnrollment(user2);
         Enrollment enrollment2 = returnDummyEnrollment(user3);
         gathering.enroll(List.of(enrollment1,enrollment2));
         categoryRepository.save(category);
         imageRepository.saveAll(List.of(userImage,gatheringImage));
         userRepository.saveAll(List.of(user1,user2));
-        gatheringCountRepository.save(gatheringCount);
         gatheringRepository.saveAll(List.of(gathering));
         enrollmentRepository.saveAll(List.of(enrollment1,enrollment2));
         em.flush();

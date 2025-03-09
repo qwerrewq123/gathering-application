@@ -5,10 +5,12 @@ import spring.myproject.domain.chat.ChatParticipant;
 import spring.myproject.domain.chat.ChatRoom;
 import spring.myproject.domain.user.User;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface ChatParticipantRepository extends JpaRepository<ChatParticipant, Long> {
 
-    Optional<ChatParticipant> findByChatRoomAndUser(ChatRoom chatRoom, User user);
+    Optional<ChatParticipant> findByChatRoomAndUserAndStatus(ChatRoom chatRoom, User user,boolean status);
+    List<ChatParticipant> findAllByChatRoomAndStatus(ChatRoom chatRoom, boolean status);
 
 }

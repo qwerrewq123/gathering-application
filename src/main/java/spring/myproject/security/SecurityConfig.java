@@ -37,7 +37,7 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .httpBasic(HttpBasicConfigurer::disable)
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/auth/id-check","/auth/nickname-check","/auth/email-certification","/auth/sign-in","/auth/sign-up").permitAll()
+                        .requestMatchers("/auth/id-check","/auth/nickname-check","/auth/email-certification","/auth/sign-in","/auth/sign-up","/connect/**").permitAll()
                         .anyRequest().authenticated())
                 .exceptionHandling(exceptionHandle -> exceptionHandle.authenticationEntryPoint(failedAuthenticationEntryPoint))
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);

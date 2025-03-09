@@ -9,9 +9,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ChatRoomResponse {
+public class ChatMyRoomResponse {
     private String name;
     private int count;
     private String createdBy;
     private boolean status;
+    private long unReadCount;
 }

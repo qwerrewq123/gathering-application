@@ -6,12 +6,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
-public class ChatRoomResponse {
-    private String name;
-    private int count;
-    private String createdBy;
+public class ChatMessageResponse {
+    private Long roomId;
+    private String content;
+    private String username;
     private boolean status;
 }

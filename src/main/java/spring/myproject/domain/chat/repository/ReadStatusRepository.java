@@ -7,7 +7,7 @@ import spring.myproject.domain.chat.ReadStatus;
 
 public interface ReadStatusRepository extends JpaRepository<ReadStatus, Long> {
     @Query("update ReadStatus r set r.status = true " +
-            "where r.chatParticipant.id = :chatParticipantId and r.chatMessage.id =: chatMEssageId ")
+            "where r.chatParticipant.id = :chatParticipantId and r.chatMessage.id <=: chatMEssageId and r.status=false")
     @Modifying
     void readChatMessage(Long chatParticipantId,Long chatMessageId);
 }

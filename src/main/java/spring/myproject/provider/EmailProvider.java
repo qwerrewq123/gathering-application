@@ -14,9 +14,8 @@ public class EmailProvider {
     private final JavaMailSender javaMailSender;
     private final String SUBJECT = "[소모임 서비스] 인증메일입니다.";
 
-    public boolean sendCertificationMail(String email,String certificationNumber){
+    public boolean sendCertificationMail(String email,String certificationNumber) throws MessagingException {
 
-        try {
             MimeMessage message = javaMailSender.createMimeMessage();
             MimeMessageHelper messageHelper = new MimeMessageHelper(message, true);
             String htmlContent = getCertificationMessage(certificationNumber);
@@ -24,11 +23,7 @@ public class EmailProvider {
             messageHelper.setSubject(SUBJECT);
             messageHelper.setText(htmlContent,true);
             javaMailSender.send(message);
-        } catch (MessagingException e) {
-            e.printStackTrace();
-            return false;
-        }
-        return true;
+            return true;
     }
     private String getCertificationMessage(String certificationNumber){
         String certificationMessage = "";

@@ -6,11 +6,6 @@ import java.util.Map;
 
 public interface EmitterRepository {
     SseEmitter save(String emitterId, SseEmitter sseEmitter);
-
-
-    Map<String, SseEmitter> findAllEmitterByUserId(String userId);
-
     void deleteById(String emitterId);
-
-
+    SseEmitter findById(String clientId);
 }

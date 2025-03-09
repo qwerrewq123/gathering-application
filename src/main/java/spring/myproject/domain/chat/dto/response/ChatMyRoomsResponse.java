@@ -4,14 +4,14 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.domain.Page;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ChatRoomResponse {
-    private String name;
-    private int count;
-    private String createdBy;
-    private boolean status;
+public class ChatMyRoomsResponse {
+    private String code;
+    private String message;
+    private Page<ChatMyRoomResponse> page;
 }

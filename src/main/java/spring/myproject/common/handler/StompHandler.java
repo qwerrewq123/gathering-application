@@ -10,6 +10,7 @@ import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.stereotype.Component;
 import spring.myproject.domain.chat.service.ChatService;
+import spring.myproject.domain.meeting.exception.NotAuthorizeException;
 
 @Component
 public class StompHandler implements ChannelInterceptor{
@@ -35,6 +36,7 @@ public class StompHandler implements ChannelInterceptor{
                     .parseClaimsJws(token)
                     .getBody();
         }
+
         if (StompCommand.SUBSCRIBE == accessor.getCommand()) {
             String bearerToken = accessor.getFirstNativeHeader("Authorization");
             String token = bearerToken.substring(7);
@@ -43,12 +45,12 @@ public class StompHandler implements ChannelInterceptor{
                     .build()
                     .parseClaimsJws(token)
                     .getBody();
-            String email = claims.getSubject();
+            String username = claims.getSubject();
             String roomId = accessor.getDestination().split("/")[2];
 
-//            if(!chatService.isRoomPaticipant(email, Long.parseLong(roomId))){
-//                throw new AuthenticationServiceException("해당 room에 권한이 없습니다.");
-//            }
+            if(!chatService.isRoomParticipant(username, Long.parseLong(roomId))){
+                throw new NotAuthorizeException("No Authority");
+            }
         }
 
         return message;

@@ -9,5 +9,6 @@ import lombok.Data;
 @AllArgsConstructor
 public class EmailCertificationRequest {
 
+    private String clientId;
     private String email;
 }

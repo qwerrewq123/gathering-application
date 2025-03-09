@@ -1,8 +1,10 @@
 package spring.myproject.async;
 
+import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import spring.myproject.domain.fail.service.FailService;
 import spring.myproject.domain.user.dto.request.EmailCertificationRequest;
 import spring.myproject.provider.EmailProvider;
 
@@ -11,13 +13,18 @@ import spring.myproject.provider.EmailProvider;
 public class AsyncService {
 
     private final EmailProvider emailProvider;
+    private final FailService failService;
 
     @Async("customAsyncExecutor")
     public void asyncTask(EmailCertificationRequest emailCertificationRequest){
-        emailCertification(emailCertificationRequest);
+        try {
+            emailCertification(emailCertificationRequest);
+        }catch (MessagingException e){
+            failService.send(emailCertificationRequest.getClientId());
+        }
     }
 
-    private void emailCertification(EmailCertificationRequest emailCertificationRequest) {
+    private void emailCertification(EmailCertificationRequest emailCertificationRequest) throws MessagingException {
         emailProvider.sendCertificationMail(emailCertificationRequest.getEmail(), certificationNumber());
     }
 

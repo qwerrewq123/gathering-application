@@ -18,15 +18,15 @@ public class Fail {
 
     @Id
     private Long id;
-    private String message;
-    private Boolean processed;
+    private String content;
     private String clientId;
 
-    public static Fail of(String clientId, String message) {
+    public static Fail of(String clientId, String content) {
         return Fail.builder()
-                .message(message)
                 .clientId(clientId)
-                .processed(false)
+                .content(content)
                 .build();
     }
+
+
 }

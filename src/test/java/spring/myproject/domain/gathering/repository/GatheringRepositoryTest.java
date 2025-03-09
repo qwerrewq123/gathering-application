@@ -32,8 +32,6 @@ public class GatheringRepositoryTest {
     @Autowired
     UserRepository userRepository;
     @Autowired
-    GatheringCountRepository gatheringCountRepository;
-    @Autowired
     GatheringRepository gatheringRepository;
     @Autowired
     EnrollmentRepository enrollmentRepository;
@@ -45,14 +43,12 @@ public class GatheringRepositoryTest {
         Image userImage = returnDummyImage(1);
         Image gatheringImage = returnDummyImage(1);
         User user = returnDummyUser(1, userImage);
-        GatheringCount gatheringCount = returnDummyGatheringCount();
-        Gathering gathering1 = returnDummyGathering(1, category, user, gatheringImage, gatheringCount);
-        Gathering gathering2 = returnDummyGathering(1, category, user, gatheringImage, gatheringCount);
-        Gathering gathering3 = returnDummyGathering(1, category, user, gatheringImage, gatheringCount);
+        Gathering gathering1 = returnDummyGathering(1, category, user, gatheringImage);
+        Gathering gathering2 = returnDummyGathering(1, category, user, gatheringImage);
+        Gathering gathering3 = returnDummyGathering(1, category, user, gatheringImage);
         categoryRepository.save(category);
         imageRepository.saveAll(List.of(userImage,gatheringImage));
         userRepository.save(user);
-        gatheringCountRepository.save(gatheringCount);
         gatheringRepository.saveAll(List.of(gathering1,gathering2,gathering3));
         em.flush();
 

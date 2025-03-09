@@ -9,9 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ChatRoomResponse {
-    private String name;
-    private int count;
-    private String createdBy;
-    private boolean status;
+public class AttendChatResponse {
+    private String code;
+    private String message;
 }

@@ -1,4 +1,4 @@
-package spring.myproject.domain.chat;
+package spring.myproject.domain.fcm;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -7,25 +7,22 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import spring.myproject.domain.user.User;
 
-
 @Entity
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 @Getter
-@Table(name = "chat_room")
-public class ChatRoom {
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+@Table(name = "user_topic")
+public class UserTopic {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false)
-    private String name;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User createdBy;
-    private int count;
-    public void changeCount(int count){
-        this.count = count;
-    }
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "topic_id")
+    private Topic topic;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_Id")
+    private User user;
 }
