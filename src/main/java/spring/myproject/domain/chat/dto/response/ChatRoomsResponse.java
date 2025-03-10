@@ -14,4 +14,8 @@ public class ChatRoomsResponse {
     private String code;
     private String message;
     private Page<ChatRoomResponse> page;
+
+    public static ChatRoomsResponse of(String code, String message, Page<ChatRoomResponse> page) {
+        return new ChatRoomsResponse(code, message, page);
+    }
 }

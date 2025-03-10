@@ -1,6 +1,7 @@
 package spring.myproject.domain.gathering.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,6 +46,8 @@ public class GatheringService {
     private final UserRepository userRepository;
     private final S3ImageUploadService s3ImageUploadService;
     private final S3ImageDownloadService s3ImageDownloadService;
+    @Value("${server.url}")
+    private String url;
 
     public AddGatheringResponse addGathering(AddGatheringRequest addGatheringRequest, MultipartFile file, String username) throws IOException {
 
@@ -53,12 +56,7 @@ public class GatheringService {
             Image image = null;
             image = saveImage(image,file);
             Gathering gathering = Gathering.of(addGatheringRequest,user,category,image);
-            Enrollment enrollment = Enrollment.builder()
-                        .gathering(gathering)
-                        .accepted(true)
-                        .date(LocalDateTime.now())
-                        .enrolledBy(user)
-                        .build();
+            Enrollment enrollment = Enrollment.of(true, gathering, user, LocalDateTime.now());
             if(image!=null) imageRepository.save(image);
             gatheringRepository.save(gathering);
             enrollmentRepository.save(enrollment);
@@ -97,83 +95,24 @@ public class GatheringService {
 
     }
 
-    private List<GatheringsQuery> toGatheringQueriesList(List<EntireGatheringsQuery> entireGatheringsQueries) {
-        return entireGatheringsQueries.stream()
-                .map(query -> GatheringsQuery.builder()
-                        .id(query.getId())
-                        .title(query.getTitle())
-                        .content(query.getContent())
-                        .registerDate(query.getRegisterDate())
-                        .category(query.getCategory())
-                        .createdBy(query.getCreatedBy())
-                        .url(query.getUrl())
-                        .count(query.getCount())
-                        .build())
-                .collect(Collectors.toList());
-    }
-
     public GatheringPagingResponse gatheringCategory(String category, Integer pageNum, Integer pageSize, String username) {
-            userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
-            PageRequest pageRequest = PageRequest.of(pageNum - 1, pageSize, Sort.Direction.ASC,"id");
-            Page<GatheringsQuery> gatheringsQueryPage = gatheringRepository.gatheringsCategory(pageRequest,category);
-            Page<GatheringsResponse> page = gatheringsQueryPage.map(g -> {
-                GatheringsResponse.GatheringsResponseBuilder builder = GatheringsResponse.builder()
-                        .id(g.getId())
-                        .title(g.getTitle())
-                        .createdBy(g.getCreatedBy())
-                        .registerDate(g.getRegisterDate())
-                        .category(g.getCategory())
-                        .content(g.getContent())
-                        .count(g.getCount());
-                try {
-                    byte[] imageBytes = s3ImageDownloadService.getFileByteArrayFromS3(g.getUrl());
-                    builder.image(imageBytes);
-                } catch (IOException e) {
-                    builder.image(null);
-                }
-                return builder.build();
-            });
-            return GatheringPagingResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE,page);
+        userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
+        PageRequest pageRequest = PageRequest.of(pageNum - 1, pageSize, Sort.Direction.ASC,"id");
+        Page<GatheringsQuery> gatheringsQueryPage = gatheringRepository.gatheringsCategory(pageRequest,category);
+        Page<GatheringsResponse> page = toGatheringsResponsePage(gatheringsQueryPage);
+        return GatheringPagingResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE,page);
     }
 
     public GatheringPagingResponse gatheringsLike(int pageNum, int pageSize, String username) {
 
-            User user = userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
-            PageRequest pageRequest = PageRequest.of(pageNum - 1, pageSize, Sort.Direction.DESC,"id");
-            Long userId = user.getId();
-            Page<GatheringsQuery> gatheringsQueryPage = gatheringRepository.gatheringsLike(pageRequest, userId);
-            Page<GatheringsResponse> page = gatheringsQueryPage.map(g -> {
-                GatheringsResponse.GatheringsResponseBuilder builder = GatheringsResponse.builder()
-                        .id(g.getId())
-                        .title(g.getTitle())
-                        .createdBy(g.getCreatedBy())
-                        .registerDate(g.getRegisterDate())
-                        .category(g.getCategory())
-                        .content(g.getContent())
-                        .count(g.getCount());
-                try {
-                    byte[] imageBytes = s3ImageDownloadService.getFileByteArrayFromS3(g.getUrl());
-                    builder.image(imageBytes);
-                } catch (IOException e) {
-                    builder.image(null);
-                }
-                return builder.build();
-            });
-
+        User user = userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
+        PageRequest pageRequest = PageRequest.of(pageNum - 1, pageSize, Sort.Direction.DESC,"id");
+        Long userId = user.getId();
+        Page<GatheringsQuery> gatheringsQueryPage = gatheringRepository.gatheringsLike(pageRequest, userId);
+        Page<GatheringsResponse> page = toGatheringsResponsePage(gatheringsQueryPage);
         return GatheringPagingResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE,page);
     }
 
-    private Image saveImage(Image image,MultipartFile file) throws IOException {
-        if(!file.isEmpty()){
-            String url = s3ImageUploadService.upload(file);
-            if(StringUtils.hasText(url)){
-                image = Image.builder()
-                        .url(url)
-                        .build();
-            }
-        }
-        return image;
-    }
     private GatheringResponse getGatheringResponse(List<GatheringDetailQuery> gatheringDetailQueries) throws IOException {
 
         GatheringResponse gatheringResponse = GatheringResponse.builder()
@@ -196,22 +135,19 @@ public class GatheringService {
         }
         return gatheringResponse;
     }
-    private TotalGatheringsElement toGatheringsResponse(GatheringsQuery gatheringsQuery) {
-
-        TotalGatheringsElement.TotalGatheringsElementBuilder builder = TotalGatheringsElement.builder();
-        builder.id(gatheringsQuery.getId())
-                .title(gatheringsQuery.getTitle())
-                .content(gatheringsQuery.getContent())
-                .registerDate(gatheringsQuery.getRegisterDate())
-                .category(gatheringsQuery.getCategory())
-                .createdBy(gatheringsQuery.getCreatedBy())
-                .count(gatheringsQuery.getCount());
-        try {
-            builder.image(s3ImageDownloadService.getFileByteArrayFromS3(gatheringsQuery.getUrl()));
-        } catch (Exception e) {
-            builder.image(null);
-        }
-        return builder.build();
+    private List<GatheringsQuery> toGatheringQueriesList(List<EntireGatheringsQuery> entireGatheringsQueries) {
+        return entireGatheringsQueries.stream()
+                .map(query -> GatheringsQuery.builder()
+                        .id(query.getId())
+                        .title(query.getTitle())
+                        .content(query.getContent())
+                        .registerDate(query.getRegisterDate())
+                        .category(query.getCategory())
+                        .createdBy(query.getCreatedBy())
+                        .url(query.getUrl())
+                        .count(query.getCount())
+                        .build())
+                .collect(Collectors.toList());
     }
 
     private List<TotalGatheringsElement> toGatheringsResponseList(List<GatheringsQuery> gatheringsQueryList) {
@@ -229,6 +165,19 @@ public class GatheringService {
                         )
                 ));
     }
+    private TotalGatheringsElement toGatheringsResponse(GatheringsQuery gatheringsQuery) {
+
+        return TotalGatheringsElement.builder().id(gatheringsQuery.getId())
+                .title(gatheringsQuery.getTitle())
+                .content(gatheringsQuery.getContent())
+                .registerDate(gatheringsQuery.getRegisterDate())
+                .category(gatheringsQuery.getCategory())
+                .createdBy(gatheringsQuery.getCreatedBy())
+                .count(gatheringsQuery.getCount())
+                .url(gatheringsQuery.getUrl())
+                .build();
+
+    }
 
     private CategoryTotalGatherings processCategoryElements(List<TotalGatheringsElement> elements) {
         boolean hasNext = elements.size() >= 9;
@@ -241,7 +190,6 @@ public class GatheringService {
                 .hasNext(hasNext)
                 .build();
     }
-
     private TotalGatheringsResponse createTotalGatherings(Map<String, CategoryTotalGatherings> categoryMap) {
         return TotalGatheringsResponse.builder()
                 .code(SUCCESS_CODE)
@@ -251,8 +199,35 @@ public class GatheringService {
     }
 
 
+    private Page<GatheringsResponse> toGatheringsResponsePage(Page<GatheringsQuery> page) {
+        return page.map(g ->
+                GatheringsResponse.builder()
+                        .id(g.getId())
+                        .title(g.getTitle())
+                        .createdBy(g.getCreatedBy())
+                        .registerDate(g.getRegisterDate())
+                        .category(g.getCategory())
+                        .content(g.getContent())
+                        .count(g.getCount())
+                        .url(getUrl(g.getUrl()))
+                        .build()
+        );
+    }
+
+
+    private Image saveImage(Image image,MultipartFile file) throws IOException {
+        if(!file.isEmpty()){
+            String url = s3ImageUploadService.upload(file);
+            if(StringUtils.hasText(url)){
+                image = Image.builder()
+                        .url(url)
+                        .build();
+            }
+        }
+        return image;
+    }
 
     private String getUrl(String fileUrl){
-        return "http://localhost/image"+fileUrl;
+        return url+fileUrl;
     }
 }

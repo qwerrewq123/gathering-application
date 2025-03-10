@@ -20,12 +20,12 @@ public class BoardResponse {
     private String message;
     private String title;
     private String description;
-    private List<byte[]> imageUrls;
+    private List<String> imageUrls;
     private String username;
-    private byte[] userImageUrl;
+    private String userImageUrl;
     private LocalDateTime registerDate;
 
-    public static BoardResponse of(List<BoardQuery> boardQueries,List<byte[]> imageUrls, byte[] userImageUrl ,String code, String message) {
+    public static BoardResponse of(List<BoardQuery> boardQueries,List<String> imageUrls, String userImageUrl ,String code, String message) {
         return BoardResponse.builder()
                 .code(code)
                 .message(message)

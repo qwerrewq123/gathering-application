@@ -2,6 +2,7 @@ package spring.myproject.domain.recommend.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import spring.myproject.domain.gathering.repository.GatheringRepository;
 import spring.myproject.domain.user.User;
@@ -29,29 +30,15 @@ public class RecommendService {
 
     private final GatheringRepository gatheringRepository;
     private final UserRepository userRepository;
+    @Value("${server.url}")
+    private String url;
 
     public RecommendResponse recommend(String username) {
 
-        try {
-            User user = userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
+            userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
             List<GatheringDetailQuery> gatheringQueryDtos = gatheringRepository.gatheringsRecommend();
             List<GatheringResponse> gatheringResponses = getGatheringResponses(gatheringQueryDtos);
-            return RecommendResponse.builder()
-                    .code(SUCCESS_CODE)
-                    .message(SUCCESS_MESSAGE)
-                    .gatherings(gatheringResponses)
-                    .build();
-        }catch (NotFoundUserException e){
-            return RecommendResponse.builder()
-                    .code(NOT_FOUND_USER_CODE)
-                    .message(NOT_FOUND_USER_MESSAGE)
-                    .build();
-        }catch (Exception e){
-            return RecommendResponse.builder()
-                    .code(DB_ERROR_CODE)
-                    .message(DB_ERROR_MESSAGE)
-                    .build();
-        }
+            return RecommendResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE,gatheringResponses);
     }
 
     private List<GatheringResponse> getGatheringResponses(List<GatheringDetailQuery> gatheringQueryDtos){
@@ -66,30 +53,23 @@ public class RecommendService {
                             .filter(Objects::nonNull)
                             .collect(Collectors.toList());
                     GatheringResponse response = new GatheringResponse();
-                    try {
-                        response.setCode("SU"); // 기본값 설정 (필요 시 변경)
-                        response.setMessage("Success");
-                        response.setTitle(representative.getTitle());
-                        response.setContent(representative.getContent());
-                        response.setRegisterDate(representative.getRegisterDate());
-                        response.setCategory(representative.getCategory());
-                        response.setCreatedBy(representative.getCreatedBy());
-                        response.setParticipatedBy(participatedBy);
-                        response.setCount(representative.getCount());
-                        response.setImage(encodeFileToBase64(representative.getUrl())); // 기본 이미지 설정 (필요 시 변경)
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
+                    response.setCode("SU"); // 기본값 설정 (필요 시 변경)
+                    response.setMessage("Success");
+                    response.setTitle(representative.getTitle());
+                    response.setContent(representative.getContent());
+                    response.setRegisterDate(representative.getRegisterDate());
+                    response.setCategory(representative.getCategory());
+                    response.setCreatedBy(representative.getCreatedBy());
+                    response.setParticipatedBy(participatedBy);
+                    response.setCount(representative.getCount());
+                    response.setImage(getUrl(representative.getUrl()));
                     return response;
                 })
                 .collect(Collectors.toList());
     }
 
-    private String encodeFileToBase64(String filePath) throws IOException {
-        File file = new File(filePath);
-        byte[] fileBytes  = Files.readAllBytes(file.toPath());
-        return Base64.getEncoder().encodeToString(fileBytes);
-
+    private String getUrl(String fileUrl){
+        return url+fileUrl;
     }
 
 }

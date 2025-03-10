@@ -25,4 +25,20 @@ public class MeetingResponse {
     private LocalDateTime endDate;
     private String content;
     private String url;
+
+    public static MeetingResponse of(String code, String message, List<MeetingDetailQuery> meetingDetailQueries,List<String> attends, String url){
+        return MeetingResponse.builder()
+                .code(code)
+                .message(message)
+                .id(meetingDetailQueries.getLast().getId())
+                .title(meetingDetailQueries.getFirst().getTitle())
+                .content(meetingDetailQueries.getFirst().getContent())
+                .boardDate(meetingDetailQueries.getFirst().getBoardDate())
+                .startDate(meetingDetailQueries.getFirst().getStartDate())
+                .endDate(meetingDetailQueries.getFirst().getEndDate())
+                .createdBy(meetingDetailQueries.getFirst().getCreatedBy())
+                .attendedBy(attends)
+                .url(url)
+                .build();
+    }
 }

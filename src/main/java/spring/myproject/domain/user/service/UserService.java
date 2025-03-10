@@ -44,7 +44,6 @@ public class UserService {
     private final UserRepository userRepository;
     private final ImageRepository imageRepository;
     private final PasswordEncoder passwordEncoder;
-    private final EmailProvider emailProvider;
     private final S3ImageUploadService s3ImageUploadService;
     private final JwtProvider jwtProvider;
     private final AsyncService asyncService;
@@ -146,6 +145,7 @@ public class UserService {
         return UserResponse.of(foundUser);
     }
 
+    //TODO : 로직처리하기
     public GenerateTokenResponse generateToken(String refreshToken) {
 
         return null;

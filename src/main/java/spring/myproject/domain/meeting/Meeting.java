@@ -5,6 +5,7 @@ import lombok.*;
 import spring.myproject.domain.attend.Attend;
 import spring.myproject.domain.gathering.Gathering;
 import spring.myproject.domain.image.Image;
+import spring.myproject.domain.meeting.dto.request.AddMeetingRequest;
 import spring.myproject.domain.user.User;
 
 import java.time.LocalDateTime;
@@ -47,5 +48,18 @@ public class Meeting {
             attend.addMeeting(this);
         }
         this.attends = attends;
+    }
+    public static Meeting of(AddMeetingRequest addMeetingRequest,Image image,User user,Gathering gathering){
+        return Meeting.builder()
+                .title(addMeetingRequest.getTitle())
+                .content(addMeetingRequest.getContent())
+                .createdBy(user)
+                .boardDate(LocalDateTime.now())
+                .startDate(addMeetingRequest.getStartDate())
+                .endDate(addMeetingRequest.getEndDate())
+                .gathering(gathering)
+                .count(1)
+                .image(image)
+                .build();
     }
 }

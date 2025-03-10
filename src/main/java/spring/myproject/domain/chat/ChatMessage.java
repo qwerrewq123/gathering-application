@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import spring.myproject.domain.chat.dto.request.ChatMessageRequest;
 
 @Entity
 @NoArgsConstructor
@@ -25,5 +26,13 @@ public class ChatMessage {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "chat_participant_id")
     ChatParticipant chatParticipant;
+
+    public static ChatMessage of(ChatRoom chatRoom, ChatParticipant chatParticipant, ChatMessageRequest chatMessageRequest){
+        return ChatMessage.builder()
+                .chatRoom(chatRoom)
+                .chatParticipant(chatParticipant)
+                .content(chatMessageRequest.getContent())
+                .build();
+    }
 
 }

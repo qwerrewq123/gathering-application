@@ -53,9 +53,6 @@ public class FailService {
 
     public CloseResponse close(String clientId) {
         emitterRepository.deleteById(clientId);
-        return CloseResponse.builder()
-                .code(SUCCESS_CODE)
-                .message(SUCCESS_MESSAGE)
-                .build();
+        return CloseResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE);
     }
 }

@@ -12,4 +12,8 @@ import lombok.NoArgsConstructor;
 public class ReadChatMessageResponse {
     private String code;
     private String message;
+
+    public static ReadChatMessageResponse of(String code, String message) {
+        return new ReadChatMessageResponse(code, message);
+    }
 }

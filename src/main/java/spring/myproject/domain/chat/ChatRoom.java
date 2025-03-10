@@ -27,5 +27,12 @@ public class ChatRoom {
     public void changeCount(int count){
         this.count = count;
     }
+    public static ChatRoom of(String name,User user){
+        return ChatRoom.builder()
+                .name(name)
+                .createdBy(user)
+                .count(1)
+                .build();
+    }
 
 }

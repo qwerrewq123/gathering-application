@@ -19,6 +19,6 @@ public class GatheringsResponse {
     private LocalDateTime registerDate;
     private String category;
     private String createdBy;
-    private byte[] image;
+    private String url;
     private int count;
 }

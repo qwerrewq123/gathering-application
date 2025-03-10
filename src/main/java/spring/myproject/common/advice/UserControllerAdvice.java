@@ -23,7 +23,7 @@ public class UserControllerAdvice {
     @ExceptionHandler(UnCorrectPasswordException.class)
     ResponseEntity<ErrorResponse> handleUnCorrectPasswordException(){
         return new ResponseEntity<>(
-                AbstractErrorResponse.getErrorResponse(UNCORRECT_CODE, UNCORRECT_MESSAGE)
+                AbstractErrorResponse.getErrorResponse(UN_CORRECT_CODE, UN_CORRECT_MESSAGE)
                 , HttpStatus.BAD_REQUEST);
     }
     @ExceptionHandler(MessagingException.class)

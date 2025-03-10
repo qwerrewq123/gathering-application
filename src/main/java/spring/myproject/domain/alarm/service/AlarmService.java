@@ -46,14 +46,6 @@ public class AlarmService {
             return AlarmResponsePage.of(SUCCESS_CODE,SUCCESS_MESSAGE,alarmResponsePage);
     }
 
-    public AddAlarmResponse addAlarm(AddAlarmRequest addAlarmRequest, String username) {
-
-            User user = userRepository.findByUsername(username).orElseThrow(()-> new NotFoundUserException("no exist User!!"));
-            Alarm alarm = Alarm.of(addAlarmRequest, LocalDateTime.now(), false, user);
-            alarmRepository.save(alarm);
-            return AddAlarmResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE);
-    }
-
     private Page<AlarmResponse> getAlarmResponses(Integer page, User user,boolean checked) {
         if(checked == true){
             PageRequest pageRequest = PageRequest.of(page - 1, 10);

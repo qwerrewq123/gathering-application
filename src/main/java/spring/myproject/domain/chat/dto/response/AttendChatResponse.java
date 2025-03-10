@@ -12,4 +12,8 @@ import lombok.NoArgsConstructor;
 public class AttendChatResponse {
     private String code;
     private String message;
+
+    public static AttendChatResponse of(String code, String message) {
+        return new AttendChatResponse(code, message);
+    }
 }

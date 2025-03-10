@@ -1,6 +1,7 @@
 package spring.myproject.domain.meeting.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -48,37 +49,21 @@ public class MeetingService {
     private final GatheringRepository gatheringRepository;
     private final AttendRepository attendRepository;
     private final S3ImageUploadService s3ImageUploadService;
-    private final S3ImageDownloadService s3ImageDownloadService;
     private final ImageRepository imageRepository;
+    @Value("${server.url}")
+    private String url;
     public AddMeetingResponse addMeeting(AddMeetingRequest addMeetingRequest, String username, Long gatheringId, MultipartFile file) throws IOException {
 
             User user = userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
             Gathering gathering = gatheringRepository.findById(gatheringId).orElseThrow(() -> new NotFoundGatheringException("no exist Gathering!!"));
             Image image = null;
             image = saveImage(image,file);
-            Meeting meeting = Meeting.builder()
-                    .title(addMeetingRequest.getTitle())
-                    .content(addMeetingRequest.getContent())
-                    .createdBy(user)
-                    .boardDate(LocalDateTime.now())
-                    .startDate(addMeetingRequest.getStartDate())
-                    .endDate(addMeetingRequest.getEndDate())
-                    .gathering(gathering)
-                    .count(1)
-                    .image(image)
-                    .build();
-        Attend attend = Attend.builder()
-                .meeting(meeting)
-                .date(LocalDateTime.now())
-                .accepted(true)
-                .attendBy(user).build();
-        if(image!=null) imageRepository.save(image);
-        meetingRepository.save(meeting);
-        attendRepository.save(attend);
-        return AddMeetingResponse.builder()
-                    .code(SUCCESS_CODE)
-                    .message(SUCCESS_MESSAGE)
-                    .build();
+            Meeting meeting = Meeting.of(addMeetingRequest,image,user,gathering);
+            Attend attend = Attend.of(meeting,user);
+            if(image!=null) imageRepository.save(image);
+            meetingRepository.save(meeting);
+            attendRepository.save(attend);
+            return AddMeetingResponse.of(SUCCESS_CODE, SUCCESS_MESSAGE);
     }
 
     public DeleteMeetingResponse deleteMeeting(String username, Long meetingId) {
@@ -127,34 +112,35 @@ public class MeetingService {
 
         userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
         List<MeetingDetailQuery> meetingDetailQueries = meetingRepository.meetingDetail(meetingId);
-        if(meetingDetailQueries.size() == 0){
-            throw new NotFoundMeetingExeption("no exist Meeting!!");
-        }
-        return MeetingResponse.builder()
-                .code("SU")
-                .message("Success")
-                .id(meetingDetailQueries.getLast().getId())
-                .title(meetingDetailQueries.getFirst().getTitle())
-                .content(meetingDetailQueries.getFirst().getContent())
-                .boardDate(meetingDetailQueries.getFirst().getBoardDate())
-                .startDate(meetingDetailQueries.getFirst().getStartDate())
-                .endDate(meetingDetailQueries.getFirst().getEndDate())
-                .createdBy(meetingDetailQueries.getFirst().getCreatedBy())
-                .attendedBy(attendedBy(meetingDetailQueries))
-                .url(meetingDetailQueries.getFirst().getUrl())
-                .build();
+        if(meetingDetailQueries.size() == 0) throw new NotFoundMeetingExeption("no exist Meeting!!");
+        List<String> attends = attendedBy(meetingDetailQueries);
+        String url = getUrl(meetingDetailQueries.getFirst().getUrl());
+        return MeetingResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE,meetingDetailQueries,attends,url);
+
     }
 
     public MeetingsResponse meetings(int pageNum, int pageSize, String username, @RequestParam(defaultValue = "") String title) {
 
             userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
             PageRequest pageRequest = PageRequest.of(pageNum - 1, pageSize, Sort.Direction.ASC,"id");
-            Page<MeetingsQuery> page = meetingRepository.meetings(pageRequest,title);
-            return MeetingsResponse.builder()
-                    .code(SUCCESS_CODE)
-                    .message(SUCCESS_MESSAGE)
-                    .page(page)
-                    .build();
+            Page<MeetingsQuery> meetingsQueryPage = meetingRepository.meetings(pageRequest,title);
+            Page<MeetingsQuery> page = toPage(meetingsQueryPage);
+            return MeetingsResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE,page);
+    }
+
+    private Page<MeetingsQuery> toPage(Page<MeetingsQuery> meetingsQueryPage) {
+        return meetingsQueryPage.map(m ->
+                MeetingsQuery.builder()
+                        .id(m.getId())
+                        .title(m.getTitle())
+                        .createdBy(m.getCreatedBy())
+                        .boardDate(m.getBoardDate())
+                        .startDate(m.getStartDate())
+                        .endDate(m.getEndDate())
+                        .content(m.getContent())
+                        .count(m.getCount())
+                        .url(getUrl(m.getUrl()))
+                        .build());
     }
 
     private List<String> attendedBy(List<MeetingDetailQuery> meetingDetailQueries){
@@ -167,6 +153,7 @@ public class MeetingService {
         }
         return attendedBy;
     }
+
     private Image saveImage(Image image, MultipartFile file) throws IOException {
         if(!file.isEmpty()){
             String url = s3ImageUploadService.upload(file);
@@ -177,5 +164,8 @@ public class MeetingService {
             }
         }
         return image;
+    }
+    private String getUrl(String fileUrl){
+        return url+fileUrl;
     }
 }

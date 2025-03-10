@@ -15,5 +15,8 @@ public class MeetingsResponse {
     private String code;
     private String message;
     private Page<MeetingsQuery> page;
+    public static MeetingsResponse of(String code, String message,Page<MeetingsQuery> page) {
+        return new MeetingsResponse(code, message,page);
+    }
 
 }

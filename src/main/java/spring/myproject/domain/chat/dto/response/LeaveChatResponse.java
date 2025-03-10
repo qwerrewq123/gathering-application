@@ -12,4 +12,8 @@ import lombok.NoArgsConstructor;
 public class LeaveChatResponse {
     String code;
     String message;
+
+    public static LeaveChatResponse of(String code, String message) {
+        return new LeaveChatResponse(code, message);
+    }
 }

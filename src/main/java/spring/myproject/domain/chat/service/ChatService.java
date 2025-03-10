@@ -42,16 +42,8 @@ public class ChatService {
 
     public AddChatRoomResponse addChatRoom(String roomName, String username) {
         User user = userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
-        ChatRoom chatRoom = ChatRoom.builder()
-                .name(roomName)
-                .createdBy(user)
-                .count(1)
-                .build();
-        ChatParticipant chatParticipant = ChatParticipant.builder()
-                .chatRoom(chatRoom)
-                .user(user)
-                .status(false)
-                .build();
+        ChatRoom chatRoom = ChatRoom.of(roomName, user);
+        ChatParticipant chatParticipant = ChatParticipant.of(chatRoom, user);
         chatRoomRepository.save(chatRoom);
         chatParticipantRepository.save(chatParticipant);
         return AddChatRoomResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE);
@@ -62,11 +54,7 @@ public class ChatService {
         Long userId = user.getId();
         PageRequest pageRequest = PageRequest.of(pageNum, 5);
         Page<ChatRoomResponse> page = chatRoomRepository.fetchChatRooms(pageRequest,userId);
-        return ChatRoomsResponse.builder()
-                .code(SUCCESS_CODE)
-                .message(SUCCESS_MESSAGE)
-                .page(page)
-                .build();
+        return ChatRoomsResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE,page);
     }
 
     public ChatMyRoomsResponse fetchMyChatRooms(Integer pageNum,String username) {
@@ -74,11 +62,7 @@ public class ChatService {
         Long userId = user.getId();
         PageRequest pageRequest = PageRequest.of(pageNum, 5);
         Page<ChatMyRoomResponse> page = chatRoomRepository.fetchMyChatRooms(pageRequest,userId);
-        return ChatMyRoomsResponse.builder()
-                .code(SUCCESS_CODE)
-                .message(SUCCESS_MESSAGE)
-                .page(page)
-                .build();
+        return ChatMyRoomsResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE,page);
     }
 
     public LeaveChatResponse leaveChat(Long chatId, String username) {
@@ -88,13 +72,8 @@ public class ChatService {
                 .orElseThrow(() -> new NotFoundChatRoomException("no exist ChatRoom!!"));
         ChatParticipant chatParticipant = chatParticipantRepository.findByChatRoomAndUserAndStatus(chatRoom,user,true)
                 .orElseThrow(()-> new NotFoundChatParticipantException("no exist ChatParticipant!!"));
-
-
         chatParticipant.changeStatus(false);
-        return LeaveChatResponse.builder()
-                .code(SUCCESS_CODE)
-                .message(SUCCESS_MESSAGE)
-                .build();
+        return LeaveChatResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE);
     }
 
     public ReadChatMessageResponse readChatMessage(Long chatId, String username) {
@@ -106,14 +85,10 @@ public class ChatService {
                 .orElseThrow(()-> new NotFoundChatParticipantException("no exist ChatParticipant!!"));
         List<ChatMessage> chatMessages = chatMessageRepository.findByChatRoomAndChatParticipant(chatRoom,chatParticipant);
         if(chatMessages.isEmpty()) throw new NotFoundChatMessageException("no exist ChatMessage!!!");
-
         Long chatParticipantId = chatParticipant.getId();
         List<Long> chatMessagesId = chatMessages.stream().map(c -> c.getId()).toList();
         readStatusRepository.readChatMessage(chatParticipantId,chatMessagesId);
-        return ReadChatMessageResponse.builder()
-                .code(SUCCESS_CODE)
-                .message(SUCCESS_MESSAGE)
-                .build();
+        return ReadChatMessageResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE);
     }
 
 
@@ -125,30 +100,13 @@ public class ChatService {
                 .orElseThrow(()->new NotFoundUserException("no exist User!!"));
         ChatParticipant chatParticipant = chatParticipantRepository.findByChatRoomAndUserAndStatus(chatRoom,user,true)
                 .orElseThrow(()->new NotFoundChatParticipantException("no exist ChatParticipant!!"));
-        ChatMessage chatMessage = ChatMessage.builder()
-                .chatRoom(chatRoom)
-                .chatParticipant(chatParticipant)
-                .content(chatMessageRequest.getContent())
-                .build();
+        ChatMessage chatMessage = ChatMessage.of(chatRoom,chatParticipant,chatMessageRequest);
         List<ChatParticipant> trueChatParticipants =
                 chatParticipantRepository.findAllByChatRoomAndStatus(chatRoom, true);
-        List<ChatParticipant> falsechatParticipants =
+        List<ChatParticipant> falseChatParticipants =
                 chatParticipantRepository.findAllByChatRoomAndStatus(chatRoom, false);
         chatMessageRepository.save(chatMessage);
-        for (ChatParticipant trueChatParticipant : trueChatParticipants) {
-            readStatusRepository.save(ReadStatus.builder()
-                            .chatMessage(chatMessage)
-                            .chatParticipant(trueChatParticipant)
-                            .status(true)
-                            .build());
-        }
-        for (ChatParticipant falsechatParticipant : falsechatParticipants) {
-            readStatusRepository.save(ReadStatus.builder()
-                    .chatMessage(chatMessage)
-                    .chatParticipant(falsechatParticipant)
-                    .status(false)
-                    .build());
-        }
+        saveReadStatus(trueChatParticipants, chatMessage, falseChatParticipants);
     }
 
     public AttendChatResponse attendChat(Long roomId, String username) {
@@ -158,22 +116,16 @@ public class ChatService {
                 .orElseThrow(()->new NotFoundUserException("no exist User!!"));
         Optional<ChatParticipant> optionalChatParticipant = chatParticipantRepository.findByChatRoomAndUserAndStatus(chatRoom,user,false);
 
-        if(optionalChatParticipant.isPresent()){
-            ChatParticipant chatParticipant = optionalChatParticipant.get();
-            chatParticipant.changeStatus(true);
-        }else{
+        if(optionalChatParticipant.isPresent()) optionalChatParticipant.get().changeStatus(true);
+        if(optionalChatParticipant.isEmpty()){
             chatParticipantRepository.save(ChatParticipant.builder()
                     .chatRoom(chatRoom)
                     .user(user)
                     .status(true)
-                    .build()
-            );
+                    .build());
         }
         chatRoom.changeCount(chatRoom.getCount()+1);
-        return AttendChatResponse.builder()
-                .code(SUCCESS_CODE)
-                .message(SUCCESS_MESSAGE)
-                .build();
+        return AttendChatResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE);
     }
 
     public FetchMessagesResponse fetchMessages(Long roomId, String username) {
@@ -185,11 +137,7 @@ public class ChatService {
                 .orElseThrow(()->new NotFoundChatParticipantException("no exist ChatParticipant!!"));
         Long chatParticipantId = chatParticipant.getId();
         List<ChatMessageResponse> chatMessageResponses = chatMessageRepository.fetchMessages(roomId,chatParticipantId);
-        return FetchMessagesResponse.builder()
-                .code(SUCCESS_CODE)
-                .message(SUCCESS_MESSAGE)
-                .chatMessageResponses(chatMessageResponses)
-                .build();
+        return FetchMessagesResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE,chatMessageResponses);
     }
 
     public boolean isRoomParticipant(String username, long roomId) {
@@ -200,5 +148,22 @@ public class ChatService {
         chatParticipantRepository.findByChatRoomAndUserAndStatus(chatRoom,user,true)
                 .orElseThrow(()->new NotFoundChatParticipantException("no exist ChatParticipant!!"));
         return true;
+    }
+
+    private void saveReadStatus(List<ChatParticipant> trueChatParticipants, ChatMessage chatMessage, List<ChatParticipant> falseChatParticipants) {
+        for (ChatParticipant trueChatParticipant : trueChatParticipants) {
+            readStatusRepository.save(ReadStatus.builder()
+                    .chatMessage(chatMessage)
+                    .chatParticipant(trueChatParticipant)
+                    .status(true)
+                    .build());
+        }
+        for (ChatParticipant falsechatParticipant : falseChatParticipants) {
+            readStatusRepository.save(ReadStatus.builder()
+                    .chatMessage(chatMessage)
+                    .chatParticipant(falsechatParticipant)
+                    .status(false)
+                    .build());
+        }
     }
 }

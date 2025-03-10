@@ -17,4 +17,8 @@ public class RecommendResponse {
     private String code;
     private String message;
     List<GatheringResponse> gatherings;
+
+    public static RecommendResponse of(String code, String message, List<GatheringResponse> gatherings) {
+        return new RecommendResponse(code, message, gatherings);
+    }
 }

@@ -12,4 +12,7 @@ import lombok.Data;
 public class UpdateMeetingResponse {
     private String code;
     private String message;
+    public static UpdateMeetingResponse of(String code, String message) {
+        return new UpdateMeetingResponse(code, message);
+    }
 }

@@ -21,6 +21,7 @@ public class UserResponse {
     private String hobby;
     private Role role;
     private String image;
+    private String nickname;
 
     public static UserResponse of(User user){
         return UserResponse.builder()
@@ -31,6 +32,7 @@ public class UserResponse {
                 .age(user.getAge())
                 .hobby(user.getHobby())
                 .role(user.getRole())
+                .nickname(user.getNickname())
                 .image(user.getProfileImage().getUrl())
                 .build();
     }

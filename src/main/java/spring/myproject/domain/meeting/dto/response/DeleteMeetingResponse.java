@@ -12,4 +12,7 @@ import lombok.Data;
 public class DeleteMeetingResponse {
     private String code;
     private String message;
+    public static DeleteMeetingResponse of(String code, String message) {
+        return new DeleteMeetingResponse(code, message);
+    }
 }

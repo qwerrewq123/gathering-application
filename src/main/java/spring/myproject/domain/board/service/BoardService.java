@@ -2,6 +2,7 @@ package spring.myproject.domain.board.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -43,42 +44,26 @@ public class BoardService {
     private final GatheringRepository gatheringRepository;
     private final EnrollmentRepository enrollmentRepository;
     private final ImageRepository imageRepository;
+    @Value("${server.url}")
+    private String url;
 
     public BoardResponse fetchBoard(Long gatheringId, Long boardId, String username) {
         User user = userRepository.findByUsername(username).orElseThrow(() -> new NotFoundUserException("no exist User!!"));
         Gathering gathering = gatheringRepository.findById(gatheringId).orElseThrow(() -> new NotFoundGatheringException("no exist Gathering!!"));
-        if(enrollmentRepository.findByGatheringAndEnrolledBy(gathering,user).isEmpty()){
-            throw new NotAuthorizeException("no Authorize to fetch board");
-        }
+        if(enrollmentRepository.findByGatheringAndEnrolledBy(gathering,user).isEmpty()) throw new NotAuthorizeException("no Authorize to fetch board");
         List<BoardQuery> boardQueries = boardRepository.fetchBoard(boardId);
         if(boardQueries.isEmpty()) throw new NotFoundBoardException("no board found");
-        byte[] userImageUrl = getUserImageUrl(boardQueries);
-        List<byte[]> imageUrls = getImageUrls(boardQueries);
-        BoardResponse fetchBoardResponse = BoardResponse.of(boardQueries,imageUrls,userImageUrl,SUCCESS_CODE,SUCCESS_MESSAGE);
-        return fetchBoardResponse;
+        String userImageUrl = getUserImageUrl(boardQueries);
+        List<String> imageUrls = getImageUrls(boardQueries);
+        return BoardResponse.of(boardQueries,imageUrls,userImageUrl,SUCCESS_CODE,SUCCESS_MESSAGE);
     }
+
     public AddBoardResponse addBoard(String username, AddBoardRequest addBoardRequest, List<MultipartFile> files, Long gatheringId) throws IOException {
         User user = userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
         Gathering gathering = gatheringRepository.findById(gatheringId).orElseThrow(() -> new NotFoundGatheringException("no exist Gathering!!"));
-        if(enrollmentRepository.findByGatheringAndEnrolledBy(gathering,user).isEmpty()){
-            throw new NotAuthorizeException("no Authorize to add board");
-        }
+        if(enrollmentRepository.findByGatheringAndEnrolledBy(gathering,user).isEmpty()) throw new NotAuthorizeException("no Authorize to add board");
         Board board = AddBoardRequest.of(addBoardRequest,user,gathering);
-        List<Image> images = new ArrayList<>();
-        for(MultipartFile file : files){
-            if(!file.isEmpty()){
-                String url = s3ImageUploadService.upload(file);
-                if(StringUtils.hasText(url)){
-                    Image image = Image.builder()
-                            .url(url)
-                            .board(board)
-                            .gathering(gathering)
-                            .build();
-                    images.add(image);
-
-                }
-            }
-        }
+        List<Image> images = saveImages(files,board,gathering);
         boardRepository.save(board);
         imageRepository.saveAll(images);
         return AddBoardResponse.of(SUCCESS_CODE, SUCCESS_MESSAGE);
@@ -87,29 +72,46 @@ public class BoardService {
     public BoardsResponse fetchBoards(Long gatheringId, String username, Integer pageNum, Integer pageSize) {
         User user = userRepository.findByUsername(username).orElseThrow(() -> new NotFoundUserException("no exist User!!"));
         Gathering gathering = gatheringRepository.findById(gatheringId).orElseThrow(() -> new NotFoundGatheringException("no exist Gathering!!"));
-        if(enrollmentRepository.findByGatheringAndEnrolledBy(gathering,user).isEmpty()){
-            throw new NotAuthorizeException("no Authorize to fetch board");
-        }
+        if(enrollmentRepository.findByGatheringAndEnrolledBy(gathering,user).isEmpty()) throw new NotAuthorizeException("no Authorize to fetch board");
         PageRequest pageRequest = PageRequest.of(pageNum, pageSize);
         Page<BoardsQuery> page = boardRepository.fetchBoards(pageRequest);
         return BoardsResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE,page);
     }
 
-    private byte[] getUserImageUrl(List<BoardQuery> boardQueries){
-        try {
-            return s3ImageDownloadService.getFileByteArrayFromS3(boardQueries.getFirst().getUserImageUrl());
-        } catch (IOException e) {
-            return null;
-        }
+    private String getUserImageUrl(List<BoardQuery> boardQueries){
+
+        return getUrl(boardQueries.getFirst().getUserImageUrl());
+
     }
-    private List<byte[]> getImageUrls(List<BoardQuery> boardQueries) {
-        List<byte[]> imageUrls = new ArrayList<>();
+
+    private List<String> getImageUrls(List<BoardQuery> boardQueries) {
+        List<String> imageUrls = new ArrayList<>();
         for (BoardQuery boardQuery : boardQueries) {
-            try {
-                imageUrls.add(s3ImageDownloadService.getFileByteArrayFromS3(boardQuery.getImageUrl()));
-            } catch (IOException e) {
-            }
+                imageUrls.add(getUrl(boardQuery.getImageUrl()));
         }
         return imageUrls;
     }
+
+    private String getUrl(String fileUrl){
+        return url+fileUrl;
+    }
+
+    private List<Image> saveImages(List<MultipartFile> files,Board board,Gathering gathering) throws IOException {
+        List<Image> images = new ArrayList<>();
+        for(MultipartFile file : files){
+            if(!file.isEmpty()){
+                String url = s3ImageUploadService.upload(file);
+                if(StringUtils.hasText(url)){         Image image = Image.builder()
+                        .url(url)
+                        .board(board)
+                        .gathering(gathering)
+                        .build();
+                    images.add(image);
+
+                }
+            }
+        }
+        return images;
+    }
+
 }

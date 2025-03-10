@@ -23,7 +23,7 @@ public class ConstClass {
     public static String NOT_FOUND_USER_CODE = "NF";
     public static String NOT_EMAIL_CODE = "NM";
     public static String DUPLICATE_EMAIL_CODE = "DE";
-    public static String UNCORRECT_CODE = "UC";
+    public static String UN_CORRECT_CODE = "UC";
     public static String DB_ERROR_CODE = "DE";
     public static String FAIL_MESSAGE_CODE = "FM";
     public static String METHOD_NOT_ALLOWED_CODE = "MN";
@@ -49,7 +49,7 @@ public class ConstClass {
     public static String NOT_FOUND_USER_MESSAGE = "Not Found User";
     public static String NOT_EMAIL_MESSAGE = "Not Found Email";
     public static String DUPLICATE_EMAIL_MESSAGE = "Duplicate Email";
-    public static String UNCORRECT_MESSAGE = "UnCorrect Password";
+    public static String UN_CORRECT_MESSAGE = "UnCorrect Password";
     public static String DB_ERROR_MESSAGE = "Database Error";
     public static String FAIL_MESSAGE_MESSAGE = "Fail Messaging From SMTP";
     public static String METHOD_NOT_ALLOWED_MESSAGE = "Method Not Allowed";

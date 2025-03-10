@@ -12,4 +12,11 @@ import lombok.NoArgsConstructor;
 public class CloseResponse {
     private String code;
     private String message;
+
+    public static CloseResponse of(String code, String message) {
+        return CloseResponse.builder()
+                .code(code)
+                .message(message)
+                .build();
+    }
 }
