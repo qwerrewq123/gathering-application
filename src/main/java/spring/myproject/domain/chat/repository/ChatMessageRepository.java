@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ChatMessageRepository extends JpaRepository<ChatMessage, Long> {
+    //TODO : 로직수정
     Optional<ChatMessage> findByChatRoomAndChatParticipant(ChatRoom chatRoom, ChatParticipant chatParticipant);
 
     @Query("select new spring.myproject.domain.chat.dto.response." +

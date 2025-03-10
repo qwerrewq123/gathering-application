@@ -1,6 +1,5 @@
 package spring.myproject.domain.gathering.repository;
 
-import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -15,6 +14,10 @@ import spring.myproject.domain.gathering.dto.response.GatheringsQuery;
 import spring.myproject.domain.gathering.dto.response.GatheringDetailQuery;
 import spring.myproject.domain.image.Image;
 import spring.myproject.domain.image.repository.ImageRepository;
+import spring.myproject.domain.like.Like;
+import spring.myproject.domain.like.repository.LikeRepository;
+import spring.myproject.domain.recommend.Recommend;
+import spring.myproject.domain.recommend.repository.RecommendRepository;
 import spring.myproject.domain.user.User;
 import spring.myproject.domain.user.repository.UserRepository;
 
@@ -36,25 +39,37 @@ public class GatheringRepositoryTest {
     @Autowired
     EnrollmentRepository enrollmentRepository;
     @Autowired
-    EntityManager em;
+    LikeRepository likeRepository;
+    @Autowired
+    RecommendRepository recommendRepository;
     @Test
-    void findPaging(){
+    void gatheringDetail(){
         Category category = returnDummyCategory(1);
         Image userImage = returnDummyImage(1);
         Image gatheringImage = returnDummyImage(1);
-        User user = returnDummyUser(1, userImage);
-        Gathering gathering1 = returnDummyGathering(1, category, user, gatheringImage);
-        Gathering gathering2 = returnDummyGathering(1, category, user, gatheringImage);
-        Gathering gathering3 = returnDummyGathering(1, category, user, gatheringImage);
+        User user1 = returnDummyUser(1, userImage);
+        User user2 = returnDummyUser(2, userImage);
+        User user3 = returnDummyUser(3, userImage);
+        Gathering gathering = returnDummyGathering(1, category, user1, gatheringImage);
+        Enrollment enrollment1 = returnDummyEnrollment(user2,gathering);
+        Enrollment enrollment2 = returnDummyEnrollment(user3,gathering);
+        enrollment1.enrollGathering(gathering);
+        enrollment2.enrollGathering(gathering);
+        gathering.enroll(List.of(enrollment1,enrollment2));
         categoryRepository.save(category);
         imageRepository.saveAll(List.of(userImage,gatheringImage));
-        userRepository.save(user);
-        gatheringRepository.saveAll(List.of(gathering1,gathering2,gathering3));
-        em.flush();
+        userRepository.saveAll(List.of(user1,user2,user3));
+        enrollmentRepository.saveAll(List.of(enrollment1,enrollment2));
+        gatheringRepository.save(gathering);
 
-        Page<GatheringsQuery> page = gatheringRepository.findPaging(PageRequest.of(0, 10), "title");
+        List<GatheringDetailQuery> gatheringDetailQueries = gatheringRepository.gatheringDetail(gathering.getId());
+        assertThat(gatheringDetailQueries).hasSize(2);
+        assertThat(gatheringDetailQueries).extracting("participatedBy")
+                .containsExactly(
+                        tuple("user2"),
+                        tuple("user3")
+                );
 
-        assertThat(page.getTotalElements()).isEqualTo(3);
     }
 
     @Test
@@ -63,34 +78,78 @@ public class GatheringRepositoryTest {
     }
 
     @Test
-    void findRecommendPaging(){
-
-    }
-
-    @Test
-    void findGatheringAndCount(){
+    void gatheringsCategory(){
         Category category = returnDummyCategory(1);
         Image userImage = returnDummyImage(1);
         Image gatheringImage = returnDummyImage(1);
         User user1 = returnDummyUser(1, userImage);
         User user2 = returnDummyUser(2, userImage);
         User user3 = returnDummyUser(3, userImage);
-        GatheringCount gatheringCount = returnDummyGatheringCount();
-        Gathering gathering = returnDummyGathering(1, category, user1, gatheringImage, gatheringCount);
-        Enrollment enrollment1 = returnDummyEnrollment(user2);
-        Enrollment enrollment2 = returnDummyEnrollment(user3);
-        gathering.enroll(List.of(enrollment1,enrollment2));
+        Gathering gathering1 = returnDummyGathering(1, category, user1, gatheringImage);
+        Gathering gathering2 = returnDummyGathering(2, category, user2, gatheringImage);
+        Gathering gathering3 = returnDummyGathering(3, category, user3, gatheringImage);
+
         categoryRepository.save(category);
         imageRepository.saveAll(List.of(userImage,gatheringImage));
-        userRepository.saveAll(List.of(user1,user2));
-        gatheringCountRepository.save(gatheringCount);
-        gatheringRepository.saveAll(List.of(gathering));
-        enrollmentRepository.saveAll(List.of(enrollment1,enrollment2));
-        em.flush();
+        userRepository.saveAll(List.of(user1,user2,user3));
+        gatheringRepository.saveAll(List.of(gathering1,gathering2,gathering3));
 
-        List<GatheringDetailQuery> gatheringAndCount = gatheringRepository.findGatheringAndCount(gathering.getId());
-
-        assertThat(gatheringAndCount.size()).isEqualTo(2);
+        PageRequest pageRequest = PageRequest.of(0, 2);
+        Page<GatheringsQuery> page = gatheringRepository.gatheringsCategory(pageRequest, category.getName());
+        assertThat(page.getTotalPages()).isEqualTo(2);
+        assertThat(page.getTotalElements()).isEqualTo(3);
     }
+    @Test
+    void gatheringsLike(){
+        Category category = returnDummyCategory(1);
+        Image userImage = returnDummyImage(1);
+        Image gatheringImage = returnDummyImage(1);
+        User user1 = returnDummyUser(1, userImage);
+        User user2 = returnDummyUser(2, userImage);
+        User user3 = returnDummyUser(3, userImage);
+        Gathering gathering = returnDummyGathering(1, category, user1, gatheringImage);
+        Like like1 = returnDummyLike(user2, gathering);
+        Like like2 = returnDummyLike(user3, gathering);
+        userRepository.saveAll(List.of(user1,user2,user3));
+        categoryRepository.save(category);
+        imageRepository.saveAll(List.of(userImage,gatheringImage));
+        gatheringRepository.save(gathering);
+        likeRepository.saveAll(List.of(like1,like2));
+
+        PageRequest pageRequest = PageRequest.of(0, 2);
+        Page<GatheringsQuery> gatheringsQueryPage1 = gatheringRepository.gatheringsLike(pageRequest, user2.getId());
+        Page<GatheringsQuery> gatheringsQueryPage2 = gatheringRepository.gatheringsLike(pageRequest, user3.getId());
+        assertThat(gatheringsQueryPage1.getTotalPages()).isEqualTo(1);
+        assertThat(gatheringsQueryPage1.getTotalElements()).isEqualTo(1);
+        assertThat(gatheringsQueryPage2.getTotalPages()).isEqualTo(1);
+        assertThat(gatheringsQueryPage2.getTotalElements()).isEqualTo(1);
+    }
+    @Test
+    void gatheringsRecommend(){
+        Category category = returnDummyCategory(1);
+        Image userImage = returnDummyImage(1);
+        Image gatheringImage = returnDummyImage(1);
+        User user1 = returnDummyUser(1, userImage);
+        Gathering gathering1 = returnDummyGathering(1, category, user1, gatheringImage);
+        Gathering gathering2 = returnDummyGathering(2, category, user1, gatheringImage);
+        Gathering gathering3 = returnDummyGathering(3, category, user1, gatheringImage);
+        Gathering gathering4 = returnDummyGathering(4, category, user1, gatheringImage);
+        Gathering gathering5 = returnDummyGathering(5, category, user1, gatheringImage);
+        Recommend recommend1 = returnDummyRecommend(gathering1, 1);
+        Recommend recommend2 = returnDummyRecommend(gathering1, 2);
+        Recommend recommend3 = returnDummyRecommend(gathering1, 3);
+        Recommend recommend4 = returnDummyRecommend(gathering1, 4);
+        Recommend recommend5 = returnDummyRecommend(gathering1, 5);
+        userRepository.save(user1);
+        categoryRepository.save(category);
+        imageRepository.saveAll(List.of(userImage,gatheringImage));
+        gatheringRepository.saveAll(List.of(gathering1,gathering2,gathering3,gathering4,gathering5));
+        recommendRepository.saveAll(List.of(recommend1,recommend2,recommend3,recommend4,recommend5));
+
+        List<GatheringDetailQuery> gatheringDetailQueries = gatheringRepository.gatheringsRecommend();
+        assertThat(gatheringDetailQueries).hasSize(5);
+    }
+
+
 
 }

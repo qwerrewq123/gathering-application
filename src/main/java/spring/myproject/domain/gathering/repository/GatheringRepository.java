@@ -65,5 +65,5 @@ public interface GatheringRepository extends JpaRepository<Gathering,Long> {
             "join g.category ca " +
             "join g.createBy cr " +
             "left join g.gatheringImage im")
-    List<GatheringDetailQuery> gatherinsRecommend();
+    List<GatheringDetailQuery> gatheringsRecommend();
 }

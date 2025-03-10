@@ -30,13 +30,13 @@ class AlarmRepositoryTest {
         Image image = returnDummyImage(1);
         User user = returnDummyUser(1, image);
         Alarm alarm1 = returnDummyAlarm(1, user);
-        Alarm alarm2 = returnDummyAlarm(1, user);
-        Alarm alarm3 = returnDummyAlarm(1, user);
-        Alarm alarm4 = returnDummyAlarm(1, user);
+        Alarm alarm2 = returnDummyAlarm(2, user);
+        Alarm alarm3 = returnDummyAlarm(3, user);
+        Alarm alarm4 = returnDummyAlarm(4, user);
 
-        Page<Alarm> page = alarmRepository.findUncheckedAlarmPage(PageRequest.of(0, 10), user.getId());
+        Page<Alarm> page = alarmRepository.findUncheckedAlarmPage(PageRequest.of(0, 1), user.getId());
 
-        assertThat(page.getTotalPages()).isEqualTo(1);
+        assertThat(page.getTotalPages()).isEqualTo(4);
         assertThat(page.getTotalElements()).isEqualTo(4);
 
     }
@@ -52,9 +52,9 @@ class AlarmRepositoryTest {
         alarm1.setChecked(true);
         alarm2.setChecked(true);
 
-        Page<Alarm> page = alarmRepository.findCheckedAlarmPage(PageRequest.of(0, 10), user.getId());
+        Page<Alarm> page = alarmRepository.findCheckedAlarmPage(PageRequest.of(0, 1), user.getId());
 
-        assertThat(page.getTotalPages()).isEqualTo(1);
+        assertThat(page.getTotalPages()).isEqualTo(2);
         assertThat(page.getTotalElements()).isEqualTo(2);
     }
 }

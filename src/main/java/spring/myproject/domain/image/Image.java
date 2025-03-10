@@ -25,4 +25,8 @@ public class Image {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "entire_image_id")
     private Gathering gathering;
+
+    public void changeBoard(Board board){
+        this.board = board;
+    }
 }

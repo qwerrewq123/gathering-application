@@ -34,7 +34,7 @@ public class RecommendService {
 
         try {
             User user = userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
-            List<GatheringDetailQuery> gatheringQueryDtos = gatheringRepository.gatherinsRecommend();
+            List<GatheringDetailQuery> gatheringQueryDtos = gatheringRepository.gatheringsRecommend();
             List<GatheringResponse> gatheringResponses = getGatheringResponses(gatheringQueryDtos);
             return RecommendResponse.builder()
                     .code(SUCCESS_CODE)

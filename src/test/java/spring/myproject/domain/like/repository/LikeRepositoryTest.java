@@ -18,6 +18,7 @@ import spring.myproject.domain.user.repository.UserRepository;
 import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.*;
 import static spring.myproject.util.DummyData.*;
 
 @SpringBootTest
@@ -29,13 +30,9 @@ class LikeRepositoryTest {
     @Autowired
     UserRepository userRepository;
     @Autowired
-    GatheringCountRepository gatheringCountRepository;
-    @Autowired
     GatheringRepository gatheringRepository;
     @Autowired
     LikeRepository likeRepository;
-    @Autowired
-    EntityManager em;
 
     @Test
     void findLike(){
@@ -44,20 +41,17 @@ class LikeRepositoryTest {
         Image gatheringImage = returnDummyImage(1);
         User user1 = returnDummyUser(1, userImage);
         User user2 = returnDummyUser(2, userImage);
-        GatheringCount gatheringCount = returnDummyGatheringCount();
-        Gathering gathering = returnDummyGathering(1, category, user1, gatheringImage, gatheringCount);
-        Like like = returnLike(user2, gathering);
+        Gathering gathering = returnDummyGathering(1, category, user1, gatheringImage);
+        Like like = returnDummyLike(user2, gathering);
         categoryRepository.save(category);
         imageRepository.saveAll(List.of(userImage,gatheringImage));
         userRepository.saveAll(List.of(user1,user2));
-        gatheringCountRepository.save(gatheringCount);
         gatheringRepository.saveAll(List.of(gathering));
         likeRepository.save(like);
-        em.flush();
 
-        Optional<Like> likeOptional = likeRepository.findLike(user2.getId(), gathering.getId());
+        Optional<Like> optionalLike = likeRepository.findLike(user2.getId(), gathering.getId());
 
-        Assertions.assertThat(likeOptional.isPresent()).isTrue();
-
+        assertThat(optionalLike).isPresent();
+        assertThat(optionalLike.get()).extracting("likedBy").isEqualTo(user2);
     }
 }
