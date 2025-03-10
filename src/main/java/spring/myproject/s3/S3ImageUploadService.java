@@ -17,7 +17,6 @@ public class S3ImageUploadService {
 
     private final AmazonS3Client s3Client;
 
-
     @Value("${s3.bucket}")
     private String bucket;
 
@@ -26,19 +25,13 @@ public class S3ImageUploadService {
         if(file.isEmpty()){
             return null;
         }
-
-
-
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentType(file.getContentType());
         metadata.setContentLength(file.getSize());
-
         String fileName = changeFileName();
         s3Client.putObject(bucket, fileName, file.getInputStream(), metadata);
-
         return fileName;
     }
-
     private String changeFileName() {
         return UUID.randomUUID().toString();
     }
