@@ -3,6 +3,7 @@ package spring.myproject.domain.user.controller;
 import com.google.api.client.auth.oauth2.RefreshTokenRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
