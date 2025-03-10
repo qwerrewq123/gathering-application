@@ -1,5 +1,6 @@
 package spring.myproject.domain.board.dto.request;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,8 +17,9 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 public class AddBoardRequest {
-
+    @NotBlank(message = "cannot blank or null or space")
     private String title;
+    @NotBlank(message = "cannot blank or null or space")
     private String description;
 
     public static Board of(AddBoardRequest addBoardRequest, User user, Gathering gathering) {

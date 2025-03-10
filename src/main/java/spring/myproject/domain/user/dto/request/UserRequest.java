@@ -1,5 +1,7 @@
 package spring.myproject.domain.user.dto.request;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -8,13 +10,19 @@ import lombok.Data;
 @Builder
 @AllArgsConstructor
 public class UserRequest {
-
+    @NotBlank(message = "cannot blank or null or space")
     private String username;
+    @NotBlank(message = "cannot blank or null or space")
     private String password;
+    @NotBlank(message = "cannot blank or null or space")
     private String email;
+    @NotBlank(message = "cannot blank or null or space")
     private String address;
+    @NotNull(message = "cannot null")
     private Integer age;
+    @NotBlank(message = "cannot blank or null or space")
     private String hobby;
+    @NotBlank(message = "cannot blank or null or space")
     private String nickname;
 
 }
