@@ -104,11 +104,12 @@ public class ChatService {
                 .orElseThrow(() -> new NotFoundChatRoomException("no exist ChatRoom!!"));
         ChatParticipant chatParticipant = chatParticipantRepository.findByChatRoomAndUserAndStatus(chatRoom,user,true)
                 .orElseThrow(()-> new NotFoundChatParticipantException("no exist ChatParticipant!!"));
-        ChatMessage chatMessage = chatMessageRepository.findByChatRoomAndChatParticipant(chatRoom,chatParticipant)
-                .orElseThrow(()-> new NotFoundChatMessageException("no exist ChatMessage!!"));
+        List<ChatMessage> chatMessages = chatMessageRepository.findByChatRoomAndChatParticipant(chatRoom,chatParticipant);
+        if(chatMessages.isEmpty()) throw new NotFoundChatMessageException("no exist ChatMessage!!!");
+
         Long chatParticipantId = chatParticipant.getId();
-        Long chatMessageId = chatMessage.getId();
-        readStatusRepository.readChatMessage(chatParticipantId,chatMessageId);
+        List<Long> chatMessagesId = chatMessages.stream().map(c -> c.getId()).toList();
+        readStatusRepository.readChatMessage(chatParticipantId,chatMessagesId);
         return ReadChatMessageResponse.builder()
                 .code(SUCCESS_CODE)
                 .message(SUCCESS_MESSAGE)
@@ -196,7 +197,7 @@ public class ChatService {
                 .orElseThrow(() -> new NotFoundChatRoomException("no exist ChatRoom!!"));
         User user = userRepository.findByUsername(username)
                 .orElseThrow(()->new NotFoundUserException("no exist User!!"));
-        ChatParticipant chatParticipant = chatParticipantRepository.findByChatRoomAndUserAndStatus(chatRoom,user,true)
+        chatParticipantRepository.findByChatRoomAndUserAndStatus(chatRoom,user,true)
                 .orElseThrow(()->new NotFoundChatParticipantException("no exist ChatParticipant!!"));
         return true;
     }

@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import spring.myproject.domain.image.dto.response.GatheringImageResponse;
 import spring.myproject.domain.image.service.ImageService;
 
 import java.io.IOException;
@@ -21,5 +22,9 @@ public class ImageController {
         return new ResponseEntity<>(resource, HttpStatus.OK);
     }
 
-    //TODO : 하나의 소모임과 관련된 모든 이미지 불러오기
+    @GetMapping("/gathering/image/{gatheringId}")
+    public ResponseEntity<GatheringImageResponse> gatheringImage(@PathVariable Long gatheringId){
+        GatheringImageResponse gatheringImageResponse =imageService.gatheringImage(gatheringId);
+        return new ResponseEntity<>(gatheringImageResponse, HttpStatus.OK);
+    }
 }

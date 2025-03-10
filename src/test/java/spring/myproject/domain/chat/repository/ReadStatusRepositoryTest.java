@@ -70,7 +70,8 @@ class ReadStatusRepositoryTest {
         chatParticipantRepository.saveAll(List.of(chatParticipant1,chatParticipant2,chatParticipant3,chatParticipant4,chatParticipant5));
         chatMessageRepository.saveAll(chatMessages);
         readStatusRepository.saveAll(readStatuses);
-        readStatusRepository.readChatMessage(chatParticipant2.getId(),chatMessages.getFirst().getId());
+        List<Long> chatMessagesIds = chatMessages.stream().map(c -> c.getId()).toList();
+        readStatusRepository.readChatMessage(chatParticipant2.getId(),chatMessagesIds);
         em.flush();;
         Optional<ReadStatus> optionalReadStatus = readStatusRepository.findById(readStatuses.get(1).getId());
 

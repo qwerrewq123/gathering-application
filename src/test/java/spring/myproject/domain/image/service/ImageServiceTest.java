@@ -1,15 +1,16 @@
-package spring.myproject.domain.like.service;
+package spring.myproject.domain.image.service;
 
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
-class LikeServiceTest {
+
+class ImageServiceTest {
 
     @Test
-    void like() {
+    void image() {
     }
 
     @Test
-    void dislike() {
+    void gatheringImage() {
     }
 }

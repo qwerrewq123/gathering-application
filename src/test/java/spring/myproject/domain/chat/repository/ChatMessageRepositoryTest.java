@@ -1,6 +1,5 @@
 package spring.myproject.domain.chat.repository;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,10 +15,8 @@ import spring.myproject.domain.user.repository.UserRepository;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 import static spring.myproject.util.DummyData.*;
 import static spring.myproject.util.DummyData.returnDummyChatParticipant;
 
@@ -38,7 +35,6 @@ class ChatMessageRepositoryTest {
     ChatRoomRepository chatRoomRepository;
     @Autowired
     ReadStatusRepository readStatusRepository;
-    //TODO : 로직수정 후 테스트작성
     @Test
     void findByChatRoomAndChatParticipant() {
         Image image = returnDummyImage(1);
@@ -70,6 +66,17 @@ class ChatMessageRepositoryTest {
         chatParticipantRepository.saveAll(List.of(chatParticipant1,chatParticipant2,chatParticipant3,chatParticipant4,chatParticipant5));
         chatMessageRepository.saveAll(chatMessages);
         readStatusRepository.saveAll(readStatuses);
+
+        List<ChatMessage> fetchChatMessages = chatMessageRepository.findByChatRoomAndChatParticipant(chatRoom, chatParticipant1);
+        assertThat(fetchChatMessages).hasSize(5);
+        assertThat(fetchChatMessages).extracting("content")
+                .containsExactly(
+                        tuple("content1"),
+                        tuple("content2"),
+                        tuple("content3"),
+                        tuple("content4"),
+                        tuple("content5")
+                );
     }
 
     @Test

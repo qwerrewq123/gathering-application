@@ -1,7 +1,6 @@
-package spring.myproject.domain.recommend.service.repository;
+package spring.myproject.domain.recommend.repository;
 
 import jakarta.persistence.EntityManager;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -12,7 +11,6 @@ import spring.myproject.domain.gathering.repository.GatheringRepository;
 import spring.myproject.domain.image.Image;
 import spring.myproject.domain.image.repository.ImageRepository;
 import spring.myproject.domain.recommend.Recommend;
-import spring.myproject.domain.recommend.repository.RecommendRepository;
 import spring.myproject.domain.user.User;
 import spring.myproject.domain.user.repository.UserRepository;
 
