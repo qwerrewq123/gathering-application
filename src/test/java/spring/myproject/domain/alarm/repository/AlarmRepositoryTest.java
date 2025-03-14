@@ -1,16 +1,16 @@
 package spring.myproject.domain.alarm.repository;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import spring.myproject.domain.alarm.Alarm;
-import spring.myproject.domain.image.Image;
-import spring.myproject.domain.image.repository.ImageRepository;
-import spring.myproject.domain.user.User;
-import spring.myproject.domain.user.repository.UserRepository;
+import spring.myproject.domain.Alarm;
+import spring.myproject.domain.Image;
+import spring.myproject.repository.image.ImageRepository;
+import spring.myproject.domain.User;
+import spring.myproject.repository.user.UserRepository;
+import spring.myproject.repository.alarm.AlarmRepository;
 
 
 import static org.assertj.core.api.Assertions.*;

@@ -9,8 +9,8 @@ import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.stereotype.Component;
-import spring.myproject.domain.chat.service.ChatService;
-import spring.myproject.domain.meeting.exception.NotAuthorizeException;
+import spring.myproject.service.chat.ChatService;
+import spring.myproject.exception.meeting.NotAuthorizeException;
 
 @Component
 public class StompHandler implements ChannelInterceptor{

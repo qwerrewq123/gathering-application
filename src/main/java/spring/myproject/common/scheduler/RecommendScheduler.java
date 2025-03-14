@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import spring.myproject.domain.recommend.repository.RecommendRepository;
+import spring.myproject.repository.recommend.RecommendRepository;
 
 @RequiredArgsConstructor
 @Component

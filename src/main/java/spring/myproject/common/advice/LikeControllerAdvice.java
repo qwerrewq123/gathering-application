@@ -5,11 +5,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import spring.myproject.common.dto.response.ErrorResponse;
-import spring.myproject.domain.gathering.exception.NotFoundGatheringException;
-import spring.myproject.domain.like.controller.LikeController;
-import spring.myproject.domain.like.exception.AlreadyLikeGathering;
-import spring.myproject.domain.like.exception.NotFoundLikeException;
-import spring.myproject.domain.user.exception.NotFoundUserException;
+import spring.myproject.exception.gathering.NotFoundGatheringException;
+import spring.myproject.controller.like.LikeController;
+import spring.myproject.exception.like.AlreadyLikeGathering;
+import spring.myproject.exception.like.NotFoundLikeException;
+import spring.myproject.exception.user.NotFoundUserException;
 import spring.myproject.util.AbstractErrorResponse;
 
 import static spring.myproject.util.ConstClass.*;

@@ -4,12 +4,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import spring.myproject.domain.enrollment.controller.EnrollmentController;
-import spring.myproject.domain.enrollment.exception.AlreadyEnrollmentException;
-import spring.myproject.domain.enrollment.exception.NotFoundEnrollmentException;
+import spring.myproject.controller.enrollment.EnrollmentController;
+import spring.myproject.exception.enrollment.AlreadyEnrollmentException;
+import spring.myproject.exception.enrollment.NotFoundEnrollmentException;
 import spring.myproject.common.dto.response.ErrorResponse;
-import spring.myproject.domain.gathering.exception.NotFoundGatheringException;
-import spring.myproject.domain.user.exception.NotFoundUserException;
+import spring.myproject.exception.gathering.NotFoundGatheringException;
+import spring.myproject.exception.user.NotFoundUserException;
 import spring.myproject.util.AbstractErrorResponse;
 
 import static spring.myproject.util.ConstClass.*;

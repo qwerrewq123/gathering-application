@@ -1,26 +1,24 @@
 package spring.myproject.util;
 
-import spring.myproject.domain.alarm.Alarm;
-import spring.myproject.domain.attend.Attend;
-import spring.myproject.domain.board.Board;
-import spring.myproject.domain.category.Category;
-import spring.myproject.domain.chat.ChatMessage;
-import spring.myproject.domain.chat.ChatParticipant;
-import spring.myproject.domain.chat.ChatRoom;
-import spring.myproject.domain.chat.ReadStatus;
-import spring.myproject.domain.chat.repository.ReadStatusRepository;
-import spring.myproject.domain.enrollment.Enrollment;
-import spring.myproject.domain.gathering.Gathering;
-import spring.myproject.domain.image.Image;
-import spring.myproject.domain.like.Like;
-import spring.myproject.domain.meeting.Meeting;
-import spring.myproject.domain.recommend.Recommend;
-import spring.myproject.domain.user.Role;
-import spring.myproject.domain.user.User;
+import spring.myproject.domain.Alarm;
+import spring.myproject.domain.Attend;
+import spring.myproject.domain.Board;
+import spring.myproject.domain.Category;
+import spring.myproject.domain.ChatMessage;
+import spring.myproject.domain.ChatParticipant;
+import spring.myproject.domain.ChatRoom;
+import spring.myproject.domain.ReadStatus;
+import spring.myproject.domain.Enrollment;
+import spring.myproject.domain.Gathering;
+import spring.myproject.domain.Image;
+import spring.myproject.domain.Like;
+import spring.myproject.domain.Meeting;
+import spring.myproject.domain.Recommend;
+import spring.myproject.domain.User;
 
 import java.time.LocalDateTime;
 
-import static spring.myproject.domain.user.Role.USER;
+import static spring.myproject.domain.Role.USER;
 
 public class DummyData {
 

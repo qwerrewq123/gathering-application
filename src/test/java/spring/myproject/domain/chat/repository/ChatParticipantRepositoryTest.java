@@ -1,15 +1,16 @@
 package spring.myproject.domain.chat.repository;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import spring.myproject.domain.chat.ChatParticipant;
-import spring.myproject.domain.chat.ChatRoom;
-import spring.myproject.domain.image.Image;
-import spring.myproject.domain.image.repository.ImageRepository;
-import spring.myproject.domain.user.User;
-import spring.myproject.domain.user.repository.UserRepository;
+import spring.myproject.domain.ChatParticipant;
+import spring.myproject.domain.ChatRoom;
+import spring.myproject.domain.Image;
+import spring.myproject.repository.image.ImageRepository;
+import spring.myproject.domain.User;
+import spring.myproject.repository.user.UserRepository;
+import spring.myproject.repository.chat.ChatParticipantRepository;
+import spring.myproject.repository.chat.ChatRoomRepository;
 
 import java.util.List;
 import java.util.Optional;

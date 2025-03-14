@@ -5,11 +5,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import spring.myproject.domain.attend.controller.AttendController;
-import spring.myproject.domain.attend.exception.*;
+import spring.myproject.controller.attend.AttendController;
 import spring.myproject.common.dto.response.ErrorResponse;
-import spring.myproject.domain.meeting.exception.NotFoundMeetingExeption;
-import spring.myproject.domain.user.exception.NotFoundUserException;
+import spring.myproject.exception.meeting.NotFoundMeetingExeption;
+import spring.myproject.exception.user.NotFoundUserException;
+import spring.myproject.exception.attend.*;
 import spring.myproject.util.AbstractErrorResponse;
 
 import static spring.myproject.util.ConstClass.*;

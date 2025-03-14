@@ -4,8 +4,8 @@ import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import spring.myproject.domain.fail.service.FailService;
-import spring.myproject.domain.user.dto.request.EmailCertificationRequest;
+import spring.myproject.service.fail.FailService;
+import spring.myproject.dto.request.user.EmailCertificationRequest;
 import spring.myproject.provider.EmailProvider;
 
 @Service

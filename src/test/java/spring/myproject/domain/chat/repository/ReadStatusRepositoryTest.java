@@ -1,25 +1,27 @@
 package spring.myproject.domain.chat.repository;
 
 import jakarta.persistence.EntityManager;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import spring.myproject.domain.chat.ChatMessage;
-import spring.myproject.domain.chat.ChatParticipant;
-import spring.myproject.domain.chat.ChatRoom;
-import spring.myproject.domain.chat.ReadStatus;
-import spring.myproject.domain.image.Image;
-import spring.myproject.domain.image.repository.ImageRepository;
-import spring.myproject.domain.user.User;
-import spring.myproject.domain.user.repository.UserRepository;
+import spring.myproject.domain.ChatMessage;
+import spring.myproject.domain.ChatParticipant;
+import spring.myproject.domain.ChatRoom;
+import spring.myproject.domain.ReadStatus;
+import spring.myproject.domain.Image;
+import spring.myproject.repository.image.ImageRepository;
+import spring.myproject.domain.User;
+import spring.myproject.repository.user.UserRepository;
+import spring.myproject.repository.chat.ChatMessageRepository;
+import spring.myproject.repository.chat.ChatParticipantRepository;
+import spring.myproject.repository.chat.ChatRoomRepository;
+import spring.myproject.repository.chat.ReadStatusRepository;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 import static spring.myproject.util.DummyData.*;
 import static spring.myproject.util.DummyData.returnDummyReadStatus;
 

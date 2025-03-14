@@ -1,30 +1,27 @@
 package spring.myproject.domain.board.repository;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import spring.myproject.domain.board.Board;
-import spring.myproject.domain.board.dto.response.BoardQuery;
-import spring.myproject.domain.board.dto.response.BoardsQuery;
-import spring.myproject.domain.category.Category;
-import spring.myproject.domain.category.repository.CategoryRepository;
-import spring.myproject.domain.gathering.Gathering;
-import spring.myproject.domain.gathering.repository.GatheringRepository;
-import spring.myproject.domain.image.Image;
-import spring.myproject.domain.image.repository.ImageRepository;
-import spring.myproject.domain.like.Like;
-import spring.myproject.domain.user.User;
-import spring.myproject.domain.user.repository.UserRepository;
+import spring.myproject.domain.Board;
+import spring.myproject.dto.response.board.BoardQuery;
+import spring.myproject.dto.response.board.BoardsQuery;
+import spring.myproject.domain.Category;
+import spring.myproject.repository.category.CategoryRepository;
+import spring.myproject.domain.Gathering;
+import spring.myproject.repository.gathering.GatheringRepository;
+import spring.myproject.domain.Image;
+import spring.myproject.repository.image.ImageRepository;
+import spring.myproject.domain.User;
+import spring.myproject.repository.user.UserRepository;
+import spring.myproject.repository.board.BoardRepository;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 import static spring.myproject.util.DummyData.*;
-import static spring.myproject.util.DummyData.returnDummyLike;
 
 @SpringBootTest
 class BoardRepositoryTest {

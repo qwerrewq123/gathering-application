@@ -4,10 +4,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import spring.myproject.domain.alarm.controller.AlarmController;
-import spring.myproject.domain.alarm.exception.NotFoundAlarmException;
+import spring.myproject.controller.alarm.AlarmController;
+import spring.myproject.exception.alarm.NotFoundAlarmException;
 import spring.myproject.common.dto.response.ErrorResponse;
-import spring.myproject.domain.user.exception.NotFoundUserException;
+import spring.myproject.exception.user.NotFoundUserException;
 import spring.myproject.util.AbstractErrorResponse;
 
 import static spring.myproject.util.ConstClass.*;

@@ -3,7 +3,7 @@ package spring.myproject.security;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import spring.myproject.domain.user.User;
+import spring.myproject.domain.User;
 
 import java.util.Collection;
 import java.util.List;

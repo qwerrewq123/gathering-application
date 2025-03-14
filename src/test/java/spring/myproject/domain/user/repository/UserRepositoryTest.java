@@ -1,23 +1,19 @@
 package spring.myproject.domain.user.repository;
 
 import jakarta.persistence.EntityManager;
-import org.assertj.core.api.Assertions;
 import org.hibernate.proxy.HibernateProxy;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.context.SpringBootTest;
-import software.amazon.awssdk.services.s3.endpoints.internal.Value;
-import spring.myproject.domain.image.Image;
-import spring.myproject.domain.image.repository.ImageRepository;
-import spring.myproject.domain.user.User;
-import spring.myproject.util.DummyData;
+import spring.myproject.domain.Image;
+import spring.myproject.repository.image.ImageRepository;
+import spring.myproject.domain.User;
+import spring.myproject.repository.user.UserRepository;
 
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 import static spring.myproject.util.DummyData.*;
 
 @DataJpaTest
