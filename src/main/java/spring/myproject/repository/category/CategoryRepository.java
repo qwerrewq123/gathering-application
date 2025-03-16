@@ -1,7 +1,7 @@
 package spring.myproject.repository.category;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import spring.myproject.domain.Category;
+import spring.myproject.entity.category.Category;
 
 import java.util.Optional;
 

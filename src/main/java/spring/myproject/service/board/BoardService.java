@@ -8,29 +8,32 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
-import spring.myproject.domain.Board;
+import spring.myproject.dto.request.fcm.TopicNotificationRequestDto;
+import spring.myproject.entity.board.Board;
 import spring.myproject.dto.request.board.AddBoardRequest;
 import spring.myproject.dto.response.board.*;
+import spring.myproject.entity.fcm.Topic;
 import spring.myproject.exception.board.NotFoundBoardException;
 import spring.myproject.repository.board.BoardRepository;
 import spring.myproject.repository.enrollment.EnrollmentRepository;
-import spring.myproject.domain.Gathering;
+import spring.myproject.entity.gathering.Gathering;
 import spring.myproject.exception.gathering.NotFoundGatheringException;
 import spring.myproject.repository.gathering.GatheringRepository;
-import spring.myproject.domain.Image;
+import spring.myproject.entity.image.Image;
 import spring.myproject.repository.image.ImageRepository;
 import spring.myproject.exception.meeting.NotAuthorizeException;
-import spring.myproject.domain.User;
+import spring.myproject.entity.user.User;
 import spring.myproject.exception.user.NotFoundUserException;
 import spring.myproject.repository.user.UserRepository;
 import spring.myproject.s3.S3ImageDownloadService;
 import spring.myproject.s3.S3ImageUploadService;
+import spring.myproject.service.fcm.FCMService;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static spring.myproject.util.ConstClass.*;
+import static spring.myproject.utils.ConstClass.*;
 
 @Service
 @RequiredArgsConstructor
@@ -40,10 +43,10 @@ public class BoardService {
     private final BoardRepository boardRepository;
     private final UserRepository userRepository;
     private final S3ImageUploadService s3ImageUploadService;
-    private final S3ImageDownloadService s3ImageDownloadService;
     private final GatheringRepository gatheringRepository;
     private final EnrollmentRepository enrollmentRepository;
     private final ImageRepository imageRepository;
+    private final FCMService fcmService;
     @Value("${server.url}")
     private String url;
 
@@ -66,6 +69,15 @@ public class BoardService {
         List<Image> images = saveImages(files,board,gathering);
         boardRepository.save(board);
         imageRepository.saveAll(images);
+        Topic topic = gathering.getTopic();
+        String topicName = topic.getTopicName();
+        fcmService.sendByTopic(TopicNotificationRequestDto.builder()
+                .topic(topicName)
+                .title("board")
+                .content("%s add board".formatted(username))
+                .url("localhost:8080/gathering/"+gatheringId)
+                .img(null)
+                .build(),topic);
         return AddBoardResponse.of(SUCCESS_CODE, SUCCESS_MESSAGE);
     }
 

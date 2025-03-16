@@ -13,8 +13,8 @@ import spring.myproject.s3.S3ImageDownloadService;
 import java.io.IOException;
 import java.util.List;
 
-import static spring.myproject.util.ConstClass.SUCCESS_CODE;
-import static spring.myproject.util.ConstClass.SUCCESS_MESSAGE;
+import static spring.myproject.utils.ConstClass.SUCCESS_CODE;
+import static spring.myproject.utils.ConstClass.SUCCESS_MESSAGE;
 
 @Service
 @RequiredArgsConstructor

@@ -10,9 +10,9 @@ import spring.myproject.controller.like.LikeController;
 import spring.myproject.exception.like.AlreadyLikeGathering;
 import spring.myproject.exception.like.NotFoundLikeException;
 import spring.myproject.exception.user.NotFoundUserException;
-import spring.myproject.util.AbstractErrorResponse;
+import spring.myproject.utils.AbstractErrorResponse;
 
-import static spring.myproject.util.ConstClass.*;
+import static spring.myproject.utils.ConstClass.*;
 
 @RestControllerAdvice(basePackageClasses = LikeController.class)
 public class LikeControllerAdvice {

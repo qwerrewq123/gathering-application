@@ -2,7 +2,7 @@ package spring.myproject.repository.like;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import spring.myproject.domain.Like;
+import spring.myproject.entity.like.Like;
 
 import java.util.Optional;
 

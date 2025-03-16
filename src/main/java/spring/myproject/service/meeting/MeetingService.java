@@ -10,16 +10,16 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
-import spring.myproject.domain.Attend;
+import spring.myproject.entity.attend.Attend;
 import spring.myproject.dto.response.meeting.*;
 import spring.myproject.repository.attend.AttendRepository;
-import spring.myproject.domain.Gathering;
+import spring.myproject.entity.gathering.Gathering;
 import spring.myproject.repository.gathering.GatheringRepository;
-import spring.myproject.domain.Image;
+import spring.myproject.entity.image.Image;
 import spring.myproject.repository.image.ImageRepository;
-import spring.myproject.domain.Meeting;
+import spring.myproject.entity.meeting.Meeting;
 import spring.myproject.repository.meeting.MeetingRepository;
-import spring.myproject.domain.User;
+import spring.myproject.entity.user.User;
 import spring.myproject.repository.user.UserRepository;
 import spring.myproject.dto.request.meeting.AddMeetingRequest;
 import spring.myproject.dto.request.meeting.UpdateMeetingRequest;
@@ -35,7 +35,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static spring.myproject.util.ConstClass.*;
+import static spring.myproject.utils.ConstClass.*;
 
 
 @Service

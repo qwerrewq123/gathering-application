@@ -5,18 +5,18 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import spring.myproject.domain.Alarm;
+import spring.myproject.entity.fcm.Alarm;
 import spring.myproject.dto.response.alarm.AlarmResponse;
 import spring.myproject.dto.response.alarm.AlarmResponsePage;
 import spring.myproject.dto.response.alarm.CheckAlarmResponse;
 import spring.myproject.dto.response.alarm.DeleteAlarmResponse;
 import spring.myproject.repository.alarm.AlarmRepository;
-import spring.myproject.domain.User;
+import spring.myproject.entity.user.User;
 import spring.myproject.repository.user.UserRepository;
 import spring.myproject.exception.alarm.NotFoundAlarmException;
 import spring.myproject.exception.user.NotFoundUserException;
 
-import static spring.myproject.util.ConstClass.*;
+import static spring.myproject.utils.ConstClass.*;
 
 @RequiredArgsConstructor
 @Service

@@ -4,14 +4,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
-import spring.myproject.domain.Fail;
+import spring.myproject.entity.user.Fail;
 import spring.myproject.dto.response.fail.CloseResponse;
 import spring.myproject.repository.fail.FailRepository;
 import spring.myproject.emitter.repository.EmitterRepository;
 
 import java.io.IOException;
 
-import static spring.myproject.util.ConstClass.*;
+import static spring.myproject.utils.ConstClass.*;
 
 @Service
 @RequiredArgsConstructor

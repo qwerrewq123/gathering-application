@@ -10,10 +10,10 @@ import spring.myproject.common.dto.response.ErrorResponse;
 import spring.myproject.exception.meeting.NotFoundMeetingExeption;
 import spring.myproject.exception.user.NotFoundUserException;
 import spring.myproject.exception.attend.*;
-import spring.myproject.util.AbstractErrorResponse;
+import spring.myproject.utils.AbstractErrorResponse;
 
-import static spring.myproject.util.ConstClass.*;
-import static spring.myproject.util.ConstClass.DB_ERROR_MESSAGE;
+import static spring.myproject.utils.ConstClass.*;
+import static spring.myproject.utils.ConstClass.DB_ERROR_MESSAGE;
 
 @Slf4j
 @RestControllerAdvice(basePackageClasses = AttendController.class)

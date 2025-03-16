@@ -10,21 +10,21 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import spring.myproject.async.AsyncService;
-import spring.myproject.domain.Image;
+import spring.myproject.entity.image.Image;
 import spring.myproject.dto.request.user.*;
 import spring.myproject.dto.response.user.*;
 import spring.myproject.exception.user.*;
 import spring.myproject.repository.image.ImageRepository;
-import spring.myproject.domain.Role;
-import spring.myproject.domain.User;
+import spring.myproject.entity.user.Role;
+import spring.myproject.entity.user.User;
 import spring.myproject.repository.user.UserRepository;
 import spring.myproject.provider.JwtProvider;
 import spring.myproject.s3.S3ImageUploadService;
 
 import java.util.List;
 
-import static spring.myproject.util.ConstClass.*;
-import static spring.myproject.util.CookieUtil.*;
+import static spring.myproject.utils.ConstClass.*;
+import static spring.myproject.utils.CookieUtil.*;
 
 @Service
 @RequiredArgsConstructor

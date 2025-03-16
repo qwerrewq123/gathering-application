@@ -10,9 +10,9 @@ import spring.myproject.exception.enrollment.NotFoundEnrollmentException;
 import spring.myproject.common.dto.response.ErrorResponse;
 import spring.myproject.exception.gathering.NotFoundGatheringException;
 import spring.myproject.exception.user.NotFoundUserException;
-import spring.myproject.util.AbstractErrorResponse;
+import spring.myproject.utils.AbstractErrorResponse;
 
-import static spring.myproject.util.ConstClass.*;
+import static spring.myproject.utils.ConstClass.*;
 
 @RestControllerAdvice(basePackageClasses = EnrollmentController.class)
 public class EnrollmentControllerAdvice {

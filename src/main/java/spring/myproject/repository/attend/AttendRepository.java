@@ -2,7 +2,7 @@ package spring.myproject.repository.attend;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import spring.myproject.domain.Attend;
+import spring.myproject.entity.attend.Attend;
 
 import java.util.Optional;
 

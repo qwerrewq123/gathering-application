@@ -4,8 +4,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import spring.myproject.domain.Role;
-import spring.myproject.domain.User;
+import spring.myproject.entity.user.Role;
+import spring.myproject.entity.user.User;
 
 @Data
 @Builder

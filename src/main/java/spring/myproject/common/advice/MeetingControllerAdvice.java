@@ -12,9 +12,9 @@ import spring.myproject.exception.meeting.MeetingIsNotEmptyException;
 import spring.myproject.exception.meeting.NotAuthorizeException;
 import spring.myproject.exception.meeting.NotFoundMeetingExeption;
 import spring.myproject.exception.user.NotFoundUserException;
-import spring.myproject.util.AbstractErrorResponse;
+import spring.myproject.utils.AbstractErrorResponse;
 
-import static spring.myproject.util.ConstClass.*;
+import static spring.myproject.utils.ConstClass.*;
 @Slf4j
 @RestControllerAdvice(basePackageClasses = MeetingController.class)
 public class MeetingControllerAdvice {

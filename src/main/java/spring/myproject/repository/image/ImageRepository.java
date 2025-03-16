@@ -2,7 +2,7 @@ package spring.myproject.repository.image;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import spring.myproject.domain.Image;
+import spring.myproject.entity.image.Image;
 
 import java.util.List;
 

@@ -3,7 +3,7 @@ package spring.myproject.repository.chat;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import spring.myproject.domain.ReadStatus;
+import spring.myproject.entity.chat.ReadStatus;
 
 import java.util.List;
 

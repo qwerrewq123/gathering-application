@@ -7,9 +7,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import spring.myproject.common.dto.response.ErrorResponse;
 import spring.myproject.controller.recommend.RecommendController;
 import spring.myproject.exception.user.NotFoundUserException;
-import spring.myproject.util.AbstractErrorResponse;
+import spring.myproject.utils.AbstractErrorResponse;
 
-import static spring.myproject.util.ConstClass.*;
+import static spring.myproject.utils.ConstClass.*;
 
 @RestControllerAdvice(basePackageClasses = RecommendController.class)
 public class RecommendControllerAdvice {

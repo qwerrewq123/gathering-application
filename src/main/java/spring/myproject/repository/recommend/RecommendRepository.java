@@ -3,7 +3,7 @@ package spring.myproject.repository.recommend;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import spring.myproject.domain.Recommend;
+import spring.myproject.entity.recommend.Recommend;
 
 import java.util.List;
 

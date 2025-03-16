@@ -5,10 +5,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-import spring.myproject.domain.ChatMessage;
-import spring.myproject.domain.ChatParticipant;
-import spring.myproject.domain.ChatRoom;
-import spring.myproject.domain.ReadStatus;
+import spring.myproject.entity.chat.ChatMessage;
+import spring.myproject.entity.chat.ChatParticipant;
+import spring.myproject.entity.chat.ChatRoom;
+import spring.myproject.entity.chat.ReadStatus;
 import spring.myproject.dto.request.chat.ChatMessageRequest;
 import spring.myproject.dto.response.chat.*;
 import spring.myproject.exception.chat.NotFoundChatMessageException;
@@ -18,15 +18,15 @@ import spring.myproject.repository.chat.ChatMessageRepository;
 import spring.myproject.repository.chat.ChatParticipantRepository;
 import spring.myproject.repository.chat.ChatRoomRepository;
 import spring.myproject.repository.chat.ReadStatusRepository;
-import spring.myproject.domain.User;
+import spring.myproject.entity.user.User;
 import spring.myproject.exception.user.NotFoundUserException;
 import spring.myproject.repository.user.UserRepository;
 
 import java.util.List;
 import java.util.Optional;
 
-import static spring.myproject.util.ConstClass.SUCCESS_CODE;
-import static spring.myproject.util.ConstClass.SUCCESS_MESSAGE;
+import static spring.myproject.utils.ConstClass.SUCCESS_CODE;
+import static spring.myproject.utils.ConstClass.SUCCESS_MESSAGE;
 
 @Service
 @RequiredArgsConstructor

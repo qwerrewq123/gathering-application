@@ -5,9 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import spring.myproject.domain.Board;
-import spring.myproject.domain.Gathering;
-import spring.myproject.domain.User;
+import spring.myproject.entity.board.Board;
+import spring.myproject.entity.gathering.Gathering;
+import spring.myproject.entity.user.User;
 
 import java.time.LocalDateTime;
 

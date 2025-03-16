@@ -6,7 +6,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Controller;
 import spring.myproject.dto.request.chat.ChatMessageRequest;
 import spring.myproject.service.chat.ChatService;
-import spring.myproject.kafka.KafkaProducerService;
+import spring.myproject.kafka.producer.KafkaProducerService;
 
 @Controller
 @RequiredArgsConstructor

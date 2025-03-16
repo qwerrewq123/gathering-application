@@ -2,9 +2,9 @@ package spring.myproject.repository.enrollment;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import spring.myproject.domain.Enrollment;
-import spring.myproject.domain.Gathering;
-import spring.myproject.domain.User;
+import spring.myproject.entity.enrollment.Enrollment;
+import spring.myproject.entity.gathering.Gathering;
+import spring.myproject.entity.user.User;
 
 import java.util.Optional;
 

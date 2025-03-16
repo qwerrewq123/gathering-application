@@ -7,16 +7,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
-import spring.myproject.domain.Category;
+import spring.myproject.entity.category.Category;
 import spring.myproject.dto.response.gathering.*;
+import spring.myproject.entity.fcm.Topic;
 import spring.myproject.repository.category.CategoryRepository;
-import spring.myproject.domain.Enrollment;
+import spring.myproject.entity.enrollment.Enrollment;
 import spring.myproject.repository.enrollment.EnrollmentRepository;
-import spring.myproject.domain.Gathering;
+import spring.myproject.entity.gathering.Gathering;
+import spring.myproject.repository.fcm.TopicRepository;
 import spring.myproject.repository.gathering.GatheringRepository;
-import spring.myproject.domain.Image;
+import spring.myproject.entity.image.Image;
 import spring.myproject.repository.image.ImageRepository;
-import spring.myproject.domain.User;
+import spring.myproject.entity.user.User;
 import spring.myproject.repository.user.UserRepository;
 import spring.myproject.dto.request.gathering.AddGatheringRequest;
 import spring.myproject.dto.request.gathering.UpdateGatheringRequest;
@@ -26,13 +28,16 @@ import spring.myproject.exception.meeting.NotAuthorizeException;
 import spring.myproject.exception.user.NotFoundUserException;
 import spring.myproject.s3.S3ImageDownloadService;
 import spring.myproject.s3.S3ImageUploadService;
+import spring.myproject.service.fcm.FCMService;
+import spring.myproject.utils.RandomStringGenerator;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static spring.myproject.util.ConstClass.*;
+import static spring.myproject.utils.ConstClass.*;
+import static spring.myproject.utils.RandomStringGenerator.*;
 
 @Service
 @Transactional
@@ -45,7 +50,8 @@ public class GatheringService {
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
     private final S3ImageUploadService s3ImageUploadService;
-    private final S3ImageDownloadService s3ImageDownloadService;
+    private final FCMService fcmService;
+    private final TopicRepository topicRepository;
     @Value("${server.url}")
     private String url;
 
@@ -60,6 +66,11 @@ public class GatheringService {
             if(image!=null) imageRepository.save(image);
             gatheringRepository.save(gathering);
             enrollmentRepository.save(enrollment);
+            Topic topic = Topic.builder()
+                .topicName(generateRandomString())
+                .build();
+            topicRepository.save(topic);
+            fcmService.subscribeToTopics(topic.getTopicName(),username);
             return AddGatheringResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE);
     }
 

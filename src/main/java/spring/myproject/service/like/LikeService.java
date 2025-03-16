@@ -3,12 +3,12 @@ package spring.myproject.service.like;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import spring.myproject.domain.Gathering;
+import spring.myproject.entity.gathering.Gathering;
 import spring.myproject.repository.gathering.GatheringRepository;
-import spring.myproject.domain.Like;
+import spring.myproject.entity.like.Like;
 import spring.myproject.repository.like.LikeRepository;
 import spring.myproject.exception.meeting.NotAuthorizeException;
-import spring.myproject.domain.User;
+import spring.myproject.entity.user.User;
 import spring.myproject.repository.user.UserRepository;
 import spring.myproject.dto.response.like.DislikeResponse;
 import spring.myproject.dto.response.like.LikeResponse;
@@ -19,7 +19,7 @@ import spring.myproject.exception.user.NotFoundUserException;
 
 import java.util.Optional;
 
-import static spring.myproject.util.ConstClass.*;
+import static spring.myproject.utils.ConstClass.*;
 
 
 @Service

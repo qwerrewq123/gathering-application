@@ -1,9 +1,9 @@
 package spring.myproject.repository.chat;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import spring.myproject.domain.ChatParticipant;
-import spring.myproject.domain.ChatRoom;
-import spring.myproject.domain.User;
+import spring.myproject.entity.chat.ChatParticipant;
+import spring.myproject.entity.chat.ChatRoom;
+import spring.myproject.entity.user.User;
 
 import java.util.List;
 import java.util.Optional;
