@@ -41,4 +41,3 @@ out/
 /src/main/resources/application.properties
 /src/test/resources/application.yml
 /src/test/resources/application-aws.yml
-/src/main/java/spring/myproject/kafka
