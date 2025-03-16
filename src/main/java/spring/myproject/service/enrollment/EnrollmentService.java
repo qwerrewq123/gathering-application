@@ -18,6 +18,7 @@ import spring.myproject.exception.enrollment.NotFoundEnrollmentException;
 import spring.myproject.exception.gathering.NotFoundGatheringException;
 import spring.myproject.exception.user.NotFoundUserException;
 import spring.myproject.service.fcm.FCMService;
+import spring.myproject.service.recommend.RecommendService;
 
 import java.time.LocalDateTime;
 
@@ -32,7 +33,7 @@ public class EnrollmentService {
     private final UserRepository userRepository;
     private final GatheringRepository gatheringRepository;
     private final FCMService fcmService;
-
+    private final RecommendService recommendService;
     public EnrollGatheringResponse enrollGathering(Long gatheringId, String username) {
 
             User user = userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
@@ -53,6 +54,7 @@ public class EnrollmentService {
                             .img(null)
                     .build(),topic);
             fcmService.subscribeToTopics(topicName,username);
+            recommendService.addScore(gathering,1);
             return EnrollGatheringResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE);
     }
     public DisEnrollGatheringResponse disEnrollGathering(Long gatheringId, String username) {
@@ -74,6 +76,7 @@ public class EnrollmentService {
                     .img(null)
                     .build(),topic);
             fcmService.unsubscribeFromTopics(topicName,username);
+        recommendService.addScore(gathering,-1);
             return DisEnrollGatheringResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE);
     }
 }

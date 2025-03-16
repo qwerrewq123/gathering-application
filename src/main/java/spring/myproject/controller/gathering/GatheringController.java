@@ -7,9 +7,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import spring.myproject.common.Username;
 import spring.myproject.dto.response.gathering.*;
+import spring.myproject.dto.response.recommend.RecommendResponse;
 import spring.myproject.service.gathering.GatheringService;
 import spring.myproject.dto.request.gathering.AddGatheringRequest;
 import spring.myproject.dto.request.gathering.UpdateGatheringRequest;
+import spring.myproject.service.recommend.RecommendService;
 
 import java.io.IOException;
 
@@ -18,6 +20,7 @@ import java.io.IOException;
 public class GatheringController {
 
     private final GatheringService gatheringService;
+    private final RecommendService recommendService;
 
     @PostMapping("/gathering")
     public ResponseEntity<AddGatheringResponse> addGathering(@RequestPart AddGatheringRequest addGatheringRequest,
@@ -71,5 +74,11 @@ public class GatheringController {
 
         GatheringPagingResponse gatheringPagingResponse = gatheringService.gatheringsLike(pageNum,pageSize,username);
         return new ResponseEntity<>(gatheringPagingResponse, HttpStatus.OK);
+    }
+
+    @GetMapping
+    public ResponseEntity<RecommendResponse> fetchRecommendTop10(@Username String username){
+        RecommendResponse recommendResponse = recommendService.fetchRecommendTop10();
+        return new ResponseEntity<>(recommendResponse, HttpStatus.OK);
     }
 }

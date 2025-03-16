@@ -4,7 +4,9 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import spring.myproject.entity.gathering.Gathering;
 import spring.myproject.repository.gathering.GatheringRepository;
+import spring.myproject.repository.recommend.RecommendRepository;
 import spring.myproject.repository.user.UserRepository;
 import spring.myproject.dto.response.gathering.GatheringDetailQuery;
 import spring.myproject.dto.response.gathering.GatheringResponse;
@@ -25,12 +27,15 @@ public class RecommendService {
 
     private final GatheringRepository gatheringRepository;
     private final UserRepository userRepository;
+    private final RecommendRepository recommendRepository;
     @Value("${server.url}")
     private String url;
 
-    public RecommendResponse recommend(String username) {
+    public void addScore(Gathering gathering,int val){
+        recommendRepository.updateCount(gathering.getId(),val);
+    }
 
-            userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
+    public RecommendResponse fetchRecommendTop10() {
             List<GatheringDetailQuery> gatheringQueryDtos = gatheringRepository.gatheringsRecommend();
             List<GatheringResponse> gatheringResponses = getGatheringResponses(gatheringQueryDtos);
             return RecommendResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE,gatheringResponses);

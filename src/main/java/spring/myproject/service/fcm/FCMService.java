@@ -59,7 +59,7 @@ public class FCMService {
 
 		try {
 			FirebaseMessaging.getInstance().send(message);
-			notificationRepository.save(spring.myproject.notification.Notification.builder()
+			notificationRepository.save(spring.myproject.entity.notification.Notification.builder()
 					.topic(topic)
 					.img(topicNotificationRequestDto.getImg())
 					.url(topicNotificationRequestDto.getUrl())

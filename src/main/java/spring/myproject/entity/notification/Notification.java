@@ -1,4 +1,4 @@
-package spring.myproject.notification;
+package spring.myproject.entity.notification;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
