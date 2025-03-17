@@ -22,6 +22,7 @@ import spring.myproject.entity.user.User;
 import spring.myproject.repository.user.UserRepository;
 import spring.myproject.repository.gathering.GatheringRepository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
@@ -147,7 +148,7 @@ public class GatheringRepositoryTest {
         gatheringRepository.saveAll(List.of(gathering1,gathering2,gathering3,gathering4,gathering5));
         recommendRepository.saveAll(List.of(recommend1,recommend2,recommend3,recommend4,recommend5));
 
-        List<GatheringDetailQuery> gatheringDetailQueries = gatheringRepository.gatheringsRecommend();
+        List<GatheringDetailQuery> gatheringDetailQueries = gatheringRepository.gatheringsRecommend(LocalDate.now());
         assertThat(gatheringDetailQueries).hasSize(5);
     }
 

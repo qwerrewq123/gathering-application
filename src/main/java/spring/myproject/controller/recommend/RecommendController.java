@@ -9,6 +9,8 @@ import spring.myproject.common.Username;
 import spring.myproject.service.recommend.RecommendService;
 import spring.myproject.dto.response.recommend.RecommendResponse;
 
+import java.time.LocalDateTime;
+
 @RestController
 @RequiredArgsConstructor
 public class RecommendController {
@@ -18,7 +20,7 @@ public class RecommendController {
     @GetMapping("/recommend")
     public ResponseEntity<Object> recommend(@Username String username){
 
-        RecommendResponse recommendResponse = recommendService.recommend(username);
+        RecommendResponse recommendResponse = recommendService.fetchRecommendTop10(LocalDateTime.now().toLocalDate());
         return new ResponseEntity<>(recommendResponse, HttpStatus.OK);
     }
 }

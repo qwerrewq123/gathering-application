@@ -1,7 +1,3 @@
 FROM amazoncorretto:21-alpine
-
-WORKDIR /app
-
-COPY target/*.jar app.jar
-
-CMD ["java", "-jar", "app.jar"]
+COPY ./build/libs/*SNAPSHOT.jar project.jar
+ENTRYPOINT ["java", "-jar", "project.jar"]

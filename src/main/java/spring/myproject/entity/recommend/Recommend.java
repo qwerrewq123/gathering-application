@@ -7,6 +7,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import spring.myproject.entity.gathering.Gathering;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
@@ -22,12 +25,9 @@ public class Recommend {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "gathering_id")
     private Gathering gathering;
-
     private Long score;
+    private LocalDate localDate;
 
-    public void reset(Recommend recommend){
-        this.score = 0L;
-    }
     public void setCount(Long score){
         this.score=score;
     }

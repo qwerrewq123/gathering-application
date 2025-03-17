@@ -3,6 +3,7 @@ package spring.myproject.service.recommend;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import spring.myproject.entity.gathering.Gathering;
 import spring.myproject.repository.gathering.GatheringRepository;
@@ -11,8 +12,9 @@ import spring.myproject.repository.user.UserRepository;
 import spring.myproject.dto.response.gathering.GatheringDetailQuery;
 import spring.myproject.dto.response.gathering.GatheringResponse;
 import spring.myproject.dto.response.recommend.RecommendResponse;
-import spring.myproject.exception.user.NotFoundUserException;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -34,9 +36,9 @@ public class RecommendService {
     public void addScore(Gathering gathering,int val){
         recommendRepository.updateCount(gathering.getId(),val);
     }
-
-    public RecommendResponse fetchRecommendTop10() {
-            List<GatheringDetailQuery> gatheringQueryDtos = gatheringRepository.gatheringsRecommend();
+    @Cacheable(value = "recommend",key="#localDate")
+    public RecommendResponse fetchRecommendTop10(LocalDate localDate) {
+            List<GatheringDetailQuery> gatheringQueryDtos = gatheringRepository.gatheringsRecommend(localDate);
             List<GatheringResponse> gatheringResponses = getGatheringResponses(gatheringQueryDtos);
             return RecommendResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE,gatheringResponses);
     }

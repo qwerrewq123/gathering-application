@@ -38,6 +38,6 @@ out/
 
 /src/main/resources/firebase/gathering-project-dcf1a-firebase-adminsdk-fbsvc-061788000f.json
 /src/main/resources/application-aws.yml
-/src/main/resources/application.properties
+/src/main/resources/application.yml
 /src/test/resources/application.yml
 /src/test/resources/application-aws.yml

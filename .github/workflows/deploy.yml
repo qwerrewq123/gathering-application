@@ -1,0 +1,66 @@
+name: deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch Github Repository
+        uses: actions/checkout@v4
+
+      - name: install jdk 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: corretto
+          java-version: 21
+
+      - name: create application.yml
+        run: echo "${{ secrets.APPLICATION_PROPERTIES }}" > ./src/main/resources/application.yml
+
+      - name: create application-aws.yml
+        run: echo "${{ secrets.APPLICATION_AWS_PROPERTIES }}" > ./src/main/resources/application.yml
+
+      - name: create application.yml
+        run: |
+          mkdir -p ./src/main/resources/firebase
+          echo "${{ secrets.FIREBASE_JSON }}" > ./src/main/resources/firebase/firebase.json
+
+      - name: test and build
+        run: ./gradlew clean build
+
+      - name: set AWS credential
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ap-northeast-2
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: login ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: build docker image
+        run: docker build -t gathering-application .
+
+      - name: attach docker tag
+        run: docker tag gathering-application ${{ steps.login-ecr.outputs.registry }}/gathering-application:latest
+
+      - name: push docker image
+        run: docker push ${{ steps.login-ecr.outputs.registry }}/gathering-application:latest
+
+      - name: ssh EC2
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_PRIVATE_KEY }}
+          script_stop: true
+          script: |
+            docker stop gathering-application || true
+            docker rm gathering-application || true
+            docker pull ${{ steps.login-ecr.outputs.registry }}/gathering-application:latest
+            docker run -d --name gathering-application -p 8080:8080 ${{ steps.login-ecr.outputs.registry }}/gathering-application:latest

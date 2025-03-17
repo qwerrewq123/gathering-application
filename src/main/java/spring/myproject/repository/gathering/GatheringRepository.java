@@ -11,6 +11,7 @@ import spring.myproject.dto.response.gathering.EntireGatheringsQuery;
 import spring.myproject.dto.response.gathering.GatheringsQuery;
 import spring.myproject.dto.response.gathering.GatheringDetailQuery;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface GatheringRepository extends JpaRepository<Gathering,Long> {
@@ -63,6 +64,7 @@ public interface GatheringRepository extends JpaRepository<Gathering,Long> {
             "join r.gathering g " +
             "join g.category ca " +
             "join g.createBy cr " +
-            "left join g.gatheringImage im")
-    List<GatheringDetailQuery> gatheringsRecommend();
+            "left join g.gatheringImage im " +
+            "where r.localDate = :localDate order by r.score desc limit 10")
+    List<GatheringDetailQuery> gatheringsRecommend(LocalDate localDate);
 }

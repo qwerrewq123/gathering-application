@@ -14,6 +14,8 @@ import spring.myproject.dto.request.gathering.UpdateGatheringRequest;
 import spring.myproject.service.recommend.RecommendService;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @RestController
 @RequiredArgsConstructor
@@ -77,8 +79,8 @@ public class GatheringController {
     }
 
     @GetMapping
-    public ResponseEntity<RecommendResponse> fetchRecommendTop10(@Username String username){
-        RecommendResponse recommendResponse = recommendService.fetchRecommendTop10();
+    public ResponseEntity<RecommendResponse> fetchRecommendTop10(){
+        RecommendResponse recommendResponse = recommendService.fetchRecommendTop10(LocalDate.now());
         return new ResponseEntity<>(recommendResponse, HttpStatus.OK);
     }
 }
