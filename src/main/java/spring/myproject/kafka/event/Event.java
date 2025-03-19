@@ -1,7 +1,7 @@
 package spring.myproject.kafka.event;
 
 import lombok.Getter;
-import spring.myproject.kafka.seriealizer.DataSerializer;
+import spring.myproject.kafka.serializer.DataSerializer;
 
 @Getter
 public class Event<T extends EventPayload> {

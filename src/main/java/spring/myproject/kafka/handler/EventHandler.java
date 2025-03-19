@@ -1,4 +1,4 @@
-package spring.myproject.kafka.event.handler;
+package spring.myproject.kafka.handler;
 
 import spring.myproject.kafka.event.Event;
 import spring.myproject.kafka.event.EventPayload;

@@ -24,4 +24,5 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
             "where p.id = :userId " +
             "group by c.id")
     Page<ChatMyRoomResponse> fetchMyChatRooms(Pageable pageable, Long userId);
+
 }

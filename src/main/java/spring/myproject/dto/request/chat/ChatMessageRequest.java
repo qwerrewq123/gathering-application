@@ -12,10 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class ChatMessageRequest {
-    @NotNull(message = "cannot null")
     private Long roomId;
-    @NotBlank(message = "cannot blank or null or space")
     private String content;
-    @NotBlank(message = "cannot blank or null or space")
     private String username;
 }

@@ -3,6 +3,8 @@ package spring.myproject.repository.chat;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import spring.myproject.entity.chat.ChatMessage;
+import spring.myproject.entity.chat.ChatParticipant;
 import spring.myproject.entity.chat.ReadStatus;
 
 import java.util.List;
@@ -12,4 +14,5 @@ public interface ReadStatusRepository extends JpaRepository<ReadStatus, Long> {
             "where r.chatParticipant.id = :chatParticipantId and r.chatMessage.id in :chatMessageIds and r.status=false")
     @Modifying
     void readChatMessage(Long chatParticipantId, List<Long> chatMessageIds);
+
 }
