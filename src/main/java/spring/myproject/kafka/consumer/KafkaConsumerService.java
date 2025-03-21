@@ -23,7 +23,7 @@ public class KafkaConsumerService {
         EventHandler<EventPayload> eventHandler = eventHandlers.stream()
                 .filter(handler -> handler.supports(event))
                 .findFirst()
-                .get();
+                .orElseThrow();
         eventHandler.handle(event);
         ack.acknowledge();
     }
