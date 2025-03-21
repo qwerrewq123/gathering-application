@@ -16,14 +16,14 @@ import java.util.concurrent.atomic.AtomicLong;
 @Service
 @RequiredArgsConstructor
 public class KafkaProducerService {
+    private static final AtomicLong counter = new AtomicLong(0);
     private final KafkaTemplate<String, String> kafkaTemplate;
-    private ObjectMapper objectMapper = new ObjectMapper();
     public void publishSendMessageEvent(String topic, ChatMessageRequest chatMessageRequest) {
-        SendChatMessageEventPayload payload = objectMapper.convertValue(chatMessageRequest, SendChatMessageEventPayload.class);
+        SendChatMessageEventPayload payload = SendChatMessageEventPayload.of(chatMessageRequest);
         Event<EventPayload> event = Event.of(fetchEventId(), EventType.SEND_MESSAGE, payload);
         kafkaTemplate.send(topic, event.toJson());
     }
     public Long fetchEventId() {
-        return new Random().nextLong();
+        return counter.incrementAndGet();
     }
 }

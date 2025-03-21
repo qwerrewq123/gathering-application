@@ -27,6 +27,4 @@ public class KafkaConsumerService {
         eventHandler.handle(event);
         ack.acknowledge();
     }
-    
-
 }
