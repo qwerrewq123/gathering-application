@@ -1,22 +1,24 @@
-package spring.myproject.entity.user.repository;
+package spring.myproject.repository.user;
 
 import jakarta.persistence.EntityManager;
 import org.hibernate.proxy.HibernateProxy;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Profile;
+import org.springframework.transaction.annotation.Transactional;
 import spring.myproject.entity.image.Image;
 import spring.myproject.repository.image.ImageRepository;
 import spring.myproject.entity.user.User;
-import spring.myproject.repository.user.UserRepository;
 
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 import static spring.myproject.utils.DummyData.*;
-
-@DataJpaTest
+@SpringBootTest
+@Transactional
 class UserRepositoryTest {
 
     @Autowired
@@ -62,8 +64,8 @@ class UserRepositoryTest {
         userRepository.save(user1);
         userRepository.save(user2);
 
-        Boolean exist1 = userRepository.existsByNickname("nickname1");
-        assertThat(exist1).isEqualTo(true);
+        Boolean exist = userRepository.existsByNickname("nickname1");
+        assertThat(exist).isEqualTo(true);
     }
     @Test
     void findByEmail(){
@@ -85,18 +87,15 @@ class UserRepositoryTest {
         List<User> userList3 = userRepository.findByEmail("email3");
         List<User> userList4 = userRepository.findByEmail("email4");
 
-        assertThat(userList1.size()).isEqualTo(1)
-                    .extracting("email")
-                            .isEqualTo("email1");
-        assertThat(userList2.size()).isEqualTo(1)
-                    .extracting("email")
-                        .isEqualTo("email2");
-        assertThat(userList3.size()).isEqualTo(1)
-                    .extracting("email")
-                        .isEqualTo("email3");
-        assertThat(userList4.size()).isEqualTo(1)
-                    .extracting("email")
-                        .isEqualTo("email4");
+        assertThat(userList1.size()).isEqualTo(1);
+        assertThat(userList1.getFirst()).extracting("email").isEqualTo("email1");
+        assertThat(userList2.size()).isEqualTo(1);
+        assertThat(userList2.getFirst()).extracting("email").isEqualTo("email1");
+        assertThat(userList3.size()).isEqualTo(1);
+        assertThat(userList3.getFirst()).extracting("email").isEqualTo("email1");
+        assertThat(userList4.size()).isEqualTo(1);
+        assertThat(userList4.getFirst()).extracting("email").isEqualTo("email1");
+
     }
     @Test
     void findById(){

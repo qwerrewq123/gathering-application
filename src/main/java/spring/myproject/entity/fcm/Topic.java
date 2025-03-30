@@ -18,7 +18,7 @@ public class Topic {
     private Long id;
     @Column
     private String topicName;
-    @OneToOne(fetch = FetchType.LAZY, mappedBy = "fcmToken", optional = false)
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "topic", optional = false)
     private Gathering gathering;
 
 }

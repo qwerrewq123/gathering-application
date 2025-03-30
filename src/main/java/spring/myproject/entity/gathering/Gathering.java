@@ -73,9 +73,6 @@ public class Gathering {
     }
 
     public void enroll(List<Enrollment> enrollments){
-        for (Enrollment enrollment : enrollments) {
-            enrollment.enrollGathering(this);
-        }
         this.enrollments = enrollments;
     }
 }

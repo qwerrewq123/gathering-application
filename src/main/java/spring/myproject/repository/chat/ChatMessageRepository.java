@@ -12,7 +12,7 @@ import java.util.List;
 public interface ChatMessageRepository extends JpaRepository<ChatMessage, Long> {
     List<ChatMessage> findByChatRoomAndChatParticipant(ChatRoom chatRoom, ChatParticipant chatParticipant);
 
-    @Query("select new spring.myproject.entity.chat.dto.response." +
+    @Query("select new spring.myproject.dto.response.chat." +
             "ChatMessageResponse(cm.chatRoom.id,cm.content,p.user.username,r.status) from ChatMessage cm " +
             "left join cm.chatParticipant p " +
             "left join ReadStatus r on r.chatMessage.id = cm.id and r.chatParticipant.id = :chatParticipantId " +

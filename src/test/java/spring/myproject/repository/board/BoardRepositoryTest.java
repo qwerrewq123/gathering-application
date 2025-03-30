@@ -1,10 +1,11 @@
-package spring.myproject.entity.board.repository;
+package spring.myproject.repository.board;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.transaction.annotation.Transactional;
 import spring.myproject.entity.board.Board;
 import spring.myproject.dto.response.board.BoardQuery;
 import spring.myproject.dto.response.board.BoardsQuery;
@@ -16,7 +17,6 @@ import spring.myproject.entity.image.Image;
 import spring.myproject.repository.image.ImageRepository;
 import spring.myproject.entity.user.User;
 import spring.myproject.repository.user.UserRepository;
-import spring.myproject.repository.board.BoardRepository;
 
 import java.util.List;
 
@@ -24,6 +24,7 @@ import static org.assertj.core.api.Assertions.*;
 import static spring.myproject.utils.DummyData.*;
 
 @SpringBootTest
+@Transactional
 class BoardRepositoryTest {
 
     @Autowired
@@ -61,9 +62,7 @@ class BoardRepositoryTest {
         assertThat(boardQueries).hasSize(3);
         assertThat(boardQueries).extracting("imageUrl")
                 .containsExactly(
-                        tuple("image1Url"),
-                        tuple("image2Url"),
-                        tuple("image3Url")
+                        "image1Url","image2Url","image3Url"
                 );
     }
 

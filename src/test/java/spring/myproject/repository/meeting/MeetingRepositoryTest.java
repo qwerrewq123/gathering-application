@@ -1,10 +1,11 @@
-package spring.myproject.entity.meeting.repository;
+package spring.myproject.repository.meeting;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.transaction.annotation.Transactional;
 import spring.myproject.entity.attend.Attend;
 import spring.myproject.repository.attend.AttendRepository;
 import spring.myproject.entity.category.Category;
@@ -20,7 +21,6 @@ import spring.myproject.dto.response.meeting.MeetingsQuery;
 import spring.myproject.dto.response.meeting.MeetingDetailQuery;
 import spring.myproject.entity.user.User;
 import spring.myproject.repository.user.UserRepository;
-import spring.myproject.repository.meeting.MeetingRepository;
 
 import java.util.List;
 
@@ -29,6 +29,7 @@ import static spring.myproject.utils.DummyData.*;
 import static spring.myproject.utils.DummyData.returnDummyEnrollment;
 
 @SpringBootTest
+@Transactional
 class MeetingRepositoryTest {
     @Autowired
     CategoryRepository categoryRepository;
@@ -50,6 +51,7 @@ class MeetingRepositoryTest {
         Category category = returnDummyCategory(1);
         Image userImage = returnDummyImage(1);
         Image gatheringImage = returnDummyImage(1);
+        Image meetingImage = returnDummyImage(1);
         User user1 = returnDummyUser(1, userImage);
         User user2 = returnDummyUser(2, userImage);
         User user3 = returnDummyUser(3, userImage);
@@ -57,13 +59,13 @@ class MeetingRepositoryTest {
         Enrollment enrollment1 = returnDummyEnrollment(user2,gathering);
         Enrollment enrollment2 = returnDummyEnrollment(user3,gathering);
         gathering.enroll(List.of(enrollment1,enrollment2));
-        Meeting meeting = returnDummyMeeting(1, user1, gathering);
+        Meeting meeting = returnDummyMeeting(1, user1, gathering,meetingImage);
         Attend attend1 = returnDummyAttend(user2,meeting);
-        Attend attend2 = returnDummyAttend(user2,meeting);
+        Attend attend2 = returnDummyAttend(user3,meeting);
         meeting.attend(List.of(attend1,attend2));
-        categoryRepository.save(category);
+        imageRepository.saveAll(List.of(userImage,gatheringImage,meetingImage));
         userRepository.saveAll(List.of(user1,user2,user3));
-        imageRepository.saveAll(List.of(userImage,gatheringImage));
+        categoryRepository.save(category);
         gatheringRepository.saveAll(List.of(gathering));
         enrollmentRepository.saveAll(List.of(enrollment1,enrollment2));
         meetingRepository.save(meeting);
@@ -71,10 +73,9 @@ class MeetingRepositoryTest {
 
         List<MeetingDetailQuery> meetingDetailQueries = meetingRepository.meetingDetail(meeting.getId());
         assertThat(meetingDetailQueries).hasSize(2);
-        assertThat(meetingDetailQueries).extracting("attendBy")
+        assertThat(meetingDetailQueries).extracting("attendedBy")
                 .containsExactly(
-                        tuple("user2"),
-                        tuple("user3")
+                        "user2","user3"
                 );
     }
     @Test
@@ -82,34 +83,38 @@ class MeetingRepositoryTest {
         Category category = returnDummyCategory(1);
         Image userImage = returnDummyImage(1);
         Image gatheringImage = returnDummyImage(1);
+        Image meetingImage = returnDummyImage(1);
         User user1 = returnDummyUser(1, userImage);
         User user2 = returnDummyUser(2, userImage);
         User user3 = returnDummyUser(3, userImage);
-        User user4 = returnDummyUser(3, userImage);
-        User user5 = returnDummyUser(3, userImage);
-        User user6 = returnDummyUser(3, userImage);
+        User user4 = returnDummyUser(4, userImage);
+        User user5 = returnDummyUser(5, userImage);
+        User user6 = returnDummyUser(6, userImage);
         Gathering gathering = returnDummyGathering(1, category, user1, gatheringImage);
-        Enrollment enrollment1 = returnDummyEnrollment(user2,gathering);
-        Enrollment enrollment2 = returnDummyEnrollment(user3,gathering);
-        Enrollment enrollment3 = returnDummyEnrollment(user4,gathering);
-        Enrollment enrollment4 = returnDummyEnrollment(user5,gathering);
-        Enrollment enrollment5 = returnDummyEnrollment(user6,gathering);
-        gathering.enroll(List.of(enrollment1,enrollment2));
-        Meeting meeting1 = returnDummyMeeting(1, user1, gathering);
-        Meeting meeting2 = returnDummyMeeting(1, user4, gathering);
-        Attend attend1 = returnDummyAttend(user2,meeting1);
+        Enrollment enrollment1 = returnDummyEnrollment(user1,gathering);
+        Enrollment enrollment2 = returnDummyEnrollment(user2,gathering);
+        Enrollment enrollment3 = returnDummyEnrollment(user3,gathering);
+        Enrollment enrollment4 = returnDummyEnrollment(user4,gathering);
+        Enrollment enrollment5 = returnDummyEnrollment(user5,gathering);
+        Enrollment enrollment6 = returnDummyEnrollment(user6,gathering);
+        gathering.enroll(List.of(enrollment1,enrollment2,enrollment3,enrollment4,enrollment5,enrollment6));
+        Meeting meeting1 = returnDummyMeeting(1, user1, gathering,meetingImage);
+        Meeting meeting2 = returnDummyMeeting(2, user4, gathering,meetingImage);
+        Attend attend1 = returnDummyAttend(user1,meeting1);
         Attend attend2 = returnDummyAttend(user2,meeting1);
-        Attend attend3 = returnDummyAttend(user2,meeting2);
-        Attend attend4 = returnDummyAttend(user2,meeting2);
-        meeting1.attend(List.of(attend1,attend2));
-        meeting2.attend(List.of(attend3,attend4));
+        Attend attend3 = returnDummyAttend(user3,meeting2);
+        Attend attend4 = returnDummyAttend(user4,meeting2);
+        Attend attend5 = returnDummyAttend(user5,meeting2);
+        Attend attend6 = returnDummyAttend(user6,meeting2);
+        meeting1.attend(List.of(attend1,attend2,attend3));
+        meeting2.attend(List.of(attend4,attend5,attend6));
         categoryRepository.save(category);
         userRepository.saveAll(List.of(user1,user2,user3,user4,user5,user6));
-        imageRepository.saveAll(List.of(userImage,gatheringImage));
+        imageRepository.saveAll(List.of(userImage,gatheringImage,meetingImage));
         gatheringRepository.saveAll(List.of(gathering));
-        enrollmentRepository.saveAll(List.of(enrollment1,enrollment2,enrollment3,enrollment4,enrollment5));
+        enrollmentRepository.saveAll(List.of(enrollment1,enrollment2,enrollment3,enrollment4,enrollment5,enrollment6));
         meetingRepository.saveAll(List.of(meeting1,meeting2));
-        attendRepository.saveAll(List.of(attend1,attend2,attend3,attend4));
+        attendRepository.saveAll(List.of(attend1,attend2,attend3,attend4,attend5,attend6));
         PageRequest pageRequest = PageRequest.of(0, 1);
         Page<MeetingsQuery> meetingsQueries = meetingRepository.meetings(pageRequest, "");
         assertThat(meetingsQueries.getTotalPages()).isEqualTo(2);

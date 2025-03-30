@@ -12,12 +12,16 @@ import java.util.List;
 
 public interface MeetingRepository extends JpaRepository<Meeting,Long> {
 
-    @Query("select new spring.myproject.entity.meeting.dto.response." +
+    @Query("select new spring.myproject.dto.response.meeting." +
             "MeetingDetailQuery(m.id,m.title,cr.username,u.username,m.boardDate,m.startDate,m.endDate,m.content,m.count,i.url) " +
-            "from Meeting m left join m.attends a left join a.attendBy u join m.createdBy cr left join m.image i " +
+            "from Meeting m " +
+            "left join m.attends a " +
+            "left join a.attendBy u " +
+            "left join m.createdBy cr " +
+            "left join m.image i on i.id=m.image.id " +
             "where m.id = :meetingId and a.accepted = true ")
     List<MeetingDetailQuery> meetingDetail(Long meetingId);
-    @Query("select new spring.myproject.entity.meeting.dto.response." +
+    @Query("select new spring.myproject.dto.response.meeting." +
             "MeetingsQuery(m.id,m.title,cr.username,m.boardDate,m.startDate,m.endDate,m.content,m.count,i.url) " +
             "from Meeting m left join m.createdBy cr left join m.image i " +
             "where m.title like %:title%")

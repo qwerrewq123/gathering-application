@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import spring.myproject.dto.response.gathering.GatheringResponse;
+import spring.myproject.dto.response.gathering.GatheringsQuery;
 
 import java.util.List;
 
@@ -16,9 +17,9 @@ public class RecommendResponse {
 
     private String code;
     private String message;
-    List<GatheringResponse> gatherings;
+    List<GatheringsQuery> gatherings;
 
-    public static RecommendResponse of(String code, String message, List<GatheringResponse> gatherings) {
+    public static RecommendResponse of(String code, String message, List<GatheringsQuery> gatherings) {
         return new RecommendResponse(code, message, gatherings);
     }
 }

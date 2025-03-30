@@ -12,6 +12,6 @@ public interface AttendRepository extends JpaRepository<Attend,Long> {
 
     @Query("select a from Attend  a where a.attendBy.id = :userId and a.meeting.id = :meetingId and a.accepted = true")
     Attend findByUserIdAndMeetingIdAndTrue(Long userId,Long meetingId);
-    @Query("select a from Attend a where a.accepted= :accepted")
+    @Query("select a from Attend a where a.accepted= :accepted and a.id = :attendId")
     Optional<Attend> findByIdAndAccepted(Long attendId,boolean accepted);
 }

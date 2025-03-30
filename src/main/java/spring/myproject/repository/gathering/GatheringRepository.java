@@ -16,7 +16,7 @@ import java.util.List;
 
 public interface GatheringRepository extends JpaRepository<Gathering,Long> {
     @Query("select " +
-            "new spring.myproject.entity.gathering.dto.response." +
+            "new spring.myproject.dto.response.gathering." +
             "GatheringDetailQuery(g.id,g.title,g.content,g.registerDate,ca.name,cr.username,u.username,im.url,g.count) " +
             "from Gathering g " +
             "left join g.enrollments e " +
@@ -40,7 +40,7 @@ public interface GatheringRepository extends JpaRepository<Gathering,Long> {
             "where rownum between 1 and 9", nativeQuery = true)
     List<EntireGatheringsQuery> gatherings(@Param("title") String title);
 
-    @Query("select new spring.myproject.entity.gathering.dto.response." +
+    @Query("select new spring.myproject.dto.response.gathering." +
             "GatheringsQuery(g.id,g.title,g.content,g.registerDate,ca.name,cr.username,im.url,g.count) " +
             "from Gathering  g " +
             "left join  g.category ca " +
@@ -50,7 +50,7 @@ public interface GatheringRepository extends JpaRepository<Gathering,Long> {
     )
     Page<GatheringsQuery> gatheringsCategory(PageRequest pageRequest, String category);
 
-    @Query("select new spring.myproject.entity.gathering.dto.response." +
+    @Query("select new spring.myproject.dto.response.gathering." +
             "GatheringsQuery(g.id,g.title,g.content,g.registerDate,ca.name,cr.username,im.url,g.count) " +
             "from Gathering g left join g.gatheringImage im " +
             "left join g.category ca left join g.createBy cr " +
@@ -58,7 +58,7 @@ public interface GatheringRepository extends JpaRepository<Gathering,Long> {
             "where u.id=:userId")
     Page<GatheringsQuery> gatheringsLike(Pageable pageable, Long userId);
 
-    @Query("select new spring.myproject.entity.gathering.dto.response." +
+    @Query("select new spring.myproject.dto.response.gathering." +
             "GatheringsQuery(g.id,g.title,g.content,g.registerDate,ca.name,cr.username,im.url,g.count) " +
             "from Recommend r " +
             "join r.gathering g " +
@@ -66,5 +66,5 @@ public interface GatheringRepository extends JpaRepository<Gathering,Long> {
             "join g.createBy cr " +
             "left join g.gatheringImage im " +
             "where r.localDate = :localDate order by r.score desc limit 10")
-    List<GatheringDetailQuery> gatheringsRecommend(LocalDate localDate);
+    List<GatheringsQuery> gatheringsRecommend(LocalDate localDate);
 }

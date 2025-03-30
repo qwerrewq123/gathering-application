@@ -1,8 +1,9 @@
-package spring.myproject.entity.enrollment.repository;
+package spring.myproject.repository.enrollment;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 import spring.myproject.entity.category.Category;
 import spring.myproject.repository.category.CategoryRepository;
 import spring.myproject.entity.enrollment.Enrollment;
@@ -12,7 +13,6 @@ import spring.myproject.entity.image.Image;
 import spring.myproject.repository.image.ImageRepository;
 import spring.myproject.entity.user.User;
 import spring.myproject.repository.user.UserRepository;
-import spring.myproject.repository.enrollment.EnrollmentRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -22,6 +22,7 @@ import static spring.myproject.utils.DummyData.*;
 import static spring.myproject.utils.DummyData.returnDummyEnrollment;
 
 @SpringBootTest
+@Transactional
 class EnrollmentRepositoryTest {
     @Autowired
     CategoryRepository categoryRepository;
@@ -46,7 +47,7 @@ class EnrollmentRepositoryTest {
         Enrollment enrollment2 = returnDummyEnrollment(user3,gathering);
         gathering.enroll(List.of(enrollment1,enrollment2));
         categoryRepository.save(category);
-        userRepository.saveAll(List.of(user1,user2));
+        userRepository.saveAll(List.of(user1,user2,user3));
         imageRepository.saveAll(List.of(userImage,gatheringImage));
         gatheringRepository.saveAll(List.of(gathering));
         enrollmentRepository.saveAll(List.of(enrollment1,enrollment2));
@@ -72,7 +73,7 @@ class EnrollmentRepositoryTest {
         Enrollment enrollment2 = returnDummyEnrollment(user3,gathering);
         gathering.enroll(List.of(enrollment1,enrollment2));
         categoryRepository.save(category);
-        userRepository.saveAll(List.of(user1,user2));
+        userRepository.saveAll(List.of(user1,user2,user3));
         imageRepository.saveAll(List.of(userImage,gatheringImage));
         gatheringRepository.saveAll(List.of(gathering));
         enrollmentRepository.saveAll(List.of(enrollment1,enrollment2));
@@ -98,7 +99,7 @@ class EnrollmentRepositoryTest {
         Enrollment enrollment2 = returnDummyEnrollment(user3,gathering);
         gathering.enroll(List.of(enrollment1,enrollment2));
         categoryRepository.save(category);
-        userRepository.saveAll(List.of(user1,user2));
+        userRepository.saveAll(List.of(user1,user2,user3));
         imageRepository.saveAll(List.of(userImage,gatheringImage));
         gatheringRepository.saveAll(List.of(gathering));
         enrollmentRepository.saveAll(List.of(enrollment1,enrollment2));

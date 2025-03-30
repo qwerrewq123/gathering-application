@@ -14,11 +14,11 @@ public interface RecommendRepository extends JpaRepository<Recommend,Long> {
     @Modifying
     void resetCount();
 
-    @Query("update Recommend  r set r.score = :score+:val where r.gathering.id = :gatehringId")
+    @Query("update Recommend  r set r.score = :val where r.gathering.id = :gatheringId")
     @Modifying
     int updateCount(Long gatheringId,int val);
 
-    @Query("select r from Recommend r order by r.count desc limit 5")
+    @Query("select r from Recommend r order by r.score desc limit 5")
     List<Recommend> fetchTop5();
 
 

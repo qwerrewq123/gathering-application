@@ -1,8 +1,9 @@
-package spring.myproject.entity.chat.repository;
+package spring.myproject.repository.chat;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 import spring.myproject.entity.chat.ChatMessage;
 import spring.myproject.entity.chat.ChatParticipant;
 import spring.myproject.entity.chat.ChatRoom;
@@ -12,10 +13,6 @@ import spring.myproject.entity.image.Image;
 import spring.myproject.repository.image.ImageRepository;
 import spring.myproject.entity.user.User;
 import spring.myproject.repository.user.UserRepository;
-import spring.myproject.repository.chat.ChatMessageRepository;
-import spring.myproject.repository.chat.ChatParticipantRepository;
-import spring.myproject.repository.chat.ChatRoomRepository;
-import spring.myproject.repository.chat.ReadStatusRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +22,7 @@ import static spring.myproject.utils.DummyData.*;
 import static spring.myproject.utils.DummyData.returnDummyChatParticipant;
 
 @SpringBootTest
+@Transactional
 class ChatMessageRepositoryTest {
 
     @Autowired
@@ -65,7 +63,7 @@ class ChatMessageRepositoryTest {
             readStatuses.add(returnDummyReadStatus(chatParticipant5,chatMessage));
         }
         imageRepository.save(image);
-        userRepository.saveAll(List.of(user1,user2,user3));
+        userRepository.saveAll(List.of(user1,user2,user3,user4,user5));
         chatRoomRepository.saveAll(List.of(chatRoom));
         chatParticipantRepository.saveAll(List.of(chatParticipant1,chatParticipant2,chatParticipant3,chatParticipant4,chatParticipant5));
         chatMessageRepository.saveAll(chatMessages);
@@ -75,11 +73,7 @@ class ChatMessageRepositoryTest {
         assertThat(fetchChatMessages).hasSize(5);
         assertThat(fetchChatMessages).extracting("content")
                 .containsExactly(
-                        tuple("content1"),
-                        tuple("content2"),
-                        tuple("content3"),
-                        tuple("content4"),
-                        tuple("content5")
+                        "content1","content2","content3","content4","content5"
                 );
     }
 
@@ -109,7 +103,7 @@ class ChatMessageRepositoryTest {
             readStatuses.add(returnDummyReadStatus(chatParticipant5,chatMessage));
         }
         imageRepository.save(image);
-        userRepository.saveAll(List.of(user1,user2,user3));
+        userRepository.saveAll(List.of(user1,user2,user3,user4,user5));
         chatRoomRepository.saveAll(List.of(chatRoom));
         chatParticipantRepository.saveAll(List.of(chatParticipant1,chatParticipant2,chatParticipant3,chatParticipant4,chatParticipant5));
         chatMessageRepository.saveAll(chatMessages);
@@ -119,11 +113,7 @@ class ChatMessageRepositoryTest {
         assertThat(chatMessageResponses.size()).isEqualTo(5);
         assertThat(chatMessageResponses).extracting("content")
                 .containsExactly(
-                        tuple("content1"),
-                        tuple("content2"),
-                        tuple("content3"),
-                        tuple("content4"),
-                        tuple("content5")
+                        "content1","content2","content3","content4","content5"
                 );
     }
 }

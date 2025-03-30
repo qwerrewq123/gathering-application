@@ -16,6 +16,7 @@ import spring.myproject.entity.meeting.Meeting;
 import spring.myproject.entity.recommend.Recommend;
 import spring.myproject.entity.user.User;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import static spring.myproject.entity.user.Role.USER;
@@ -35,7 +36,7 @@ public class DummyData {
                 .hobby(String.format("hobby%d",i))
                 .age(i)
                 .role(USER)
-                .nickname(String.format("nick%d",i))
+                .nickname(String.format("nickname%d",i))
                 .address(String.format("address%d",i))
                 .password("password")
                 .email(String.format("email%d",i))
@@ -69,7 +70,7 @@ public class DummyData {
                 .build();
     }
 
-    public static Meeting returnDummyMeeting(int i, User createdBy, Gathering gathering){
+    public static Meeting returnDummyMeeting(int i, User createdBy, Gathering gathering,Image image){
         return Meeting.builder()
                 .boardDate(LocalDateTime.now())
                 .startDate(LocalDateTime.now())
@@ -80,12 +81,12 @@ public class DummyData {
                 .attends(null)
                 .gathering(gathering)
                 .count(i)
-                .image(null)
+                .image(image)
                 .build();
     }
     public static Attend returnDummyAttend(User attendBy,Meeting meeting){
         return Attend.builder()
-                .accepted(false)
+                .accepted(true)
                 .meeting(meeting)
                 .attendBy(attendBy)
                 .date(LocalDateTime.now())
@@ -99,10 +100,11 @@ public class DummyData {
                 .date(LocalDateTime.now())
                 .build();
     }
-    public static Recommend returnDummyRecommend(Gathering gathering,int count){
+    public static Recommend returnDummyRecommend(Gathering gathering,int score){
         return Recommend.builder()
-                .count(Long.valueOf(count))
+                .score(Long.valueOf(score))
                 .gathering(gathering)
+                .localDate(LocalDate.now())
                 .build();
     }
     public static Like returnDummyLike(User likedBy, Gathering gathering){

@@ -1,9 +1,10 @@
-package spring.myproject.entity.chat.repository;
+package spring.myproject.repository.chat;
 
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 import spring.myproject.entity.chat.ChatMessage;
 import spring.myproject.entity.chat.ChatParticipant;
 import spring.myproject.entity.chat.ChatRoom;
@@ -12,10 +13,6 @@ import spring.myproject.entity.image.Image;
 import spring.myproject.repository.image.ImageRepository;
 import spring.myproject.entity.user.User;
 import spring.myproject.repository.user.UserRepository;
-import spring.myproject.repository.chat.ChatMessageRepository;
-import spring.myproject.repository.chat.ChatParticipantRepository;
-import spring.myproject.repository.chat.ChatRoomRepository;
-import spring.myproject.repository.chat.ReadStatusRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +23,7 @@ import static spring.myproject.utils.DummyData.*;
 import static spring.myproject.utils.DummyData.returnDummyReadStatus;
 
 @SpringBootTest
+@Transactional
 class ReadStatusRepositoryTest {
     @Autowired
     UserRepository userRepository;
@@ -67,14 +65,15 @@ class ReadStatusRepositoryTest {
             readStatuses.add(returnDummyReadStatus(chatParticipant5,chatMessage));
         }
         imageRepository.save(image);
-        userRepository.saveAll(List.of(user1,user2,user3));
+        userRepository.saveAll(List.of(user1,user2,user3,user4,user5));
         chatRoomRepository.saveAll(List.of(chatRoom));
         chatParticipantRepository.saveAll(List.of(chatParticipant1,chatParticipant2,chatParticipant3,chatParticipant4,chatParticipant5));
         chatMessageRepository.saveAll(chatMessages);
         readStatusRepository.saveAll(readStatuses);
         List<Long> chatMessagesIds = chatMessages.stream().map(c -> c.getId()).toList();
         readStatusRepository.readChatMessage(chatParticipant2.getId(),chatMessagesIds);
-        em.flush();;
+        em.flush();
+        em.clear();
         Optional<ReadStatus> optionalReadStatus = readStatusRepository.findById(readStatuses.get(1).getId());
 
         assertThat(optionalReadStatus).isPresent();

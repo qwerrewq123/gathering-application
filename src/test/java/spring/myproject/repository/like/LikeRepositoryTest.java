@@ -1,8 +1,9 @@
-package spring.myproject.entity.like.repository;
+package spring.myproject.repository.like;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 import spring.myproject.entity.category.Category;
 import spring.myproject.repository.category.CategoryRepository;
 import spring.myproject.entity.gathering.Gathering;
@@ -12,7 +13,6 @@ import spring.myproject.repository.image.ImageRepository;
 import spring.myproject.entity.like.Like;
 import spring.myproject.entity.user.User;
 import spring.myproject.repository.user.UserRepository;
-import spring.myproject.repository.like.LikeRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,6 +21,7 @@ import static org.assertj.core.api.Assertions.*;
 import static spring.myproject.utils.DummyData.*;
 
 @SpringBootTest
+@Transactional
 class LikeRepositoryTest {
     @Autowired
     CategoryRepository categoryRepository;

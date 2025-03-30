@@ -1,10 +1,11 @@
-package spring.myproject.entity.gathering.repository;
+package spring.myproject.repository.gathering;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.transaction.annotation.Transactional;
 import spring.myproject.entity.category.Category;
 import spring.myproject.repository.category.CategoryRepository;
 import spring.myproject.entity.enrollment.Enrollment;
@@ -20,7 +21,6 @@ import spring.myproject.entity.recommend.Recommend;
 import spring.myproject.repository.recommend.RecommendRepository;
 import spring.myproject.entity.user.User;
 import spring.myproject.repository.user.UserRepository;
-import spring.myproject.repository.gathering.GatheringRepository;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -29,6 +29,7 @@ import static org.assertj.core.api.Assertions.*;
 import static spring.myproject.utils.DummyData.*;
 
 @SpringBootTest
+@Transactional
 public class GatheringRepositoryTest {
     @Autowired
     CategoryRepository categoryRepository;
@@ -55,28 +56,19 @@ public class GatheringRepositoryTest {
         Gathering gathering = returnDummyGathering(1, category, user1, gatheringImage);
         Enrollment enrollment1 = returnDummyEnrollment(user2,gathering);
         Enrollment enrollment2 = returnDummyEnrollment(user3,gathering);
-        enrollment1.enrollGathering(gathering);
-        enrollment2.enrollGathering(gathering);
         gathering.enroll(List.of(enrollment1,enrollment2));
         categoryRepository.save(category);
         imageRepository.saveAll(List.of(userImage,gatheringImage));
         userRepository.saveAll(List.of(user1,user2,user3));
-        enrollmentRepository.saveAll(List.of(enrollment1,enrollment2));
         gatheringRepository.save(gathering);
+        enrollmentRepository.saveAll(List.of(enrollment1,enrollment2));
 
         List<GatheringDetailQuery> gatheringDetailQueries = gatheringRepository.gatheringDetail(gathering.getId());
         assertThat(gatheringDetailQueries).hasSize(2);
         assertThat(gatheringDetailQueries).extracting("participatedBy")
                 .containsExactly(
-                        tuple("user2"),
-                        tuple("user3")
+                        "user2","user3"
                 );
-
-    }
-
-    @Test
-    void findLikePaging(){
-
     }
 
     @Test
@@ -148,7 +140,7 @@ public class GatheringRepositoryTest {
         gatheringRepository.saveAll(List.of(gathering1,gathering2,gathering3,gathering4,gathering5));
         recommendRepository.saveAll(List.of(recommend1,recommend2,recommend3,recommend4,recommend5));
 
-        List<GatheringDetailQuery> gatheringDetailQueries = gatheringRepository.gatheringsRecommend(LocalDate.now());
+        List<GatheringsQuery> gatheringDetailQueries = gatheringRepository.gatheringsRecommend(LocalDate.now());
         assertThat(gatheringDetailQueries).hasSize(5);
     }
 

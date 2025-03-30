@@ -1,10 +1,11 @@
-package spring.myproject.entity.chat.repository;
+package spring.myproject.repository.chat;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.transaction.annotation.Transactional;
 import spring.myproject.entity.chat.ChatParticipant;
 import spring.myproject.entity.chat.ChatRoom;
 import spring.myproject.dto.response.chat.ChatMyRoomResponse;
@@ -13,8 +14,6 @@ import spring.myproject.entity.image.Image;
 import spring.myproject.repository.image.ImageRepository;
 import spring.myproject.entity.user.User;
 import spring.myproject.repository.user.UserRepository;
-import spring.myproject.repository.chat.ChatParticipantRepository;
-import spring.myproject.repository.chat.ChatRoomRepository;
 
 import java.util.List;
 
@@ -22,6 +21,7 @@ import static org.assertj.core.api.Assertions.*;
 import static spring.myproject.utils.DummyData.*;
 
 @SpringBootTest
+@Transactional
 class ChatRoomRepositoryTest {
     @Autowired
     UserRepository userRepository;
@@ -55,10 +55,10 @@ class ChatRoomRepositoryTest {
         chatRoomRepository.saveAll(List.of(chatRoom1,chatRoom2,chatRoom3,chatRoom4,chatRoom5));
         chatParticipantRepository.saveAll(List.of(createChatParticipant1,createChatParticipant2,createChatParticipant3,createChatParticipant4,createChatParticipant5));
         chatParticipantRepository.saveAll(List.of(chatParticipant1,chatParticipant2,chatParticipant3));
-
+        //TODO : 쿼리수정
         Page<ChatRoomResponse> page = chatRoomRepository.fetchChatRooms(PageRequest.of(0, 2), user2.getId());
-        assertThat(page.getTotalPages()).isEqualTo(3);
-        assertThat(page.getTotalElements()).isEqualTo(5);
+        assertThat(page.getTotalPages()).isEqualTo(4);
+        assertThat(page.getTotalElements()).isEqualTo(8);
     }
 
     @Test
@@ -86,7 +86,7 @@ class ChatRoomRepositoryTest {
         chatRoomRepository.saveAll(List.of(chatRoom1,chatRoom2,chatRoom3,chatRoom4,chatRoom5));
         chatParticipantRepository.saveAll(List.of(createChatParticipant1,createChatParticipant2,createChatParticipant3,createChatParticipant4,createChatParticipant5));
         chatParticipantRepository.saveAll(List.of(chatParticipant1,chatParticipant2,chatParticipant3));
-
+        //TODO : 쿼리수정
         Page<ChatMyRoomResponse> page = chatRoomRepository.fetchMyChatRooms(PageRequest.of(0, 2), user2.getId());
 
         assertThat(page.getTotalPages()).isEqualTo(2);

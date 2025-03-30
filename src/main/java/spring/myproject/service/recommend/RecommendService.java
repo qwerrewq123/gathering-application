@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import spring.myproject.dto.response.gathering.GatheringsQuery;
 import spring.myproject.entity.gathering.Gathering;
 import spring.myproject.repository.gathering.GatheringRepository;
 import spring.myproject.repository.recommend.RecommendRepository;
@@ -38,9 +39,9 @@ public class RecommendService {
     }
     @Cacheable(value = "recommend",key="#localDate")
     public RecommendResponse fetchRecommendTop10(LocalDate localDate) {
-            List<GatheringDetailQuery> gatheringQueryDtos = gatheringRepository.gatheringsRecommend(localDate);
-            List<GatheringResponse> gatheringResponses = getGatheringResponses(gatheringQueryDtos);
-            return RecommendResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE,gatheringResponses);
+            List<GatheringsQuery> gatheringQueryDtos = gatheringRepository.gatheringsRecommend(localDate);
+//            List<GatheringResponse> gatheringResponses = getGatheringResponses(gatheringQueryDtos);
+            return RecommendResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE,gatheringQueryDtos);
     }
 
     private List<GatheringResponse> getGatheringResponses(List<GatheringDetailQuery> gatheringQueryDtos){

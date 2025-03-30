@@ -1,4 +1,4 @@
-package spring.myproject.entity.alarm.repository;
+package spring.myproject.repository.alarm;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,8 +10,9 @@ import spring.myproject.entity.image.Image;
 import spring.myproject.repository.image.ImageRepository;
 import spring.myproject.entity.user.User;
 import spring.myproject.repository.user.UserRepository;
-import spring.myproject.repository.alarm.AlarmRepository;
 
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
 import static spring.myproject.utils.DummyData.*;
@@ -34,6 +35,9 @@ class AlarmRepositoryTest {
         Alarm alarm3 = returnDummyAlarm(3, user);
         Alarm alarm4 = returnDummyAlarm(4, user);
 
+        imageRepository.save(image);
+        userRepository.save(user);
+        alarmRepository.saveAll(List.of(alarm1,alarm2,alarm3,alarm4));
         Page<Alarm> page = alarmRepository.findUncheckedAlarmPage(PageRequest.of(0, 1), user.getId());
 
         assertThat(page.getTotalPages()).isEqualTo(4);
@@ -51,7 +55,9 @@ class AlarmRepositoryTest {
         Alarm alarm4 = returnDummyAlarm(1, user);
         alarm1.setChecked(true);
         alarm2.setChecked(true);
-
+        imageRepository.save(image);
+        userRepository.save(user);
+        alarmRepository.saveAll(List.of(alarm1,alarm2,alarm3,alarm4));
         Page<Alarm> page = alarmRepository.findCheckedAlarmPage(PageRequest.of(0, 1), user.getId());
 
         assertThat(page.getTotalPages()).isEqualTo(2);

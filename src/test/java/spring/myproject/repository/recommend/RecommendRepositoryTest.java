@@ -1,9 +1,10 @@
-package spring.myproject.entity.recommend.repository;
+package spring.myproject.repository.recommend;
 
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 import spring.myproject.entity.category.Category;
 import spring.myproject.repository.category.CategoryRepository;
 import spring.myproject.entity.gathering.Gathering;
@@ -13,14 +14,13 @@ import spring.myproject.repository.image.ImageRepository;
 import spring.myproject.entity.recommend.Recommend;
 import spring.myproject.entity.user.User;
 import spring.myproject.repository.user.UserRepository;
-import spring.myproject.repository.recommend.RecommendRepository;
 
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 import static spring.myproject.utils.DummyData.*;
-
+@Transactional
 @SpringBootTest
 public class RecommendRepositoryTest {
     @Autowired
@@ -52,10 +52,11 @@ public class RecommendRepositoryTest {
         recommendRepository.save(recommend);
 
         recommendRepository.resetCount();
-        Optional<Recommend> optionalRecommend = recommendRepository.findById(recommend.getId());
         em.flush();
+        em.clear();
+        Optional<Recommend> optionalRecommend = recommendRepository.findById(recommend.getId());
 
-        assertThat(optionalRecommend.get().getCount()).isEqualTo(0);
+        assertThat(optionalRecommend.get().getScore()).isEqualTo(0);
     }
     @Test
     void updateCount(){
@@ -73,10 +74,12 @@ public class RecommendRepositoryTest {
         recommendRepository.saveAll(List.of(recommend));
 
 
-        recommendRepository.updateCount(gathering.getId());
+        recommendRepository.updateCount(gathering.getId(),10);
+        em.flush();
+        em.clear();
         Optional<Recommend> optionalRecommend = recommendRepository.findById(recommend.getId());
         assertThat(optionalRecommend).isNotNull();
-        assertThat(optionalRecommend.get()).extracting("count").isEqualTo(2);
+        assertThat(optionalRecommend.get()).extracting("score").isEqualTo(10L);
     }
     @Test
     void fetchTop5(){

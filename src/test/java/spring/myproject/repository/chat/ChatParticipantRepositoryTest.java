@@ -1,16 +1,15 @@
-package spring.myproject.entity.chat.repository;
+package spring.myproject.repository.chat;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 import spring.myproject.entity.chat.ChatParticipant;
 import spring.myproject.entity.chat.ChatRoom;
 import spring.myproject.entity.image.Image;
 import spring.myproject.repository.image.ImageRepository;
 import spring.myproject.entity.user.User;
 import spring.myproject.repository.user.UserRepository;
-import spring.myproject.repository.chat.ChatParticipantRepository;
-import spring.myproject.repository.chat.ChatRoomRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,6 +19,7 @@ import static spring.myproject.utils.DummyData.*;
 import static spring.myproject.utils.DummyData.returnDummyChatParticipant;
 
 @SpringBootTest
+@Transactional
 class ChatParticipantRepositoryTest {
     @Autowired
     UserRepository userRepository;
@@ -90,12 +90,10 @@ class ChatParticipantRepositoryTest {
         chatParticipantRepository.saveAll(List.of(chatParticipant1,chatParticipant2,chatParticipant3,chatParticipant4,chatParticipant5,chatParticipant6));
 
         List<ChatParticipant> chatParticipants = chatParticipantRepository.findAllByChatRoomAndStatus(chatRoom1, true);
-        assertThat(chatParticipants).hasSize(2);
+        assertThat(chatParticipants).hasSize(3);
         assertThat(chatParticipants).extracting("user")
                 .containsExactly(
-                        tuple(user1),
-                        tuple(user2),
-                        tuple(user3)
+                        user1,user2,user3
                 );
     }
 }
