@@ -131,10 +131,6 @@ public class UserService {
     }
 
 
-    public UserResponse fetchUser(Long userId) {
-        User foundUser = userRepository.findById(userId).orElseThrow(() -> new NotFoundUserException("not Found User"));
-        return UserResponse.of(foundUser);
-    }
 
     //TODO : 로직처리하기
     public GenerateTokenResponse generateToken(String refreshToken) {

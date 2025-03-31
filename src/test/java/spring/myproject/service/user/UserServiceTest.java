@@ -1,5 +1,7 @@
 package spring.myproject.service.user;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -8,9 +10,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.web.multipart.MultipartFile;
+import spring.myproject.async.AsyncService;
 import spring.myproject.entity.image.Image;
 import spring.myproject.dto.request.user.*;
 import spring.myproject.dto.response.user.*;
+import spring.myproject.entity.user.Role;
 import spring.myproject.exception.user.*;
 import spring.myproject.repository.image.ImageRepository;
 import spring.myproject.entity.user.User;
@@ -20,6 +24,7 @@ import spring.myproject.s3.S3ImageUploadService;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -41,6 +46,8 @@ class UserServiceTest {
     S3ImageUploadService s3ImageUploadService;
     @MockitoBean
     ImageRepository imageRepository;
+    @MockitoBean
+    AsyncService asyncService;
 
     @Test
     void idCheck() {
@@ -66,15 +73,16 @@ class UserServiceTest {
         when(userRepository.existsByNickname("true nickname")).thenReturn(false);
         when(userRepository.existsByNickname("false nickname")).thenReturn(true);
         NicknameCheckRequest trueNicknameCheckRequest = NicknameCheckRequest.builder()
-                .nickname("true username")
+                .nickname("true nickname")
                 .build();
         NicknameCheckRequest falseNicknameCheckRequest = NicknameCheckRequest.builder()
-                .nickname("false username")
+                .nickname("false nickname")
                 .build();
+
         assertThatThrownBy(()->userService.nicknameCheck(falseNicknameCheckRequest))
                 .isInstanceOf(ExistUserException.class);
         NicknameCheckResponse nicknameCheckResponse = userService.nicknameCheck(trueNicknameCheckRequest);
-        assertThat(nicknameCheckResponse).isInstanceOf(IdCheckResponse.class)
+        assertThat(nicknameCheckResponse).isInstanceOf(NicknameCheckResponse.class)
                 .extracting("code","message")
                 .containsExactly(SUCCESS_CODE, SUCCESS_MESSAGE);
     }
@@ -96,40 +104,41 @@ class UserServiceTest {
 
     }
 
-//    @Test
-//    void signIn() {
-//        User mockUser = new User(1L,"username","password","email","address",1,"hobby", Role.USER,"nickname",null,null);
-//        when(userRepository.findByUsername("true username")).thenReturn(Optional.of(mockUser));
-//        when(userRepository.findByUsername("false username")).thenThrow(NotFoundUserException.class);
-//        when(passwordEncoder.matches(any(String.class),"true password")).thenReturn(true);
-//        when(passwordEncoder.matches(any(String.class),"false password")).thenReturn(true);
-//        when(jwtProvider.createAccessToken("true username","true password")).thenReturn("accessToken");
-//        when(jwtProvider.createRefreshToken("true username","true password")).thenReturn("refreshToken");
-//        HttpServletResponse mockResponse = mock(HttpServletResponse.class);
-//        doNothing().when(mockResponse).addCookie(any(Cookie.class));
-//
-//        SignInRequest trueSignRequest = SignInRequest.builder()
-//                .username("true username")
-//                .password("true password")
-//                .build();
-//        SignInRequest falseSignRequest1 = SignInRequest.builder()
-//                .username("false username")
-//                .password("false password")
-//                .build();
-//        SignInRequest falseSignRequest2 = SignInRequest.builder()
-//                .username("true username")
-//                .password("false password")
-//                .build();
-//
-//        SignInResponse signInResponse = userService.signIn(trueSignRequest, mockResponse);
-//        assertThatThrownBy(()->userService.signIn(falseSignRequest1,mockResponse))
-//                .isInstanceOf(ExistUserException.class);
-//        assertThatThrownBy(()->userService.signIn(falseSignRequest2,mockResponse))
-//                .isInstanceOf(UnCorrectPasswordException.class);
-//        assertThat(signInResponse).isInstanceOf(SignInResponse.class)
-//                .extracting("code","message","accessToken")
-//                .containsExactly(SUCCESS_CODE, SUCCESS_MESSAGE,"accessToken");
-//    }
+    @Test
+    void signIn() {
+        User mockUser = new User(1L,"username","password","email",
+                "address",1,"hobby", Role.USER,"nickname",null,null,null);
+        when(userRepository.findByUsername("true username")).thenReturn(Optional.of(mockUser));
+        when(userRepository.findByUsername("false username")).thenThrow(NotFoundUserException.class);
+        when(passwordEncoder.matches(any(String.class),eq("true password"))).thenReturn(true);
+        when(passwordEncoder.matches(any(String.class),eq("false password"))).thenReturn(true);
+        when(jwtProvider.createAccessToken("true username","true password")).thenReturn("accessToken");
+        when(jwtProvider.createRefreshToken("true username","true password")).thenReturn("refreshToken");
+        HttpServletResponse mockResponse = mock(HttpServletResponse.class);
+        doNothing().when(mockResponse).addCookie(any(Cookie.class));
+
+        SignInRequest trueSignRequest = SignInRequest.builder()
+                .username("true username")
+                .password("true password")
+                .build();
+        SignInRequest falseSignRequest1 = SignInRequest.builder()
+                .username("false username")
+                .password("false password")
+                .build();
+        SignInRequest falseSignRequest2 = SignInRequest.builder()
+                .username("true username")
+                .password("false password")
+                .build();
+
+        SignInResponse signInResponse = userService.signIn(trueSignRequest, mockResponse);
+        assertThatThrownBy(()->userService.signIn(falseSignRequest1,mockResponse))
+                .isInstanceOf(ExistUserException.class);
+        assertThatThrownBy(()->userService.signIn(falseSignRequest2,mockResponse))
+                .isInstanceOf(UnCorrectPasswordException.class);
+        assertThat(signInResponse).isInstanceOf(SignInResponse.class)
+                .extracting("code","message","accessToken")
+                .containsExactly(SUCCESS_CODE, SUCCESS_MESSAGE,"accessToken");
+    }
 
     @Test
     void emailCertification() {
@@ -151,28 +160,13 @@ class UserServiceTest {
         assertThatThrownBy(()->userService.emailCertification(falseEmailCertificationRequest2))
                 .isInstanceOf(DuplicateEmailExeption.class);
         EmailCertificationResponse emailCertificationResponse = userService.emailCertification(trueEmailCertificationRequest);
-        assertThat(emailCertificationResponse).isInstanceOf(IdCheckResponse.class)
+        assertThat(emailCertificationResponse).isInstanceOf(EmailCertificationResponse.class)
                 .extracting("code","message")
                 .containsExactly(SUCCESS_CODE, SUCCESS_MESSAGE);
 
 
     }
 
-//    @Test
-//    void fetchUser() {
-//        Image mockImage = new Image(1L,"url",null,null);
-//        User mockUser = new User(1L,"username","password","email","address",1,"hobby", Role.USER,"nickname",mockImage,null);
-//
-//        when(userRepository.findById(1L)).thenReturn(Optional.of(mockUser));
-//        when(userRepository.findById(2L)).thenReturn(Optional.empty());
-//        assertThatThrownBy(()->userService.fetchUser(2L))
-//                .isInstanceOf(NotFoundUserException.class);
-//        UserResponse userResponse = userService.fetchUser(1L);
-//        assertThat(userResponse).isInstanceOf(UserResponse.class)
-//                .extracting("username","password","email","address","age","hobby","role","nickname","image")
-//                .containsExactly(
-//                        tuple("username","password","email","address","age","hobby",Role.USER,"nickname","url")
-//                );
-//    }
+
 
 }
