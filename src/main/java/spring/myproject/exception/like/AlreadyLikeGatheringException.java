@@ -1,22 +1,22 @@
 package spring.myproject.exception.like;
 
-public class AlreadyLikeGathering extends RuntimeException {
-    public AlreadyLikeGathering() {
+public class AlreadyLikeGatheringException extends RuntimeException {
+    public AlreadyLikeGatheringException() {
     }
 
-    public AlreadyLikeGathering(String message) {
+    public AlreadyLikeGatheringException(String message) {
         super(message);
     }
 
-    public AlreadyLikeGathering(String message, Throwable cause) {
+    public AlreadyLikeGatheringException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public AlreadyLikeGathering(Throwable cause) {
+    public AlreadyLikeGatheringException(Throwable cause) {
         super(cause);
     }
 
-    public AlreadyLikeGathering(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    public AlreadyLikeGatheringException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }

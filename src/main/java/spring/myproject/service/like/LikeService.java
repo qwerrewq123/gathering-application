@@ -13,7 +13,7 @@ import spring.myproject.repository.user.UserRepository;
 import spring.myproject.dto.response.like.DislikeResponse;
 import spring.myproject.dto.response.like.LikeResponse;
 import spring.myproject.exception.gathering.NotFoundGatheringException;
-import spring.myproject.exception.like.AlreadyLikeGathering;
+import spring.myproject.exception.like.AlreadyLikeGatheringException;
 import spring.myproject.exception.like.NotFoundLikeException;
 import spring.myproject.exception.user.NotFoundUserException;
 
@@ -35,9 +35,9 @@ public class LikeService {
 
             User user = userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
             Long userId = user.getId();
-            Optional<Like> optionalLike = likeRepository.findLike(userId, gatheringId);
             Gathering gathering = gatheringRepository.findById(gatheringId).orElseThrow(()-> new NotFoundGatheringException("no exist Gathering!!"));
-            if(optionalLike.isPresent()) throw new AlreadyLikeGathering("Already Like Gathering!!");
+            Optional<Like> optionalLike = likeRepository.findLike(userId, gatheringId);
+            if(optionalLike.isPresent()) throw new AlreadyLikeGatheringException("Already Like Gathering!!");
             likeRepository.save(Like.of(gathering,user));
             return LikeResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE);
     }
@@ -45,10 +45,10 @@ public class LikeService {
 
             User user = userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
             Long userId = user.getId();
-            Like like = likeRepository.findLike(userId, gatheringId).orElseThrow(()-> new NotFoundLikeException("no exist Like"));
             gatheringRepository.findById(gatheringId).orElseThrow(()-> new NotFoundGatheringException("no exist Gathering!!"));
+            Like like = likeRepository.findLike(userId, gatheringId).orElseThrow(()-> new NotFoundLikeException("no exist Like"));
             Long likedId = like.getLikedBy().getId();
-            if(likedId.equals(userId)) throw new NotAuthorizeException("no Authorize!1");
+            if(!likedId.equals(userId)) throw new NotAuthorizeException("no Authorize!");
             likeRepository.delete(like);
             return DislikeResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE);
     }

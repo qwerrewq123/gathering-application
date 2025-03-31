@@ -1,23 +1,23 @@
 package spring.myproject.exception.attend;
 
-public class NotFoundAttend extends RuntimeException {
+public class NotFoundAttendException extends RuntimeException {
 
-    public NotFoundAttend() {
+    public NotFoundAttendException() {
     }
 
-    public NotFoundAttend(String message) {
+    public NotFoundAttendException(String message) {
         super(message);
     }
 
-    public NotFoundAttend(String message, Throwable cause) {
+    public NotFoundAttendException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public NotFoundAttend(Throwable cause) {
+    public NotFoundAttendException(Throwable cause) {
         super(cause);
     }
 
-    public NotFoundAttend(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    public NotFoundAttendException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }

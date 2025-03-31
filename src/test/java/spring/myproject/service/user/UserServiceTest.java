@@ -106,14 +106,14 @@ class UserServiceTest {
 
     @Test
     void signIn() {
-        User mockUser = new User(1L,"username","password","email",
+        User mockUser = new User(1L,"true username","password","email",
                 "address",1,"hobby", Role.USER,"nickname",null,null,null);
         when(userRepository.findByUsername("true username")).thenReturn(Optional.of(mockUser));
         when(userRepository.findByUsername("false username")).thenThrow(NotFoundUserException.class);
-        when(passwordEncoder.matches(any(String.class),eq("true password"))).thenReturn(true);
-        when(passwordEncoder.matches(any(String.class),eq("false password"))).thenReturn(true);
-        when(jwtProvider.createAccessToken("true username","true password")).thenReturn("accessToken");
-        when(jwtProvider.createRefreshToken("true username","true password")).thenReturn("refreshToken");
+        when(passwordEncoder.matches(eq("true password"),any(String.class))).thenReturn(true);
+        when(passwordEncoder.matches(eq("false password"),any(String.class))).thenReturn(false);
+        when(jwtProvider.createAccessToken("true username","USER")).thenReturn("accessToken");
+        when(jwtProvider.createRefreshToken("true username","USER")).thenReturn("refreshToken");
         HttpServletResponse mockResponse = mock(HttpServletResponse.class);
         doNothing().when(mockResponse).addCookie(any(Cookie.class));
 
@@ -130,11 +130,11 @@ class UserServiceTest {
                 .password("false password")
                 .build();
 
-        SignInResponse signInResponse = userService.signIn(trueSignRequest, mockResponse);
         assertThatThrownBy(()->userService.signIn(falseSignRequest1,mockResponse))
-                .isInstanceOf(ExistUserException.class);
+                .isInstanceOf(NotFoundUserException.class);
         assertThatThrownBy(()->userService.signIn(falseSignRequest2,mockResponse))
                 .isInstanceOf(UnCorrectPasswordException.class);
+        SignInResponse signInResponse = userService.signIn(trueSignRequest, mockResponse);
         assertThat(signInResponse).isInstanceOf(SignInResponse.class)
                 .extracting("code","message","accessToken")
                 .containsExactly(SUCCESS_CODE, SUCCESS_MESSAGE,"accessToken");

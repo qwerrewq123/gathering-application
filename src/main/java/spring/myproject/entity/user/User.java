@@ -16,6 +16,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @Entity
+@EqualsAndHashCode
 public class User implements Serializable {
 
     @Id

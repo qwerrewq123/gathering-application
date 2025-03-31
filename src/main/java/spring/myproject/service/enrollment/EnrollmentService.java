@@ -76,7 +76,7 @@ public class EnrollmentService {
                     .img(null)
                     .build(),topic);
             fcmService.unsubscribeFromTopics(topicName,username);
-        recommendService.addScore(gathering,-1);
+            recommendService.addScore(gathering,-1);
             return DisEnrollGatheringResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE);
     }
 }

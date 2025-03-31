@@ -50,7 +50,7 @@ public class AttendControllerAdvice {
                 AbstractErrorResponse.getErrorResponse(NOT_WITHDRAW_CODE, NOT_WITHDRAW_MESSAGE)
                 , HttpStatus.BAD_REQUEST);
     }
-    @ExceptionHandler(NotFoundAttend.class)
+    @ExceptionHandler(NotFoundAttendException.class)
     ResponseEntity<ErrorResponse> handleNotFoundAttendException(){
         return new ResponseEntity<>(
                 AbstractErrorResponse.getErrorResponse(NOT_FOUND_ATTEND_CODE, NOT_FOUND_ATTEND_MESSAGE)

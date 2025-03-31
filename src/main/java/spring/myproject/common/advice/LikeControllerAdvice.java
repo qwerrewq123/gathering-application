@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import spring.myproject.common.dto.response.ErrorResponse;
 import spring.myproject.exception.gathering.NotFoundGatheringException;
 import spring.myproject.controller.like.LikeController;
-import spring.myproject.exception.like.AlreadyLikeGathering;
+import spring.myproject.exception.like.AlreadyLikeGatheringException;
 import spring.myproject.exception.like.NotFoundLikeException;
 import spring.myproject.exception.user.NotFoundUserException;
 import spring.myproject.utils.AbstractErrorResponse;
@@ -28,7 +28,7 @@ public class LikeControllerAdvice {
                 AbstractErrorResponse.getErrorResponse(NOT_FOUND_GATHERING_CODE, NOT_FOUND_GATHERING_MESSAGE)
                 , HttpStatus.BAD_REQUEST);
     }
-    @ExceptionHandler(AlreadyLikeGathering.class)
+    @ExceptionHandler(AlreadyLikeGatheringException.class)
     ResponseEntity<ErrorResponse> handleAlreadyLikeException(){
         return new ResponseEntity<>(
                 AbstractErrorResponse.getErrorResponse(ALREADY_LIKE_CODE, ALREADY_LIKE_MESSAGE)
