@@ -8,10 +8,11 @@ import org.springframework.web.multipart.MultipartFile;
 import spring.myproject.common.Username;
 import spring.myproject.dto.response.meeting.*;
 import spring.myproject.service.meeting.MeetingService;
-import spring.myproject.dto.request.meeting.AddMeetingRequest;
-import spring.myproject.dto.request.meeting.UpdateMeetingRequest;
 
 import java.io.IOException;
+
+import static spring.myproject.dto.request.meeting.MeetingRequestDto.*;
+import static spring.myproject.dto.response.meeting.MeetingResponseDto.*;
 
 
 @RestController

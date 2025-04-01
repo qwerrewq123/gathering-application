@@ -4,10 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Controller;
-import spring.myproject.dto.request.chat.ChatMessageRequest;
 import spring.myproject.kafka.event.EventType;
-import spring.myproject.service.chat.ChatService;
 import spring.myproject.kafka.producer.KafkaProducerService;
+
+import static spring.myproject.dto.request.chat.ChatRequestDto.*;
 
 @Controller
 @RequiredArgsConstructor

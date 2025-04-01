@@ -9,7 +9,6 @@ import spring.myproject.entity.chat.ChatMessage;
 import spring.myproject.entity.chat.ChatParticipant;
 import spring.myproject.entity.chat.ChatRoom;
 import spring.myproject.entity.chat.ReadStatus;
-import spring.myproject.dto.request.chat.ChatMessageRequest;
 import spring.myproject.dto.response.chat.*;
 import spring.myproject.exception.chat.NotFoundChatMessageException;
 import spring.myproject.exception.chat.NotFoundChatParticipantException;

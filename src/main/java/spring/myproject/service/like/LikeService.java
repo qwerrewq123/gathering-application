@@ -3,6 +3,7 @@ package spring.myproject.service.like;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import spring.myproject.dto.response.like.LikeResponseDto;
 import spring.myproject.entity.gathering.Gathering;
 import spring.myproject.repository.gathering.GatheringRepository;
 import spring.myproject.entity.like.Like;
@@ -10,8 +11,6 @@ import spring.myproject.repository.like.LikeRepository;
 import spring.myproject.exception.meeting.NotAuthorizeException;
 import spring.myproject.entity.user.User;
 import spring.myproject.repository.user.UserRepository;
-import spring.myproject.dto.response.like.DislikeResponse;
-import spring.myproject.dto.response.like.LikeResponse;
 import spring.myproject.exception.gathering.NotFoundGatheringException;
 import spring.myproject.exception.like.AlreadyLikeGatheringException;
 import spring.myproject.exception.like.NotFoundLikeException;
@@ -19,6 +18,7 @@ import spring.myproject.exception.user.NotFoundUserException;
 
 import java.util.Optional;
 
+import static spring.myproject.dto.response.like.LikeResponseDto.*;
 import static spring.myproject.utils.ConstClass.*;
 
 

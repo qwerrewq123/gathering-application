@@ -10,6 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import spring.myproject.dto.response.meeting.querydto.MeetingDetailQuery;
+import spring.myproject.dto.response.meeting.querydto.MeetingsQuery;
 import spring.myproject.entity.attend.Attend;
 import spring.myproject.dto.response.meeting.*;
 import spring.myproject.repository.attend.AttendRepository;
@@ -21,8 +23,6 @@ import spring.myproject.entity.meeting.Meeting;
 import spring.myproject.repository.meeting.MeetingRepository;
 import spring.myproject.entity.user.User;
 import spring.myproject.repository.user.UserRepository;
-import spring.myproject.dto.request.meeting.AddMeetingRequest;
-import spring.myproject.dto.request.meeting.UpdateMeetingRequest;
 import spring.myproject.exception.gathering.NotFoundGatheringException;
 import spring.myproject.exception.meeting.MeetingIsNotEmptyException;
 import spring.myproject.exception.meeting.NotAuthorizeException;
@@ -35,6 +35,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static spring.myproject.dto.request.meeting.MeetingRequestDto.*;
+import static spring.myproject.dto.response.meeting.MeetingResponseDto.*;
 import static spring.myproject.utils.ConstClass.*;
 
 
@@ -62,7 +64,7 @@ public class MeetingService {
             if(image!=null) imageRepository.save(image);
             meetingRepository.save(meeting);
             attendRepository.save(attend);
-            return AddMeetingResponse.of(SUCCESS_CODE, SUCCESS_MESSAGE);
+            return AddMeetingResponse.of(SUCCESS_CODE, SUCCESS_MESSAGE, meeting.getId());
     }
 
     public DeleteMeetingResponse deleteMeeting(String username, Long meetingId) {
@@ -105,6 +107,7 @@ public class MeetingService {
             return UpdateMeetingResponse.builder()
                     .code(SUCCESS_CODE)
                     .message(SUCCESS_MESSAGE)
+                    .id(meetingId)
                     .build();
     }
     public MeetingResponse meetingDetail(Long meetingId, String username) {
@@ -122,24 +125,10 @@ public class MeetingService {
 
             userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
             PageRequest pageRequest = PageRequest.of(pageNum - 1, pageSize, Sort.Direction.ASC,"id");
-            Page<MeetingsQuery> meetingsQueryPage = meetingRepository.meetings(pageRequest,title);
-            Page<MeetingsQuery> page = toPage(meetingsQueryPage);
-            return MeetingsResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE,page);
-    }
-
-    private Page<MeetingsQuery> toPage(Page<MeetingsQuery> meetingsQueryPage) {
-        return meetingsQueryPage.map(m ->
-                MeetingsQuery.builder()
-                        .id(m.getId())
-                        .title(m.getTitle())
-                        .createdBy(m.getCreatedBy())
-                        .boardDate(m.getBoardDate())
-                        .startDate(m.getStartDate())
-                        .endDate(m.getEndDate())
-                        .content(m.getContent())
-                        .count(m.getCount())
-                        .url(getUrl(m.getUrl()))
-                        .build());
+            Page<MeetingsQuery> page = meetingRepository.meetings(pageRequest,title);
+            List<MeetingElement> content = toContent(page);
+            boolean hasNext = page.hasNext();
+            return MeetingsResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE,content,hasNext);
     }
 
     private List<String> attendedBy(List<MeetingDetailQuery> meetingDetailQueries){
@@ -151,6 +140,22 @@ public class MeetingService {
             }
         }
         return attendedBy;
+    }
+
+    private List<MeetingElement> toContent(Page<MeetingsQuery> page) {
+        return page.map(m ->
+                MeetingElement.builder()
+                        .id(m.getId())
+                        .title(m.getTitle())
+                        .createdBy(m.getCreatedBy())
+                        .boardDate(m.getBoardDate())
+                        .startDate(m.getStartDate())
+                        .endDate(m.getEndDate())
+                        .content(m.getContent())
+                        .count(m.getCount())
+                        .url(getUrl(m.getUrl()))
+                        .build())
+                        .getContent();
     }
 
     private Image saveImage(Image image, MultipartFile file) throws IOException {

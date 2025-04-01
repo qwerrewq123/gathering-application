@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import spring.myproject.dto.response.board.querydto.BoardQuery;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -22,7 +23,7 @@ public class BoardResponse {
     private String userImageUrl;
     private LocalDateTime registerDate;
 
-    public static BoardResponse of(List<BoardQuery> boardQueries,List<String> imageUrls, String userImageUrl ,String code, String message) {
+    public static BoardResponse of(List<BoardQuery> boardQueries, List<String> imageUrls, String userImageUrl , String code, String message) {
         return BoardResponse.builder()
                 .code(code)
                 .message(message)

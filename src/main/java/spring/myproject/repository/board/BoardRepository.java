@@ -5,8 +5,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import spring.myproject.entity.board.Board;
-import spring.myproject.dto.response.board.BoardQuery;
-import spring.myproject.dto.response.board.BoardsQuery;
+import spring.myproject.dto.response.board.querydto.BoardQuery;
+import spring.myproject.dto.response.board.querydto.BoardsQuery;
 
 import java.util.List;
 

@@ -2,7 +2,6 @@ package spring.myproject.entity.meeting;
 
 import jakarta.persistence.*;
 import lombok.*;
-import spring.myproject.dto.request.meeting.AddMeetingRequest;
 import spring.myproject.entity.user.User;
 import spring.myproject.entity.attend.Attend;
 import spring.myproject.entity.gathering.Gathering;
@@ -11,6 +10,8 @@ import spring.myproject.entity.image.Image;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import static spring.myproject.dto.request.meeting.MeetingRequestDto.*;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -50,7 +51,7 @@ public class Meeting {
         }
         this.attends = attends;
     }
-    public static Meeting of(AddMeetingRequest addMeetingRequest,Image image,User user,Gathering gathering){
+    public static Meeting of(AddMeetingRequest addMeetingRequest, Image image, User user, Gathering gathering){
         return Meeting.builder()
                 .title(addMeetingRequest.getTitle())
                 .content(addMeetingRequest.getContent())

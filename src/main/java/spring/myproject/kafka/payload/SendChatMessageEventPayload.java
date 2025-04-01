@@ -1,13 +1,13 @@
 package spring.myproject.kafka.payload;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import spring.myproject.dto.request.chat.ChatMessageRequest;
 import spring.myproject.kafka.event.EventPayload;
+
+import static spring.myproject.dto.request.chat.ChatRequestDto.*;
+
 @Getter
 @AllArgsConstructor
 @Builder

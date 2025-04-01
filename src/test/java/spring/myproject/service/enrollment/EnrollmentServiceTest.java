@@ -1,14 +1,12 @@
 package spring.myproject.service.enrollment;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import spring.myproject.dto.response.enrollment.DisEnrollGatheringResponse;
-import spring.myproject.dto.response.enrollment.EnrollGatheringResponse;
+import spring.myproject.dto.response.enrollment.EnrollResponseDto;
 import spring.myproject.entity.enrollment.Enrollment;
 import spring.myproject.entity.fcm.Topic;
 import spring.myproject.entity.gathering.Gathering;
@@ -23,7 +21,6 @@ import spring.myproject.repository.gathering.GatheringRepository;
 import spring.myproject.repository.user.UserRepository;
 import spring.myproject.service.fcm.FCMService;
 import spring.myproject.service.recommend.RecommendService;
-import spring.myproject.utils.ConstClass;
 
 import java.util.Optional;
 
@@ -32,6 +29,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
+import static spring.myproject.dto.response.enrollment.EnrollResponseDto.*;
 import static spring.myproject.utils.ConstClass.*;
 
 @SpringBootTest

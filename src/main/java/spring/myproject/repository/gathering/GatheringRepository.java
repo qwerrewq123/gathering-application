@@ -6,24 +6,26 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import spring.myproject.dto.response.gathering.querydto.GatheringDetailQuery;
+import spring.myproject.dto.response.gathering.querydto.GatheringsQuery;
 import spring.myproject.entity.gathering.Gathering;
-import spring.myproject.dto.response.gathering.EntireGatheringsQuery;
-import spring.myproject.dto.response.gathering.GatheringsQuery;
-import spring.myproject.dto.response.gathering.GatheringDetailQuery;
+import spring.myproject.dto.response.gathering.querydto.MainGatheringsQuery;
 
 import java.time.LocalDate;
 import java.util.List;
 
+
 public interface GatheringRepository extends JpaRepository<Gathering,Long> {
     @Query("select " +
-            "new spring.myproject.dto.response.gathering." +
-            "GatheringDetailQuery(g.id,g.title,g.content,g.registerDate,ca.name,cr.username,u.username,im.url,g.count) " +
+            "new spring.myproject.dto.response.gathering.querydto.GatheringDetailQuery" +
+            "(g.id,g.title,g.content,g.registerDate,ca.name,cr.username,u.username,u.nickname,pm.url,im.url,g.count) " +
             "from Gathering g " +
-            "left join g.enrollments e " +
-            "left join e.enrolledBy u " +
             "left join g.createBy cr " +
             "left join g.category ca " +
             "left join g.gatheringImage im " +
+            "left join g.enrollments e " +
+            "left join e.enrolledBy u " +
+            "left join u.profileImage pm " +
             "where g.id = :gatheringId")
     List<GatheringDetailQuery> gatheringDetail(Long gatheringId);
 
@@ -38,9 +40,9 @@ public interface GatheringRepository extends JpaRepository<Gathering,Long> {
             "  where g.title like concat('%', :title, '%') " +
             ") as subquery " +
             "where rownum between 1 and 9", nativeQuery = true)
-    List<EntireGatheringsQuery> gatherings(@Param("title") String title);
+    List<MainGatheringsQuery> gatherings(@Param("title") String title);
 
-    @Query("select new spring.myproject.dto.response.gathering." +
+    @Query("select new spring.myproject.dto.response.gathering.querydto." +
             "GatheringsQuery(g.id,g.title,g.content,g.registerDate,ca.name,cr.username,im.url,g.count) " +
             "from Gathering  g " +
             "left join  g.category ca " +
@@ -50,7 +52,7 @@ public interface GatheringRepository extends JpaRepository<Gathering,Long> {
     )
     Page<GatheringsQuery> gatheringsCategory(PageRequest pageRequest, String category);
 
-    @Query("select new spring.myproject.dto.response.gathering." +
+    @Query("select new spring.myproject.dto.response.gathering.querydto." +
             "GatheringsQuery(g.id,g.title,g.content,g.registerDate,ca.name,cr.username,im.url,g.count) " +
             "from Gathering g left join g.gatheringImage im " +
             "left join g.category ca left join g.createBy cr " +
@@ -58,7 +60,7 @@ public interface GatheringRepository extends JpaRepository<Gathering,Long> {
             "where u.id=:userId")
     Page<GatheringsQuery> gatheringsLike(Pageable pageable, Long userId);
 
-    @Query("select new spring.myproject.dto.response.gathering." +
+    @Query("select new spring.myproject.dto.response.gathering.querydto." +
             "GatheringsQuery(g.id,g.title,g.content,g.registerDate,ca.name,cr.username,im.url,g.count) " +
             "from Recommend r " +
             "join r.gathering g " +

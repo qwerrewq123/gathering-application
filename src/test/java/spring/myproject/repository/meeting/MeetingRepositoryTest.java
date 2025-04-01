@@ -17,8 +17,8 @@ import spring.myproject.repository.gathering.GatheringRepository;
 import spring.myproject.entity.image.Image;
 import spring.myproject.repository.image.ImageRepository;
 import spring.myproject.entity.meeting.Meeting;
-import spring.myproject.dto.response.meeting.MeetingsQuery;
-import spring.myproject.dto.response.meeting.MeetingDetailQuery;
+import spring.myproject.dto.response.meeting.querydto.MeetingsQuery;
+import spring.myproject.dto.response.meeting.querydto.MeetingDetailQuery;
 import spring.myproject.entity.user.User;
 import spring.myproject.repository.user.UserRepository;
 

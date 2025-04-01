@@ -9,8 +9,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import spring.myproject.dto.request.fcm.TopicNotificationRequestDto;
+import spring.myproject.dto.response.board.querydto.BoardQuery;
+import spring.myproject.dto.response.board.querydto.BoardsQuery;
 import spring.myproject.entity.board.Board;
-import spring.myproject.dto.request.board.AddBoardRequest;
 import spring.myproject.dto.response.board.*;
 import spring.myproject.entity.fcm.Topic;
 import spring.myproject.exception.board.NotFoundBoardException;
@@ -25,7 +26,6 @@ import spring.myproject.exception.meeting.NotAuthorizeException;
 import spring.myproject.entity.user.User;
 import spring.myproject.exception.user.NotFoundUserException;
 import spring.myproject.repository.user.UserRepository;
-import spring.myproject.s3.S3ImageDownloadService;
 import spring.myproject.s3.S3ImageUploadService;
 import spring.myproject.service.fcm.FCMService;
 
@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static spring.myproject.dto.request.board.BoardRequestDto.*;
 import static spring.myproject.utils.ConstClass.*;
 
 @Service

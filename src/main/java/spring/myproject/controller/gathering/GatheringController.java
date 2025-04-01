@@ -9,13 +9,13 @@ import spring.myproject.common.Username;
 import spring.myproject.dto.response.gathering.*;
 import spring.myproject.dto.response.recommend.RecommendResponse;
 import spring.myproject.service.gathering.GatheringService;
-import spring.myproject.dto.request.gathering.AddGatheringRequest;
-import spring.myproject.dto.request.gathering.UpdateGatheringRequest;
 import spring.myproject.service.recommend.RecommendService;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+
+import static spring.myproject.dto.request.gathering.GatheringRequestDto.*;
+import static spring.myproject.dto.response.gathering.GatheringResponseDto.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -51,31 +51,31 @@ public class GatheringController {
     }
 
     @GetMapping("/gatherings")
-    public ResponseEntity<TotalGatheringsResponse> gatherings(@RequestParam(defaultValue = "") String title,
-                                                              @Username String username){
+    public ResponseEntity<MainGatheringResponse> gatherings(@RequestParam(defaultValue = "") String title,
+                                                            @Username String username){
 
-        TotalGatheringsResponse totalGatheringsResponse = gatheringService.gatherings(username, title);
-        return new ResponseEntity<>(totalGatheringsResponse, HttpStatus.OK);
+        MainGatheringResponse mainGatheringResponse = gatheringService.gatherings(username, title);
+        return new ResponseEntity<>(mainGatheringResponse, HttpStatus.OK);
     }
     @GetMapping("/gathering")
-    public ResponseEntity<GatheringPagingResponse> gatheringCategory(@RequestParam String category,
+    public ResponseEntity<GatheringCategoryResponse> gatheringCategory(@RequestParam String category,
                                                                      @RequestParam Integer pageNum,
                                                                      @RequestParam Integer pageSize,
                                                                      @Username String username
                                                                ){
 
-        GatheringPagingResponse gatheringPagingResponse = gatheringService.gatheringCategory(category,pageNum,pageSize,username);
-        return new ResponseEntity<>(gatheringPagingResponse, HttpStatus.OK);
+        GatheringCategoryResponse gatheringCategoryResponse = gatheringService.gatheringCategory(category,pageNum,pageSize,username);
+        return new ResponseEntity<>(gatheringCategoryResponse, HttpStatus.OK);
     }
 
 
     @GetMapping("/gatherings/like")
-    public ResponseEntity<GatheringPagingResponse> gatheringsLike(@RequestParam int pageNum,
+    public ResponseEntity<GatheringLikeResponse> gatheringsLike(@RequestParam int pageNum,
                                                                   @RequestParam Integer pageSize,
                                                  @Username String username){
 
-        GatheringPagingResponse gatheringPagingResponse = gatheringService.gatheringsLike(pageNum,pageSize,username);
-        return new ResponseEntity<>(gatheringPagingResponse, HttpStatus.OK);
+        GatheringLikeResponse gatheringLikeResponse = gatheringService.gatheringsLike(pageNum,pageSize,username);
+        return new ResponseEntity<>(gatheringLikeResponse, HttpStatus.OK);
     }
 
     @GetMapping

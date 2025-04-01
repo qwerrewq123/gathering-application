@@ -4,8 +4,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import spring.myproject.dto.response.gathering.GatheringResponse;
-import spring.myproject.dto.response.gathering.GatheringsQuery;
 
 import java.util.List;
 

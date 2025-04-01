@@ -6,8 +6,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import spring.myproject.dto.response.like.DislikeResponse;
-import spring.myproject.dto.response.like.LikeResponse;
+import spring.myproject.dto.response.like.LikeResponseDto;
 import spring.myproject.entity.gathering.Gathering;
 import spring.myproject.entity.like.Like;
 import spring.myproject.entity.user.Role;
@@ -28,6 +27,7 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static spring.myproject.dto.response.like.LikeResponseDto.*;
 import static spring.myproject.utils.ConstClass.SUCCESS_CODE;
 import static spring.myproject.utils.ConstClass.SUCCESS_MESSAGE;
 

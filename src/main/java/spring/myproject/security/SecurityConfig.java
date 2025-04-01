@@ -24,7 +24,8 @@ public class SecurityConfig {
 
     private final FailedAuthenticationEntryPoint failedAuthenticationEntryPoint;
     private final JwtAuthFilter jwtAuthFilter;
-
+    private String[] whitelist = {"/auth/id-check","/auth/nickname-check","/auth/generateToken",
+            "/auth/email-certification","/auth/sign-in","/auth/sign-up","/connect/**"};
     @Bean
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
@@ -37,7 +38,7 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .httpBasic(HttpBasicConfigurer::disable)
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/auth/id-check","/auth/nickname-check","/auth/email-certification","/auth/sign-in","/auth/sign-up","/connect/**").permitAll()
+                        .requestMatchers(whitelist).permitAll()
                         .anyRequest().authenticated())
                 .exceptionHandling(exceptionHandle -> exceptionHandle.authenticationEntryPoint(failedAuthenticationEntryPoint))
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);

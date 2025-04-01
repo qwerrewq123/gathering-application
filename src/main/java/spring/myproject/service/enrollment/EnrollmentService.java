@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import spring.myproject.dto.request.fcm.TopicNotificationRequestDto;
+import spring.myproject.dto.response.enrollment.EnrollResponseDto;
 import spring.myproject.entity.enrollment.Enrollment;
 import spring.myproject.entity.fcm.Topic;
 import spring.myproject.repository.enrollment.EnrollmentRepository;
@@ -11,8 +12,6 @@ import spring.myproject.entity.gathering.Gathering;
 import spring.myproject.repository.gathering.GatheringRepository;
 import spring.myproject.entity.user.User;
 import spring.myproject.repository.user.UserRepository;
-import spring.myproject.dto.response.enrollment.DisEnrollGatheringResponse;
-import spring.myproject.dto.response.enrollment.EnrollGatheringResponse;
 import spring.myproject.exception.enrollment.AlreadyEnrollmentException;
 import spring.myproject.exception.enrollment.NotFoundEnrollmentException;
 import spring.myproject.exception.gathering.NotFoundGatheringException;
@@ -22,6 +21,7 @@ import spring.myproject.service.recommend.RecommendService;
 
 import java.time.LocalDateTime;
 
+import static spring.myproject.dto.response.enrollment.EnrollResponseDto.*;
 import static spring.myproject.utils.ConstClass.*;
 
 @Service

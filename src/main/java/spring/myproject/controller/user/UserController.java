@@ -8,12 +8,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import spring.myproject.async.AsyncService;
-import spring.myproject.dto.request.user.*;
-import spring.myproject.dto.response.user.*;
 import spring.myproject.service.fcm.FCMService;
 import spring.myproject.service.user.UserService;
 
-import java.io.IOException;
+import static spring.myproject.dto.request.user.UserRequestDto.*;
+import static spring.myproject.dto.response.user.UserResponseDto.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -40,9 +39,10 @@ public class UserController {
             MediaType.MULTIPART_FORM_DATA_VALUE,
             MediaType.APPLICATION_JSON_VALUE
     })
-    public ResponseEntity<SignUpResponse> signUp(@RequestPart("userRequest") UserRequest userRequest, @RequestPart(required = false,name = "file") MultipartFile file) throws IOException {
+    public ResponseEntity<SignUpResponse> signUp(@RequestPart SignUpRequest signUpRequest
+            , @RequestPart(required = false,name = "file") MultipartFile file){
 
-        SignUpResponse signUpResponse = userService.signUp(userRequest, file);
+        SignUpResponse signUpResponse = userService.signUp(signUpRequest, file);
         return new ResponseEntity<>(signUpResponse, HttpStatus.OK);
     }
 
@@ -64,8 +64,9 @@ public class UserController {
     }
 
     @PostMapping(value = "/auth/generateToken")
-    public ResponseEntity<GenerateTokenResponse> generateToken(@CookieValue(value = "refreshToken", required = false) String refreshToken){
-        GenerateTokenResponse generateTokenResponse = userService.generateToken(refreshToken);
+    public ResponseEntity<GenerateTokenResponse> generateToken(@CookieValue(value = "refreshToken") String refreshToken,
+                                                               HttpServletResponse response){
+        GenerateTokenResponse generateTokenResponse = userService.generateToken(refreshToken,response);
         return new ResponseEntity<>(generateTokenResponse,HttpStatus.OK);
     }
 }

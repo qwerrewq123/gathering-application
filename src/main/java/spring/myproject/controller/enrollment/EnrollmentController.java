@@ -7,9 +7,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import spring.myproject.common.Username;
+import spring.myproject.dto.response.enrollment.EnrollResponseDto;
 import spring.myproject.service.enrollment.EnrollmentService;
-import spring.myproject.dto.response.enrollment.DisEnrollGatheringResponse;
-import spring.myproject.dto.response.enrollment.EnrollGatheringResponse;
+
+import static spring.myproject.dto.response.enrollment.EnrollResponseDto.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -18,7 +19,7 @@ public class EnrollmentController {
     private final EnrollmentService enrollmentService;
     @PostMapping("/gathering/{gatheringId}/participate")
     public ResponseEntity<EnrollGatheringResponse> enrollGathering(@PathVariable Long gatheringId,
-                                                       @Username String username){
+                                                                   @Username String username){
 
         EnrollGatheringResponse enrollGatheringResponse = enrollmentService.enrollGathering(gatheringId, username);
         return new ResponseEntity<>(enrollGatheringResponse, HttpStatus.OK);

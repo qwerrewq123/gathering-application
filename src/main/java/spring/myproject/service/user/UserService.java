@@ -1,5 +1,6 @@
 package spring.myproject.service.user;
 
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -11,8 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import spring.myproject.async.AsyncService;
 import spring.myproject.entity.image.Image;
-import spring.myproject.dto.request.user.*;
-import spring.myproject.dto.response.user.*;
 import spring.myproject.exception.user.*;
 import spring.myproject.repository.image.ImageRepository;
 import spring.myproject.entity.user.Role;
@@ -20,9 +19,12 @@ import spring.myproject.entity.user.User;
 import spring.myproject.repository.user.UserRepository;
 import spring.myproject.provider.JwtProvider;
 import spring.myproject.s3.S3ImageUploadService;
+import spring.myproject.validator.JwtValidator;
 
 import java.util.List;
 
+import static spring.myproject.dto.request.user.UserRequestDto.*;
+import static spring.myproject.dto.response.user.UserResponseDto.*;
 import static spring.myproject.utils.ConstClass.*;
 import static spring.myproject.utils.CookieUtil.*;
 
@@ -37,6 +39,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final S3ImageUploadService s3ImageUploadService;
     private final JwtProvider jwtProvider;
+    private final JwtValidator jwtValidator;
     private final AsyncService asyncService;
     @Value("${jwt.refresh.expiration}")
     private int refreshExpiration;
@@ -63,7 +66,7 @@ public class UserService {
 
     }
 
-    public SignUpResponse signUp(UserRequest userRequest, MultipartFile file){
+    public SignUpResponse signUp(SignUpRequest signUpRequest, MultipartFile file){
 
         try {
             Image image = null;
@@ -75,15 +78,15 @@ public class UserService {
             }
             imageRepository.save(image);
             User user = User.builder()
-                    .age(userRequest.getAge())
-                    .email(userRequest.getEmail())
-                    .hobby(userRequest.getHobby())
-                    .address(userRequest.getAddress())
-                    .username(userRequest.getUsername())
-                    .password(passwordEncoder.encode(userRequest.getPassword()))
+                    .age(signUpRequest.getAge())
+                    .email(signUpRequest.getEmail())
+                    .hobby(signUpRequest.getHobby())
+                    .address(signUpRequest.getAddress())
+                    .username(signUpRequest.getUsername())
+                    .password(passwordEncoder.encode(signUpRequest.getPassword()))
                     .role(Role.USER)
                     .profileImage(image)
-                    .nickname(userRequest.getNickname())
+                    .nickname(signUpRequest.getNickname())
                     .build();
             userRepository.save(user);
             return SignUpResponse.builder()
@@ -132,10 +135,29 @@ public class UserService {
 
 
 
-    //TODO : 로직처리하기
-    public GenerateTokenResponse generateToken(String refreshToken) {
+    public GenerateTokenResponse generateToken(String refreshToken,HttpServletResponse response) {
+        try {
+            Claims claims = jwtValidator.validateToken(refreshToken);
+            String username = claims.getSubject();
+            User user = userRepository.findByUsername(username).orElseThrow(() -> new NotFoundUserException("not Found User"));
+            String role = (String)claims.get("role");
+            String accessToken = jwtProvider.createAccessToken(username, role);
+            String issuedRefreshToken = jwtProvider.createRefreshToken(username, role);
+            user.changeRefreshToken(issuedRefreshToken);
+            Cookie cookie = getCookie("refreshToken", refreshToken,refreshExpiration);
+            response.addCookie(cookie);
+            return GenerateTokenResponse.builder()
+                    .code(SUCCESS_CODE)
+                    .message(SUCCESS_MESSAGE)
+                    .accessToken(accessToken)
+                    .build();
 
-        return null;
+        }catch (Exception e){
+            return GenerateTokenResponse.builder()
+                    .code(UN_VALID_TOKEN)
+                    .message(UN_VALID_TOKEN_MESSAGE)
+                    .build();
+        }
     }
 
 

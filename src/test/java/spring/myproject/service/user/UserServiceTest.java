@@ -12,8 +12,6 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.web.multipart.MultipartFile;
 import spring.myproject.async.AsyncService;
 import spring.myproject.entity.image.Image;
-import spring.myproject.dto.request.user.*;
-import spring.myproject.dto.response.user.*;
 import spring.myproject.entity.user.Role;
 import spring.myproject.exception.user.*;
 import spring.myproject.repository.image.ImageRepository;
@@ -28,6 +26,8 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
+import static spring.myproject.dto.request.user.UserRequestDto.*;
+import static spring.myproject.dto.response.user.UserResponseDto.*;
 import static spring.myproject.utils.ConstClass.*;
 
 @SpringBootTest
@@ -96,7 +96,7 @@ class UserServiceTest {
         when(passwordEncoder.encode(anyString())).thenReturn("encode password");
         when(userRepository.save(any(User.class))).thenReturn(null);
 
-        UserRequest userRequest = new UserRequest("username", "password", "email", "address", 1, "hobby", "nickname");
+        SignUpRequest userRequest = new SignUpRequest("username", "password", "email", "address", 1, "hobby", "nickname");
         SignUpResponse signUpResponse = userService.signUp(userRequest, mockMultipartFile);
         assertThat(signUpResponse).isInstanceOf(SignUpResponse.class)
                 .extracting("code","message")

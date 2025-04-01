@@ -3,6 +3,7 @@ package spring.myproject.service.attend;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import spring.myproject.dto.response.attend.AttendResponseDto;
 import spring.myproject.entity.attend.Attend;
 import spring.myproject.exception.attend.AlreadyAttendExeption;
 import spring.myproject.exception.attend.NotFoundAttendException;
@@ -13,14 +14,12 @@ import spring.myproject.exception.meeting.NotAuthorizeException;
 import spring.myproject.repository.meeting.MeetingRepository;
 import spring.myproject.entity.user.User;
 import spring.myproject.repository.user.UserRepository;
-import spring.myproject.dto.response.attend.AddAttendResponse;
-import spring.myproject.dto.response.attend.DisAttendResponse;
-import spring.myproject.dto.response.attend.PermitAttendResponse;
 import spring.myproject.exception.meeting.NotFoundMeetingExeption;
 import spring.myproject.exception.user.NotFoundUserException;
 
 import java.time.LocalDateTime;
 
+import static spring.myproject.dto.response.attend.AttendResponseDto.*;
 import static spring.myproject.utils.ConstClass.*;
 
 @Service

@@ -5,22 +5,22 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
-import spring.myproject.dto.response.gathering.GatheringsQuery;
+import spring.myproject.dto.response.gathering.GatheringResponseDto;
+import spring.myproject.dto.response.gathering.querydto.GatheringDetailQuery;
+import spring.myproject.dto.response.gathering.querydto.GatheringsQuery;
 import spring.myproject.entity.gathering.Gathering;
 import spring.myproject.repository.gathering.GatheringRepository;
 import spring.myproject.repository.recommend.RecommendRepository;
 import spring.myproject.repository.user.UserRepository;
-import spring.myproject.dto.response.gathering.GatheringDetailQuery;
-import spring.myproject.dto.response.gathering.GatheringResponse;
 import spring.myproject.dto.response.recommend.RecommendResponse;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static spring.myproject.dto.response.gathering.GatheringResponseDto.*;
 import static spring.myproject.utils.ConstClass.*;
 
 @Service

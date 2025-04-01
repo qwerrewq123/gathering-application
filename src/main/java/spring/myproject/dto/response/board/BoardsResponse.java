@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.domain.Page;
+import spring.myproject.dto.response.board.querydto.BoardsQuery;
 
 @Data
 @AllArgsConstructor

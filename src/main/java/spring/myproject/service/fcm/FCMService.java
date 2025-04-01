@@ -7,7 +7,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import spring.myproject.dto.request.fcm.TopicNotificationRequestDto;
-import spring.myproject.dto.request.user.SignInRequest;
 import spring.myproject.entity.fcm.FCMToken;
 import spring.myproject.entity.fcm.FCMTokenTopic;
 import spring.myproject.entity.fcm.Topic;
@@ -30,6 +29,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
+
+import static spring.myproject.dto.request.user.UserRequestDto.*;
 
 @Service
 @RequiredArgsConstructor

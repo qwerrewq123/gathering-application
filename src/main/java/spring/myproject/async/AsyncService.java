@@ -14,7 +14,6 @@ import spring.myproject.exception.chat.NotFoundChatParticipantException;
 import spring.myproject.exception.chat.NotFoundChatRoomException;
 import spring.myproject.exception.user.NotFoundUserException;
 import spring.myproject.kafka.event.Event;
-import spring.myproject.kafka.event.EventPayload;
 import spring.myproject.kafka.payload.SendChatMessageEventPayload;
 import spring.myproject.repository.chat.ChatMessageRepository;
 import spring.myproject.repository.chat.ChatParticipantRepository;
@@ -22,10 +21,11 @@ import spring.myproject.repository.chat.ChatRoomRepository;
 import spring.myproject.repository.chat.ReadStatusRepository;
 import spring.myproject.repository.user.UserRepository;
 import spring.myproject.service.fail.FailService;
-import spring.myproject.dto.request.user.EmailCertificationRequest;
 import spring.myproject.provider.EmailProvider;
 
 import java.util.List;
+
+import static spring.myproject.dto.request.user.UserRequestDto.*;
 
 @Service
 @RequiredArgsConstructor

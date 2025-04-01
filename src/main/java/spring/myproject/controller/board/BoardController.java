@@ -5,7 +5,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import spring.myproject.common.Username;
-import spring.myproject.dto.request.board.AddBoardRequest;
 import spring.myproject.dto.response.board.AddBoardResponse;
 import spring.myproject.dto.response.board.BoardResponse;
 import spring.myproject.dto.response.board.BoardsResponse;
@@ -13,6 +12,8 @@ import spring.myproject.service.board.BoardService;
 
 import java.io.IOException;
 import java.util.List;
+
+import static spring.myproject.dto.request.board.BoardRequestDto.*;
 
 @RestController
 @RequiredArgsConstructor

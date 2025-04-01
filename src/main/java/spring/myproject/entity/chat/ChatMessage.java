@@ -5,7 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import spring.myproject.dto.request.chat.ChatMessageRequest;
+
+import static spring.myproject.dto.request.chat.ChatRequestDto.*;
 
 @Entity
 @NoArgsConstructor

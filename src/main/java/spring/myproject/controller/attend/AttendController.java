@@ -7,10 +7,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import spring.myproject.common.Username;
+import spring.myproject.dto.response.attend.AttendResponseDto;
 import spring.myproject.service.attend.AttendService;
-import spring.myproject.dto.response.attend.AddAttendResponse;
-import spring.myproject.dto.response.attend.DisAttendResponse;
-import spring.myproject.dto.response.attend.PermitAttendResponse;
+
+import static spring.myproject.dto.response.attend.AttendResponseDto.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -20,7 +20,7 @@ public class AttendController {
 
     @PostMapping("/meeting/{meetingId}/attend")
     public ResponseEntity<AddAttendResponse> addAttend(@PathVariable Long meetingId,
-                                            @Username String username
+                                                       @Username String username
                                             ){
 
         AddAttendResponse addAttendResponse = attendService.addAttend(meetingId, username);

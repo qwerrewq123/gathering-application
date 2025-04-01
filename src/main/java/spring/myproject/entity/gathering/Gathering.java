@@ -2,10 +2,7 @@ package spring.myproject.entity.gathering;
 
 import jakarta.persistence.*;
 import lombok.*;
-import spring.myproject.dto.request.gathering.AddGatheringRequest;
-import spring.myproject.dto.request.gathering.UpdateGatheringRequest;
 import spring.myproject.entity.enrollment.Enrollment;
-import spring.myproject.entity.fcm.FCMToken;
 import spring.myproject.entity.fcm.Topic;
 import spring.myproject.entity.image.Image;
 import spring.myproject.entity.user.User;
@@ -14,6 +11,9 @@ import spring.myproject.entity.category.Category;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import static spring.myproject.dto.request.gathering.GatheringRequestDto.*;
+
 @Getter
 @NoArgsConstructor
 @Entity

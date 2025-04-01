@@ -1,19 +1,12 @@
 package spring.myproject.service.meeting;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.web.multipart.MultipartFile;
-import spring.myproject.dto.request.meeting.AddMeetingRequest;
-import spring.myproject.dto.request.meeting.UpdateMeetingRequest;
-import spring.myproject.dto.response.meeting.AddMeetingResponse;
-import spring.myproject.dto.response.meeting.DeleteMeetingResponse;
-import spring.myproject.dto.response.meeting.UpdateMeetingResponse;
 import spring.myproject.entity.attend.Attend;
 import spring.myproject.entity.fcm.Topic;
 import spring.myproject.entity.gathering.Gathering;
@@ -30,7 +23,6 @@ import spring.myproject.repository.image.ImageRepository;
 import spring.myproject.repository.meeting.MeetingRepository;
 import spring.myproject.repository.user.UserRepository;
 import spring.myproject.s3.S3ImageUploadService;
-import spring.myproject.utils.ConstClass;
 
 import java.io.IOException;
 import java.util.Optional;

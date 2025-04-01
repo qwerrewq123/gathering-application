@@ -7,9 +7,10 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import spring.myproject.common.Username;
+import spring.myproject.dto.response.like.LikeResponseDto;
 import spring.myproject.service.like.LikeService;
-import spring.myproject.dto.response.like.DislikeResponse;
-import spring.myproject.dto.response.like.LikeResponse;
+
+import static spring.myproject.dto.response.like.LikeResponseDto.*;
 
 
 @RestController

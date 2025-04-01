@@ -7,6 +7,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
+import spring.myproject.dto.response.gathering.querydto.MainGatheringsQuery;
+import spring.myproject.dto.response.gathering.querydto.GatheringDetailQuery;
+import spring.myproject.dto.response.gathering.querydto.GatheringsQuery;
 import spring.myproject.entity.category.Category;
 import spring.myproject.dto.response.gathering.*;
 import spring.myproject.entity.fcm.Topic;
@@ -20,22 +23,20 @@ import spring.myproject.entity.image.Image;
 import spring.myproject.repository.image.ImageRepository;
 import spring.myproject.entity.user.User;
 import spring.myproject.repository.user.UserRepository;
-import spring.myproject.dto.request.gathering.AddGatheringRequest;
-import spring.myproject.dto.request.gathering.UpdateGatheringRequest;
 import spring.myproject.exception.category.NotFoundCategoryException;
 import spring.myproject.exception.gathering.NotFoundGatheringException;
 import spring.myproject.exception.meeting.NotAuthorizeException;
 import spring.myproject.exception.user.NotFoundUserException;
-import spring.myproject.s3.S3ImageDownloadService;
 import spring.myproject.s3.S3ImageUploadService;
 import spring.myproject.service.fcm.FCMService;
-import spring.myproject.utils.RandomStringGenerator;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static spring.myproject.dto.request.gathering.GatheringRequestDto.*;
+import static spring.myproject.dto.response.gathering.GatheringResponseDto.*;
 import static spring.myproject.utils.ConstClass.*;
 import static spring.myproject.utils.RandomStringGenerator.*;
 
@@ -71,7 +72,7 @@ public class GatheringService {
                 .build();
             topicRepository.save(topic);
             fcmService.subscribeToTopics(topic.getTopicName(),username);
-            return AddGatheringResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE);
+            return AddGatheringResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE, gathering.getId());
     }
 
     public UpdateGatheringResponse updateGathering(UpdateGatheringRequest updateGatheringRequest, MultipartFile file, String username,Long gatheringId) throws IOException {
@@ -85,7 +86,7 @@ public class GatheringService {
             image = saveImage(image,file);
             if(image!=null) imageRepository.save(image);
             gathering.changeGathering(image,category,updateGatheringRequest);
-            return UpdateGatheringResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE);
+            return UpdateGatheringResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE,gatheringId);
     }
 
     public GatheringResponse gatheringDetail(Long gatheringId, String username) throws IOException {
@@ -96,32 +97,34 @@ public class GatheringService {
             return getGatheringResponse(gatheringDetailQueries);
     }
 
-    public TotalGatheringsResponse gatherings(String username, String title) {
-            userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
-            List<EntireGatheringsQuery> entireGatheringsQueries = gatheringRepository.gatherings(title);
-            List<GatheringsQuery> gatherings = toGatheringQueriesList(entireGatheringsQueries);
-            List<TotalGatheringsElement> totalGatheringsElements = toGatheringsResponseList(gatherings);
-            Map<String, CategoryTotalGatherings> map = categorizeByCategory(totalGatheringsElements);
-            return createTotalGatherings(map);
-
-    }
-
-    public GatheringPagingResponse gatheringCategory(String category, Integer pageNum, Integer pageSize, String username) {
+    public GatheringCategoryResponse gatheringCategory(String category, Integer pageNum, Integer pageSize, String username) {
         userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
         PageRequest pageRequest = PageRequest.of(pageNum - 1, pageSize, Sort.Direction.ASC,"id");
-        Page<GatheringsQuery> gatheringsQueryPage = gatheringRepository.gatheringsCategory(pageRequest,category);
-        Page<GatheringsResponse> page = toGatheringsResponsePage(gatheringsQueryPage);
-        return GatheringPagingResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE,page);
+        Page<GatheringsQuery> page = gatheringRepository.gatheringsCategory(pageRequest,category);
+        boolean hasNext = page.hasNext();
+        List<GatheringsResponse> content = toContent(page);
+        return GatheringCategoryResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE,content,hasNext);
     }
 
-    public GatheringPagingResponse gatheringsLike(int pageNum, int pageSize, String username) {
+    public GatheringLikeResponse gatheringsLike(int pageNum, int pageSize, String username) {
 
         User user = userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
         PageRequest pageRequest = PageRequest.of(pageNum - 1, pageSize, Sort.Direction.DESC,"id");
         Long userId = user.getId();
-        Page<GatheringsQuery> gatheringsQueryPage = gatheringRepository.gatheringsLike(pageRequest, userId);
-        Page<GatheringsResponse> page = toGatheringsResponsePage(gatheringsQueryPage);
-        return GatheringPagingResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE,page);
+        Page<GatheringsQuery> page = gatheringRepository.gatheringsLike(pageRequest, userId);
+        boolean hasNext = page.hasNext();
+        List<GatheringsResponse> content = toContent(page);
+        return GatheringLikeResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE,content,hasNext);
+    }
+
+    public MainGatheringResponse gatherings(String username, String title) {
+            userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
+            List<MainGatheringsQuery> mainGatheringsQueryList = gatheringRepository.gatherings(title);
+            List<GatheringsQuery> gatherings = toGatheringQueriesList(mainGatheringsQueryList);
+            List<MainGatheringElement> mainGatheringElements = toGatheringsResponseList(gatherings);
+            Map<String, CategoryTotalGatherings> map = categorizeByCategory(mainGatheringElements);
+            return toMainGatheringResponse(map);
+
     }
 
     private GatheringResponse getGatheringResponse(List<GatheringDetailQuery> gatheringDetailQueries) throws IOException {
@@ -137,48 +140,70 @@ public class GatheringService {
                 .image(getUrl(gatheringDetailQueries.getFirst().getUrl()))
                 .count(gatheringDetailQueries.getFirst().getCount())
                 .participatedBy(new ArrayList<>())
+                .participatedByNickname(new ArrayList<>())
+                .participatedByUrl(new ArrayList<>())
                 .build();
 
         for (GatheringDetailQuery gatheringDetailQuery : gatheringDetailQueries) {
             if(StringUtils.hasText(gatheringDetailQuery.getParticipatedBy())){
-                gatheringResponse.getParticipatedBy().add(gatheringDetailQuery.getParticipatedBy());
+                gatheringResponse.getParticipatedByUrl().add(gatheringDetailQuery.getParticipatedBy());
+            }
+            if(StringUtils.hasText(gatheringDetailQuery.getParticipatedByNickname())){
+                gatheringResponse.getParticipatedByNickname().add(gatheringDetailQuery.getParticipatedByNickname());
+            }
+            if(StringUtils.hasText(gatheringDetailQuery.getParticipatedByUrl())){
+                gatheringResponse.getParticipatedByUrl().add(gatheringDetailQuery.getParticipatedByUrl());
             }
         }
         return gatheringResponse;
     }
-    private List<GatheringsQuery> toGatheringQueriesList(List<EntireGatheringsQuery> entireGatheringsQueries) {
+
+    private List<GatheringsResponse> toContent(Page<GatheringsQuery> page) {
+        return page.map(g ->
+                GatheringsResponse.builder()
+                        .id(g.getId())
+                        .title(g.getTitle())
+                        .createdBy(g.getCreatedBy())
+                        .registerDate(g.getRegisterDate())
+                        .category(g.getCategory())
+                        .content(g.getContent())
+                        .count(g.getCount())
+                        .url(getUrl(g.getUrl()))
+                        .build()).getContent();
+    }
+    private List<GatheringsQuery> toGatheringQueriesList(List<MainGatheringsQuery> entireGatheringsQueries) {
         return entireGatheringsQueries.stream()
-                .map(query -> GatheringsQuery.builder()
-                        .id(query.getId())
-                        .title(query.getTitle())
-                        .content(query.getContent())
-                        .registerDate(query.getRegisterDate())
-                        .category(query.getCategory())
-                        .createdBy(query.getCreatedBy())
-                        .url(query.getUrl())
-                        .count(query.getCount())
+                .map(q -> GatheringsQuery.builder()
+                        .id(q.getId())
+                        .title(q.getTitle())
+                        .content(q.getContent())
+                        .registerDate(q.getRegisterDate())
+                        .category(q.getCategory())
+                        .createdBy(q.getCreatedBy())
+                        .url(q.getUrl())
+                        .count(q.getCount())
                         .build())
                 .collect(Collectors.toList());
     }
 
-    private List<TotalGatheringsElement> toGatheringsResponseList(List<GatheringsQuery> gatheringsQueryList) {
+    private List<MainGatheringElement> toGatheringsResponseList(List<GatheringsQuery> gatheringsQueryList) {
         return gatheringsQueryList.stream()
                 .map(this::toGatheringsResponse)
                 .collect(Collectors.toList());
     }
-    public Map<String, CategoryTotalGatherings> categorizeByCategory(List<TotalGatheringsElement> totalGatheringsElements) {
-        return totalGatheringsElements.stream()
+    public Map<String, CategoryTotalGatherings> categorizeByCategory(List<MainGatheringElement> mainGatheringElements) {
+        return mainGatheringElements.stream()
                 .collect(Collectors.groupingBy(
-                        TotalGatheringsElement::getCategory,
+                        MainGatheringElement::getCategory,
                         Collectors.collectingAndThen(
                                 Collectors.toList(),
                                 this::processCategoryElements
                         )
                 ));
     }
-    private TotalGatheringsElement toGatheringsResponse(GatheringsQuery gatheringsQuery) {
+    private MainGatheringElement toGatheringsResponse(GatheringsQuery gatheringsQuery) {
 
-        return TotalGatheringsElement.builder().id(gatheringsQuery.getId())
+        return MainGatheringElement.builder().id(gatheringsQuery.getId())
                 .title(gatheringsQuery.getTitle())
                 .content(gatheringsQuery.getContent())
                 .registerDate(gatheringsQuery.getRegisterDate())
@@ -190,7 +215,7 @@ public class GatheringService {
 
     }
 
-    private CategoryTotalGatherings processCategoryElements(List<TotalGatheringsElement> elements) {
+    private CategoryTotalGatherings processCategoryElements(List<MainGatheringElement> elements) {
         boolean hasNext = elements.size() >= 9;
         if (hasNext) {
             elements = elements.subList(0, 8);
@@ -201,8 +226,9 @@ public class GatheringService {
                 .hasNext(hasNext)
                 .build();
     }
-    private TotalGatheringsResponse createTotalGatherings(Map<String, CategoryTotalGatherings> categoryMap) {
-        return TotalGatheringsResponse.builder()
+
+    private MainGatheringResponse toMainGatheringResponse(Map<String, CategoryTotalGatherings> categoryMap) {
+        return MainGatheringResponse.builder()
                 .code(SUCCESS_CODE)
                 .message(SUCCESS_MESSAGE)
                 .map(categoryMap)
@@ -210,20 +236,6 @@ public class GatheringService {
     }
 
 
-    private Page<GatheringsResponse> toGatheringsResponsePage(Page<GatheringsQuery> page) {
-        return page.map(g ->
-                GatheringsResponse.builder()
-                        .id(g.getId())
-                        .title(g.getTitle())
-                        .createdBy(g.getCreatedBy())
-                        .registerDate(g.getRegisterDate())
-                        .category(g.getCategory())
-                        .content(g.getContent())
-                        .count(g.getCount())
-                        .url(getUrl(g.getUrl()))
-                        .build()
-        );
-    }
 
 
     private Image saveImage(Image image,MultipartFile file) throws IOException {

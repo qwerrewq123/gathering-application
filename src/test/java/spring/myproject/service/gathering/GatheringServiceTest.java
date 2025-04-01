@@ -1,22 +1,17 @@
 package spring.myproject.service.gathering;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.web.multipart.MultipartFile;
-import spring.myproject.dto.request.gathering.AddGatheringRequest;
-import spring.myproject.dto.request.gathering.UpdateGatheringRequest;
-import spring.myproject.dto.response.gathering.AddGatheringResponse;
-import spring.myproject.dto.response.gathering.UpdateGatheringResponse;
+import spring.myproject.dto.request.gathering.GatheringRequestDto;
+import spring.myproject.dto.response.gathering.GatheringResponseDto;
 import spring.myproject.entity.category.Category;
 import spring.myproject.entity.gathering.Gathering;
-import spring.myproject.entity.image.Image;
 import spring.myproject.entity.user.Role;
 import spring.myproject.entity.user.User;
 import spring.myproject.exception.category.NotFoundCategoryException;
@@ -31,13 +26,14 @@ import spring.myproject.repository.image.ImageRepository;
 import spring.myproject.repository.user.UserRepository;
 import spring.myproject.s3.S3ImageUploadService;
 import spring.myproject.service.fcm.FCMService;
-import spring.myproject.utils.ConstClass;
 
 import java.io.IOException;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
+import static spring.myproject.dto.request.gathering.GatheringRequestDto.*;
+import static spring.myproject.dto.response.gathering.GatheringResponseDto.*;
 import static spring.myproject.utils.ConstClass.*;
 
 @SpringBootTest
