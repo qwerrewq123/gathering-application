@@ -54,5 +54,5 @@ public class ConstClass {
     public static String DB_ERROR_MESSAGE = "Database Error";
     public static String FAIL_MESSAGE_MESSAGE = "Fail Messaging From SMTP";
     public static String METHOD_NOT_ALLOWED_MESSAGE = "Method Not Allowed";
-    public static String UN_VALID_TOKEN_MESSAGE = "Un Valid Token";`
+    public static String UN_VALID_TOKEN_MESSAGE = "Un Valid Token";
 }
