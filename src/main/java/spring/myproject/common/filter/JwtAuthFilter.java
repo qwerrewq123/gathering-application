@@ -1,7 +1,6 @@
-package spring.myproject.filter;
+package spring.myproject.common.filter;
 
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,8 +16,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import org.springframework.beans.factory.annotation.Value;
-import spring.myproject.validator.JwtValidator;
+import spring.myproject.common.validator.JwtValidator;
 
 import java.io.IOException;
 import java.util.ArrayList;

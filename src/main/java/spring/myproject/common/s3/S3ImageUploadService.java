@@ -1,4 +1,4 @@
-package spring.myproject.s3;
+package spring.myproject.common.s3;
 
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.ObjectMetadata;

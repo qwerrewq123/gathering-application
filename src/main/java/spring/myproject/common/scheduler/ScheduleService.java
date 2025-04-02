@@ -1,9 +1,9 @@
-package spring.myproject.scheduler;
+package spring.myproject.common.scheduler;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import spring.myproject.cache.EvictCacheService;
+import spring.myproject.common.cache.EvictCacheService;
 
 import java.time.LocalDate;
 

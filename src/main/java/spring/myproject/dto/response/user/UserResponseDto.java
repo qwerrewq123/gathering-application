@@ -117,13 +117,13 @@ public class UserResponseDto {
     @Builder
     @AllArgsConstructor
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    public static class CertificationCheckResponse {
+    public static class CheckCertificationResponse {
 
         private String code;
         private String message;
 
-        public static CertificationCheckResponse of(String code, String message){
-            return new CertificationCheckResponse(code,message);
+        public static CheckCertificationResponse of(String code, String message){
+            return new CheckCertificationResponse(code,message);
         }
     }
 }

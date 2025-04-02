@@ -7,7 +7,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import spring.myproject.entity.user.Fail;
 import spring.myproject.dto.response.fail.CloseResponse;
 import spring.myproject.repository.fail.FailRepository;
-import spring.myproject.emitter.repository.EmitterRepository;
+import spring.myproject.repository.emitter.EmitterRepository;
 
 import java.io.IOException;
 

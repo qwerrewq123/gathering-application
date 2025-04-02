@@ -1,4 +1,4 @@
-package spring.myproject.validator;
+package spring.myproject.common.validator;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

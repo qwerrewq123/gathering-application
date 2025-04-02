@@ -24,7 +24,7 @@ public class UserControllerAdvice {
     @ExceptionHandler(UnCorrectPasswordException.class)
     ResponseEntity<ErrorResponse> handleUnCorrectPasswordException(){
         return new ResponseEntity<>(
-                AbstractErrorResponse.getErrorResponse(UN_CORRECT_CODE, UN_CORRECT_MESSAGE)
+                AbstractErrorResponse.getErrorResponse(UN_CORRECT_PASSWORD_CODE, UN_CORRECT_PASSWORD_MESSAGE)
                 , HttpStatus.BAD_REQUEST);
     }
     @ExceptionHandler(MessagingException.class)
@@ -49,6 +49,18 @@ public class UserControllerAdvice {
     ResponseEntity<ErrorResponse> handleDuplicateEmailException(){
         return new ResponseEntity<>(
                 AbstractErrorResponse.getErrorResponse(DUPLICATE_EMAIL_CODE, DUPLICATE_EMAIL_MESSAGE)
+                , HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(NotFoundCertificationException.class)
+    ResponseEntity<ErrorResponse> handleNotFoundCertificationException(){
+        return new ResponseEntity<>(
+                AbstractErrorResponse.getErrorResponse(NOT_FOUND_CERTIFICATION_CODE, NOT_FOUND_CERTIFICATION_MESSAGE)
+                , HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(UnCorrectCertification.class)
+    ResponseEntity<ErrorResponse> handleUnCorrectCertification(){
+        return new ResponseEntity<>(
+                AbstractErrorResponse.getErrorResponse(UN_CORRECT_CERTIFICATION_CODE, UN_CORRECT_CERTIFICATION_MESSAGE)
                 , HttpStatus.BAD_REQUEST);
     }
 

@@ -3,12 +3,10 @@ package spring.myproject.kafka.handler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Component;
-import spring.myproject.async.AsyncService;
+import spring.myproject.common.async.AsyncService;
 import spring.myproject.kafka.event.Event;
 import spring.myproject.kafka.event.EventType;
 import spring.myproject.kafka.payload.SendChatMessageEventPayload;
-import spring.myproject.repository.chat.ChatMessageRepository;
-import spring.myproject.repository.chat.ReadStatusRepository;
 
 @Component
 @RequiredArgsConstructor

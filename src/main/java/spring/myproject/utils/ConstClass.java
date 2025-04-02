@@ -23,11 +23,13 @@ public class ConstClass {
     public static String NOT_FOUND_USER_CODE = "NF";
     public static String NOT_EMAIL_CODE = "NM";
     public static String DUPLICATE_EMAIL_CODE = "DE";
-    public static String UN_CORRECT_CODE = "UC";
+    public static String UN_CORRECT_PASSWORD_CODE = "UC";
     public static String DB_ERROR_CODE = "DE";
     public static String FAIL_MESSAGE_CODE = "FM";
     public static String METHOD_NOT_ALLOWED_CODE = "MN";
     public static String UN_VALID_TOKEN = "UV";
+    public static String NOT_FOUND_CERTIFICATION_CODE = "NF";
+    public static String UN_CORRECT_CERTIFICATION_CODE = "UC";
 
     public static String NOT_FOUND_ALARM_MESSAGE = "Not Found Alarm!!";
     public static String AUTO_ATTEND_MESSAGE = "Auto Attend Meeting";
@@ -50,9 +52,11 @@ public class ConstClass {
     public static String NOT_FOUND_USER_MESSAGE = "Not Found User";
     public static String NOT_EMAIL_MESSAGE = "Not Found Email";
     public static String DUPLICATE_EMAIL_MESSAGE = "Duplicate Email";
-    public static String UN_CORRECT_MESSAGE = "UnCorrect Password";
+    public static String UN_CORRECT_PASSWORD_MESSAGE = "UnCorrect Password";
     public static String DB_ERROR_MESSAGE = "Database Error";
     public static String FAIL_MESSAGE_MESSAGE = "Fail Messaging From SMTP";
     public static String METHOD_NOT_ALLOWED_MESSAGE = "Method Not Allowed";
     public static String UN_VALID_TOKEN_MESSAGE = "Un Valid Token";
+    public static String NOT_FOUND_CERTIFICATION_MESSAGE = "Not Found Certification";
+    public static String UN_CORRECT_CERTIFICATION_MESSAGE = "Un Correct Certification";
 }

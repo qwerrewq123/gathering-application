@@ -8,7 +8,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import spring.myproject.dto.response.image.GatheringImageResponse;
 import spring.myproject.repository.image.ImageRepository;
-import spring.myproject.s3.S3ImageDownloadService;
+import spring.myproject.common.s3.S3ImageDownloadService;
 
 import java.io.IOException;
 import java.util.List;

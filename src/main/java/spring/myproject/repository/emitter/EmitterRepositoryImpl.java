@@ -1,12 +1,10 @@
-package spring.myproject.emitter.repository;
+package spring.myproject.repository.emitter;
 
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Repository;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 @Component
 public class EmitterRepositoryImpl implements EmitterRepository {

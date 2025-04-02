@@ -13,7 +13,6 @@ import org.springframework.web.multipart.MultipartFile;
 import spring.myproject.dto.response.meeting.querydto.MeetingDetailQuery;
 import spring.myproject.dto.response.meeting.querydto.MeetingsQuery;
 import spring.myproject.entity.attend.Attend;
-import spring.myproject.dto.response.meeting.*;
 import spring.myproject.repository.attend.AttendRepository;
 import spring.myproject.entity.gathering.Gathering;
 import spring.myproject.repository.gathering.GatheringRepository;
@@ -28,11 +27,9 @@ import spring.myproject.exception.meeting.MeetingIsNotEmptyException;
 import spring.myproject.exception.meeting.NotAuthorizeException;
 import spring.myproject.exception.meeting.NotFoundMeetingExeption;
 import spring.myproject.exception.user.NotFoundUserException;
-import spring.myproject.s3.S3ImageUploadService;
-import spring.myproject.utils.change.ChangeFactory;
+import spring.myproject.common.s3.S3ImageUploadService;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 

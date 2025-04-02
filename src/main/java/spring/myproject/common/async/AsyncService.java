@@ -1,4 +1,4 @@
-package spring.myproject.async;
+package spring.myproject.common.async;
 
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,7 @@ import spring.myproject.repository.chat.ChatRoomRepository;
 import spring.myproject.repository.chat.ReadStatusRepository;
 import spring.myproject.repository.user.UserRepository;
 import spring.myproject.service.fail.FailService;
-import spring.myproject.provider.EmailProvider;
+import spring.myproject.common.provider.EmailProvider;
 
 import java.util.List;
 

@@ -9,17 +9,20 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
-import spring.myproject.async.AsyncService;
+import spring.myproject.common.async.AsyncService;
+import spring.myproject.dto.request.user.UserRequestDto;
 import spring.myproject.entity.image.Image;
 import spring.myproject.exception.user.*;
+import spring.myproject.repository.certification.CertificationRepository;
 import spring.myproject.utils.mapper.UserFactory;
 import spring.myproject.repository.image.ImageRepository;
 import spring.myproject.entity.user.User;
 import spring.myproject.repository.user.UserRepository;
-import spring.myproject.provider.JwtProvider;
-import spring.myproject.s3.S3ImageUploadService;
-import spring.myproject.validator.JwtValidator;
+import spring.myproject.common.provider.JwtProvider;
+import spring.myproject.common.s3.S3ImageUploadService;
+import spring.myproject.common.validator.JwtValidator;
 
 import java.util.List;
 
@@ -37,6 +40,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final ImageRepository imageRepository;
     private final PasswordEncoder passwordEncoder;
+    private final CertificationRepository certificationRepository;
     private final S3ImageUploadService s3ImageUploadService;
     private final JwtProvider jwtProvider;
     private final JwtValidator jwtValidator;
@@ -125,4 +129,10 @@ public class UserService {
     }
 
 
+    public CheckCertificationResponse checkCertification(CheckCertificationRequest checkCertificationRequest) {
+        String certification = certificationRepository.findCertificationByEmail(checkCertificationRequest.getEmail());
+        if(!StringUtils.hasText(certification)) throw new NotFoundCertificationException("Not Found Certification");
+        if(certification != checkCertificationRequest.getCertification()) throw new UnCorrectCertification("UnCorrect Certification");
+        return CheckCertificationResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE);
+    }
 }

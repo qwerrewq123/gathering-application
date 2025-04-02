@@ -1,4 +1,4 @@
-package spring.myproject.security;
+package spring.myproject.common.security;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -14,7 +14,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import spring.myproject.filter.JwtAuthFilter;
+import spring.myproject.common.filter.JwtAuthFilter;
 
 
 @Configuration
@@ -25,7 +25,7 @@ public class SecurityConfig {
     private final FailedAuthenticationEntryPoint failedAuthenticationEntryPoint;
     private final JwtAuthFilter jwtAuthFilter;
     private String[] whitelist = {"/auth/id-check","/auth/nickname-check","/auth/generateToken",
-            "/auth/email-certification","/auth/sign-in","/auth/sign-up","/connect/**"};
+            "/auth/email-certification","/auth/check-certification","/auth/sign-in","/auth/sign-up","/connect/**"};
     @Bean
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();

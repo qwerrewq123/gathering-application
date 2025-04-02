@@ -22,7 +22,7 @@ import spring.myproject.repository.gathering.GatheringRepository;
 import spring.myproject.repository.image.ImageRepository;
 import spring.myproject.repository.meeting.MeetingRepository;
 import spring.myproject.repository.user.UserRepository;
-import spring.myproject.s3.S3ImageUploadService;
+import spring.myproject.common.s3.S3ImageUploadService;
 
 import java.io.IOException;
 import java.util.Optional;

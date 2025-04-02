@@ -7,7 +7,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import spring.myproject.async.AsyncService;
+import spring.myproject.common.async.AsyncService;
 import spring.myproject.service.fcm.FCMService;
 import spring.myproject.service.user.UserService;
 
@@ -61,6 +61,12 @@ public class UserController {
         EmailCertificationResponse emailCertificationResponse = userService.emailCertification(emailCertificationRequest);
         asyncService.asyncTask(emailCertificationRequest);
         return new ResponseEntity<>(emailCertificationResponse,HttpStatus.OK);
+    }
+    @PostMapping(value = "/auth/check-certification")
+    public ResponseEntity<CheckCertificationResponse> checkCertification(@RequestBody CheckCertificationRequest checkCertificationRequest){
+
+        CheckCertificationResponse checkCertificationResponse = userService.checkCertification(checkCertificationRequest);
+        return new ResponseEntity<>(checkCertificationResponse,HttpStatus.OK);
     }
 
     @PostMapping(value = "/auth/generateToken")

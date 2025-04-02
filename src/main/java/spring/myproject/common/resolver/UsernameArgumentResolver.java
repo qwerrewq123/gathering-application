@@ -1,11 +1,9 @@
-package spring.myproject.common.argumentresolver;
+package spring.myproject.common.resolver;
 
 import org.springframework.core.MethodParameter;
-import org.springframework.messaging.Message;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.support.WebDataBinderFactory;

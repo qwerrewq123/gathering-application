@@ -68,4 +68,14 @@ public class UserRequestDto {
         private String email;
     }
 
+    @Data
+    @Builder
+    @AllArgsConstructor
+    public static class CheckCertificationRequest {
+        @NotBlank(message = "cannot blank or null or space")
+        private String certification;
+        @NotBlank(message = "cannot blank or null or space")
+        private String email;
+    }
+
 }

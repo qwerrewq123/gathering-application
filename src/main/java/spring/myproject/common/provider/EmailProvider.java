@@ -1,4 +1,4 @@
-package spring.myproject.provider;
+package spring.myproject.common.provider;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;

@@ -10,15 +10,15 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.web.multipart.MultipartFile;
-import spring.myproject.async.AsyncService;
+import spring.myproject.common.async.AsyncService;
 import spring.myproject.entity.image.Image;
 import spring.myproject.entity.user.Role;
 import spring.myproject.exception.user.*;
 import spring.myproject.repository.image.ImageRepository;
 import spring.myproject.entity.user.User;
 import spring.myproject.repository.user.UserRepository;
-import spring.myproject.provider.JwtProvider;
-import spring.myproject.s3.S3ImageUploadService;
+import spring.myproject.common.provider.JwtProvider;
+import spring.myproject.common.s3.S3ImageUploadService;
 
 import java.io.IOException;
 import java.util.List;

@@ -27,7 +27,7 @@ import spring.myproject.exception.category.NotFoundCategoryException;
 import spring.myproject.exception.gathering.NotFoundGatheringException;
 import spring.myproject.exception.meeting.NotAuthorizeException;
 import spring.myproject.exception.user.NotFoundUserException;
-import spring.myproject.s3.S3ImageUploadService;
+import spring.myproject.common.s3.S3ImageUploadService;
 import spring.myproject.service.fcm.FCMService;
 
 import java.io.IOException;

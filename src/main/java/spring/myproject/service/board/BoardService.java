@@ -12,7 +12,6 @@ import spring.myproject.dto.request.fcm.TopicNotificationRequestDto;
 import spring.myproject.dto.response.board.querydto.BoardQuery;
 import spring.myproject.dto.response.board.querydto.BoardsQuery;
 import spring.myproject.entity.board.Board;
-import spring.myproject.dto.response.board.*;
 import spring.myproject.entity.fcm.Topic;
 import spring.myproject.exception.board.NotFoundBoardException;
 import spring.myproject.repository.board.BoardRepository;
@@ -26,7 +25,7 @@ import spring.myproject.exception.meeting.NotAuthorizeException;
 import spring.myproject.entity.user.User;
 import spring.myproject.exception.user.NotFoundUserException;
 import spring.myproject.repository.user.UserRepository;
-import spring.myproject.s3.S3ImageUploadService;
+import spring.myproject.common.s3.S3ImageUploadService;
 import spring.myproject.service.fcm.FCMService;
 
 import java.io.IOException;

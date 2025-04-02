@@ -1,4 +1,4 @@
-package spring.myproject.provider;
+package spring.myproject.common.provider;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

@@ -1,8 +1,6 @@
-package spring.myproject.emitter.repository;
+package spring.myproject.repository.emitter;
 
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
-
-import java.util.Map;
 
 public interface EmitterRepository {
     SseEmitter save(String emitterId, SseEmitter sseEmitter);
