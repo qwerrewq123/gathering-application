@@ -19,6 +19,8 @@ public class Image {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String url;
+    @Column(name = "content_type")
+    private String contentType;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "board_id")
     Board board;

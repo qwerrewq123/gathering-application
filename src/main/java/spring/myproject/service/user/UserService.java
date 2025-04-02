@@ -68,8 +68,10 @@ public class UserService {
         try {
             Image image = null;
             if(!file.isEmpty()){
+                String contentType = file.getContentType();
                 String url = s3ImageUploadService.upload(file);
                 image = Image.builder()
+                        .contentType(contentType)
                         .url(url)
                         .build();
             }

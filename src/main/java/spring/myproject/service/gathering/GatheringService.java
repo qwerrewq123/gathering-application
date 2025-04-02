@@ -196,9 +196,11 @@ public class GatheringService {
     private Image saveImage(Image image,MultipartFile file) throws IOException {
         if(!file.isEmpty()){
             String url = s3ImageUploadService.upload(file);
+            String contentType = file.getContentType();
             if(StringUtils.hasText(url)){
                 image = Image.builder()
                         .url(url)
+                        .contentType(contentType)
                         .build();
             }
         }

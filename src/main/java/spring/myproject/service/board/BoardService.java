@@ -120,10 +120,13 @@ public class BoardService {
         for(MultipartFile file : files){
             if(!file.isEmpty()){
                 String url = s3ImageUploadService.upload(file);
-                if(StringUtils.hasText(url)){         Image image = Image.builder()
+                String contentType = file.getContentType();
+                if(StringUtils.hasText(url)){
+                    Image image = Image.builder()
                         .url(url)
                         .board(board)
                         .gathering(gathering)
+                        .contentType(contentType)
                         .build();
                     images.add(image);
 
