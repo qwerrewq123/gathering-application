@@ -6,9 +6,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import spring.myproject.controller.alarm.AlarmController;
-import spring.myproject.exception.alarm.NotFoundAlarmException;
+import spring.myproject.common.exception.alarm.NotFoundAlarmException;
 import spring.myproject.dto.response.ErrorResponse;
-import spring.myproject.exception.user.NotFoundUserException;
+import spring.myproject.common.exception.user.NotFoundUserException;
 import spring.myproject.utils.AbstractErrorResponse;
 
 import static spring.myproject.utils.ConstClass.*;

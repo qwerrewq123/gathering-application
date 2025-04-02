@@ -10,16 +10,15 @@ import spring.myproject.entity.attend.Attend;
 import spring.myproject.entity.meeting.Meeting;
 import spring.myproject.entity.user.Role;
 import spring.myproject.entity.user.User;
-import spring.myproject.exception.attend.AlreadyAttendExeption;
-import spring.myproject.exception.attend.NotFoundAttendException;
-import spring.myproject.exception.attend.NotWithdrawException;
-import spring.myproject.exception.meeting.NotAuthorizeException;
-import spring.myproject.exception.meeting.NotFoundMeetingExeption;
-import spring.myproject.exception.user.NotFoundUserException;
+import spring.myproject.common.exception.attend.AlreadyAttendExeption;
+import spring.myproject.common.exception.attend.NotFoundAttendException;
+import spring.myproject.common.exception.attend.NotWithdrawException;
+import spring.myproject.common.exception.meeting.NotAuthorizeException;
+import spring.myproject.common.exception.meeting.NotFoundMeetingExeption;
+import spring.myproject.common.exception.user.NotFoundUserException;
 import spring.myproject.repository.attend.AttendRepository;
 import spring.myproject.repository.meeting.MeetingRepository;
 import spring.myproject.repository.user.UserRepository;
-import spring.myproject.service.meeting.MeetingService;
 
 import java.util.Optional;
 

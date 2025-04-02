@@ -23,10 +23,10 @@ import spring.myproject.entity.image.Image;
 import spring.myproject.repository.image.ImageRepository;
 import spring.myproject.entity.user.User;
 import spring.myproject.repository.user.UserRepository;
-import spring.myproject.exception.category.NotFoundCategoryException;
-import spring.myproject.exception.gathering.NotFoundGatheringException;
-import spring.myproject.exception.meeting.NotAuthorizeException;
-import spring.myproject.exception.user.NotFoundUserException;
+import spring.myproject.common.exception.category.NotFoundCategoryException;
+import spring.myproject.common.exception.gathering.NotFoundGatheringException;
+import spring.myproject.common.exception.meeting.NotAuthorizeException;
+import spring.myproject.common.exception.user.NotFoundUserException;
 import spring.myproject.common.s3.S3ImageUploadService;
 import spring.myproject.service.fcm.FCMService;
 

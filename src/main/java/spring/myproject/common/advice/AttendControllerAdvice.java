@@ -6,15 +6,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import spring.myproject.common.exception.attend.*;
 import spring.myproject.controller.attend.AttendController;
 import spring.myproject.dto.response.ErrorResponse;
-import spring.myproject.exception.meeting.NotFoundMeetingExeption;
-import spring.myproject.exception.user.NotFoundUserException;
-import spring.myproject.exception.attend.*;
+import spring.myproject.common.exception.meeting.NotFoundMeetingExeption;
+import spring.myproject.common.exception.user.NotFoundUserException;
 import spring.myproject.utils.AbstractErrorResponse;
 
 import static spring.myproject.utils.ConstClass.*;
-import static spring.myproject.utils.ConstClass.DB_ERROR_MESSAGE;
+
 @Order(1)
 @Slf4j
 @RestControllerAdvice(basePackageClasses = AttendController.class)

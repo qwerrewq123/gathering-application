@@ -11,15 +11,14 @@ import spring.myproject.dto.response.chat.query.MyChatRoomElement;
 import spring.myproject.entity.chat.ChatMessage;
 import spring.myproject.entity.chat.ChatParticipant;
 import spring.myproject.entity.chat.ChatRoom;
-import spring.myproject.dto.response.chat.*;
-import spring.myproject.exception.chat.NotFoundChatParticipantException;
-import spring.myproject.exception.chat.NotFoundChatRoomException;
+import spring.myproject.common.exception.chat.NotFoundChatParticipantException;
+import spring.myproject.common.exception.chat.NotFoundChatRoomException;
 import spring.myproject.repository.chat.ChatMessageRepository;
 import spring.myproject.repository.chat.ChatParticipantRepository;
 import spring.myproject.repository.chat.ChatRoomRepository;
 import spring.myproject.repository.chat.ReadStatusRepository;
 import spring.myproject.entity.user.User;
-import spring.myproject.exception.user.NotFoundUserException;
+import spring.myproject.common.exception.user.NotFoundUserException;
 import spring.myproject.repository.user.UserRepository;
 
 import java.util.List;

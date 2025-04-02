@@ -5,13 +5,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import spring.myproject.dto.response.alarm.AlarmResponseDto;
 import spring.myproject.entity.fcm.Alarm;
 import spring.myproject.repository.alarm.AlarmRepository;
 import spring.myproject.entity.user.User;
 import spring.myproject.repository.user.UserRepository;
-import spring.myproject.exception.alarm.NotFoundAlarmException;
-import spring.myproject.exception.user.NotFoundUserException;
+import spring.myproject.common.exception.alarm.NotFoundAlarmException;
+import spring.myproject.common.exception.user.NotFoundUserException;
 
 import java.util.List;
 

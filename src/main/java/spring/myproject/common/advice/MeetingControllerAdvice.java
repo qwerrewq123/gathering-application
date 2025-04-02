@@ -7,12 +7,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import spring.myproject.dto.response.ErrorResponse;
-import spring.myproject.exception.gathering.NotFoundGatheringException;
+import spring.myproject.common.exception.gathering.NotFoundGatheringException;
 import spring.myproject.controller.meeting.MeetingController;
-import spring.myproject.exception.meeting.MeetingIsNotEmptyException;
-import spring.myproject.exception.meeting.NotAuthorizeException;
-import spring.myproject.exception.meeting.NotFoundMeetingExeption;
-import spring.myproject.exception.user.NotFoundUserException;
+import spring.myproject.common.exception.meeting.MeetingIsNotEmptyException;
+import spring.myproject.common.exception.meeting.NotAuthorizeException;
+import spring.myproject.common.exception.meeting.NotFoundMeetingExeption;
+import spring.myproject.common.exception.user.NotFoundUserException;
 import spring.myproject.utils.AbstractErrorResponse;
 
 import static spring.myproject.utils.ConstClass.*;

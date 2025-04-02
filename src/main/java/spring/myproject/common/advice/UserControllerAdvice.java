@@ -6,9 +6,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import spring.myproject.common.exception.user.*;
 import spring.myproject.dto.response.ErrorResponse;
 import spring.myproject.controller.user.UserController;
-import spring.myproject.exception.user.*;
 import spring.myproject.utils.AbstractErrorResponse;
 
 import static spring.myproject.utils.ConstClass.*;
