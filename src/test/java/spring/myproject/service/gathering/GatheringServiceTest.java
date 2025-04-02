@@ -8,8 +8,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.web.multipart.MultipartFile;
-import spring.myproject.dto.request.gathering.GatheringRequestDto;
-import spring.myproject.dto.response.gathering.GatheringResponseDto;
 import spring.myproject.entity.category.Category;
 import spring.myproject.entity.gathering.Gathering;
 import spring.myproject.entity.user.Role;

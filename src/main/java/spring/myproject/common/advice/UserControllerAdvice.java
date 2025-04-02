@@ -1,17 +1,18 @@
 package spring.myproject.common.advice;
 
 import jakarta.mail.MessagingException;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import spring.myproject.common.dto.response.ErrorResponse;
+import spring.myproject.dto.response.ErrorResponse;
 import spring.myproject.controller.user.UserController;
 import spring.myproject.exception.user.*;
 import spring.myproject.utils.AbstractErrorResponse;
 
 import static spring.myproject.utils.ConstClass.*;
-
+@Order(1)
 @RestControllerAdvice(basePackageClasses = UserController.class)
 public class UserControllerAdvice {
     @ExceptionHandler(NotFoundUserException.class)
@@ -50,10 +51,5 @@ public class UserControllerAdvice {
                 AbstractErrorResponse.getErrorResponse(DUPLICATE_EMAIL_CODE, DUPLICATE_EMAIL_MESSAGE)
                 , HttpStatus.BAD_REQUEST);
     }
-    @ExceptionHandler(Exception.class)
-    ResponseEntity<ErrorResponse> handleException(){
-        return new ResponseEntity<>(
-                AbstractErrorResponse.getErrorResponse(DB_ERROR_CODE, DB_ERROR_MESSAGE)
-                , HttpStatus.BAD_REQUEST);
-    }
+
 }

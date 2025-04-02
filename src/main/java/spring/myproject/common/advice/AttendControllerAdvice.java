@@ -1,12 +1,13 @@
 package spring.myproject.common.advice;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import spring.myproject.controller.attend.AttendController;
-import spring.myproject.common.dto.response.ErrorResponse;
+import spring.myproject.dto.response.ErrorResponse;
 import spring.myproject.exception.meeting.NotFoundMeetingExeption;
 import spring.myproject.exception.user.NotFoundUserException;
 import spring.myproject.exception.attend.*;
@@ -14,7 +15,7 @@ import spring.myproject.utils.AbstractErrorResponse;
 
 import static spring.myproject.utils.ConstClass.*;
 import static spring.myproject.utils.ConstClass.DB_ERROR_MESSAGE;
-
+@Order(1)
 @Slf4j
 @RestControllerAdvice(basePackageClasses = AttendController.class)
 public class AttendControllerAdvice {
@@ -62,11 +63,5 @@ public class AttendControllerAdvice {
                 AbstractErrorResponse.getErrorResponse(ALWAYS_PERMIT_CODE, ALWAYS_PERMIT_MESSAGE)
                 , HttpStatus.BAD_REQUEST);
     }
-    @ExceptionHandler(Exception.class)
-    ResponseEntity<ErrorResponse> handleException(Exception e){
-        log.error(e.getMessage(), e);
-        return new ResponseEntity<>(
-                AbstractErrorResponse.getErrorResponse(DB_ERROR_CODE, DB_ERROR_MESSAGE)
-                , HttpStatus.BAD_REQUEST);
-    }
+
 }

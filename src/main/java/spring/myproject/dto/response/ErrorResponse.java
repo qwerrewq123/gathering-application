@@ -1,4 +1,4 @@
-package spring.myproject.common.dto.response;
+package spring.myproject.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

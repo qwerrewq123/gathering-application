@@ -6,7 +6,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import spring.myproject.dto.response.enrollment.EnrollResponseDto;
 import spring.myproject.entity.enrollment.Enrollment;
 import spring.myproject.entity.fcm.Topic;
 import spring.myproject.entity.gathering.Gathering;

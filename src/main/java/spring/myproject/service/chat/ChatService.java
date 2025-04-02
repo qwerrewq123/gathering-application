@@ -6,6 +6,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import spring.myproject.dto.response.chat.query.ChatMessageElement;
+import spring.myproject.dto.response.chat.query.ChatRoomElement;
+import spring.myproject.dto.response.chat.query.MyChatRoomElement;
 import spring.myproject.entity.chat.ChatMessage;
 import spring.myproject.entity.chat.ChatParticipant;
 import spring.myproject.entity.chat.ChatRoom;
@@ -98,22 +100,25 @@ public class ChatService {
         return ReadChatMessageResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE);
     }
 
-    public ChatRoomsResponse fetchChatRooms(Integer pageNum,String username) {
+    public ChatRoomResponse fetchChatRooms(Integer pageNum, String username) {
         User user = userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
         Long userId = user.getId();
         PageRequest pageRequest = PageRequest.of(pageNum, 5);
-        Page<ChatRoomResponse> page = chatRoomRepository.fetchChatRooms(pageRequest,userId);
-        return ChatRoomsResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE,page);
+        Page<ChatRoomElement> page = chatRoomRepository.fetchChatRooms(pageRequest,userId);
+        List<ChatRoomElement> content = page.getContent();
+        boolean hasNext = page.hasNext();
+        return ChatRoomResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE,content,hasNext);
     }
 
-    public ChatMyRoomsResponse fetchMyChatRooms(Integer pageNum, String username) {
+    public MyChatRoomResponse fetchMyChatRooms(Integer pageNum, String username) {
         User user = userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
         Long userId = user.getId();
         PageRequest pageRequest = PageRequest.of(pageNum, 5);
-        Page<ChatMyRoomResponse> page = chatRoomRepository.fetchMyChatRooms(pageRequest,userId);
-        return ChatMyRoomsResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE,page);
+        Page<MyChatRoomElement> page = chatRoomRepository.fetchMyChatRooms(pageRequest,userId);
+        List<MyChatRoomElement> content = page.getContent();
+        boolean hasNext = page.hasNext();
+        return MyChatRoomResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE,content,hasNext);
     }
-
 
 
     public boolean isRoomParticipant(String username, long roomId) {

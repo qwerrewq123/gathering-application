@@ -6,7 +6,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import spring.myproject.dto.response.like.LikeResponseDto;
 import spring.myproject.entity.gathering.Gathering;
 import spring.myproject.entity.like.Like;
 import spring.myproject.entity.user.Role;
@@ -18,7 +17,6 @@ import spring.myproject.exception.user.NotFoundUserException;
 import spring.myproject.repository.gathering.GatheringRepository;
 import spring.myproject.repository.like.LikeRepository;
 import spring.myproject.repository.user.UserRepository;
-import spring.myproject.utils.ConstClass;
 
 import java.util.Optional;
 

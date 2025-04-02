@@ -69,7 +69,7 @@ class ChatMessageRepositoryTest {
         chatMessageRepository.saveAll(chatMessages);
         readStatusRepository.saveAll(readStatuses);
 
-        List<ChatMessage> fetchChatMessages = chatMessageRepository.findByChatRoomAndChatParticipant(chatRoom, chatParticipant1);
+        List<ChatMessage> fetchChatMessages = chatMessageRepository.findChatMessageByChatRoom(chatRoom);
         assertThat(fetchChatMessages).hasSize(5);
         assertThat(fetchChatMessages).extracting("content")
                 .containsExactly(
@@ -109,9 +109,9 @@ class ChatMessageRepositoryTest {
         chatMessageRepository.saveAll(chatMessages);
         readStatusRepository.saveAll(readStatuses);
 
-        List<ChatMessageElement> chatMessageRespons = chatMessageRepository.fetchMessages(chatRoom.getId(), chatParticipant1.getId());
-        assertThat(chatMessageRespons.size()).isEqualTo(5);
-        assertThat(chatMessageRespons).extracting("content")
+        List<ChatMessageElement> chatMessageResponse = chatMessageRepository.fetchMessages(chatRoom.getId(), chatParticipant1.getId());
+        assertThat(chatMessageResponse.size()).isEqualTo(5);
+        assertThat(chatMessageResponse).extracting("content")
                 .containsExactly(
                         "content1","content2","content3","content4","content5"
                 );

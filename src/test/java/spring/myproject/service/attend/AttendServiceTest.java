@@ -28,6 +28,7 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static spring.myproject.dto.response.attend.AttendResponseDto.*;
 import static spring.myproject.utils.ConstClass.*;
 
 @SpringBootTest
@@ -41,8 +42,6 @@ public class AttendServiceTest {
     AttendRepository attendRepository;
     @MockitoBean
     MeetingRepository meetingRepository;
-    @Autowired
-    private MeetingService meetingService;
 
     @Test
     public void addAttend() {

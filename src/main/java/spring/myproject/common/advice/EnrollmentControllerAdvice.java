@@ -1,5 +1,6 @@
 package spring.myproject.common.advice;
 
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -7,13 +8,13 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import spring.myproject.controller.enrollment.EnrollmentController;
 import spring.myproject.exception.enrollment.AlreadyEnrollmentException;
 import spring.myproject.exception.enrollment.NotFoundEnrollmentException;
-import spring.myproject.common.dto.response.ErrorResponse;
+import spring.myproject.dto.response.ErrorResponse;
 import spring.myproject.exception.gathering.NotFoundGatheringException;
 import spring.myproject.exception.user.NotFoundUserException;
 import spring.myproject.utils.AbstractErrorResponse;
 
 import static spring.myproject.utils.ConstClass.*;
-
+@Order(1)
 @RestControllerAdvice(basePackageClasses = EnrollmentController.class)
 public class EnrollmentControllerAdvice {
     @ExceptionHandler(NotFoundUserException.class)
@@ -40,10 +41,5 @@ public class EnrollmentControllerAdvice {
                 AbstractErrorResponse.getErrorResponse(NOT_FOUND_ENROLLMENT_CODE, NOT_FOUND_ENROLLMENT_MESSAGE)
                 , HttpStatus.BAD_REQUEST);
     }
-    @ExceptionHandler(Exception.class)
-    ResponseEntity<ErrorResponse> handleException(){
-        return new ResponseEntity<>(
-                AbstractErrorResponse.getErrorResponse(DB_ERROR_CODE, DB_ERROR_MESSAGE)
-                , HttpStatus.BAD_REQUEST);
-    }
+
 }

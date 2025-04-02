@@ -1,12 +1,13 @@
 package spring.myproject.common.advice;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import spring.myproject.exception.category.NotFoundCategoryException;
-import spring.myproject.common.dto.response.ErrorResponse;
+import spring.myproject.dto.response.ErrorResponse;
 import spring.myproject.controller.gathering.GatheringController;
 import spring.myproject.exception.gathering.NotFoundGatheringException;
 import spring.myproject.exception.meeting.NotAuthorizeException;
@@ -17,6 +18,7 @@ import java.io.IOException;
 
 import static spring.myproject.utils.ConstClass.*;
 @Slf4j
+@Order(1)
 @RestControllerAdvice(basePackageClasses = GatheringController.class)
 public class GatheringControllerAdvice {
     @ExceptionHandler(NotFoundUserException.class)
@@ -49,11 +51,5 @@ public class GatheringControllerAdvice {
                 AbstractErrorResponse.getErrorResponse(UPLOAD_FAIL_CODE, UPLOAD_FAIL_MESSAGE)
                 , HttpStatus.BAD_REQUEST);
     }
-    @ExceptionHandler(Exception.class)
-    ResponseEntity<ErrorResponse> handleException(Exception e){
-        log.error(e.getMessage(), e);
-        return new ResponseEntity<>(
-                AbstractErrorResponse.getErrorResponse(DB_ERROR_CODE, DB_ERROR_MESSAGE)
-                , HttpStatus.BAD_REQUEST);
-    }
+
 }

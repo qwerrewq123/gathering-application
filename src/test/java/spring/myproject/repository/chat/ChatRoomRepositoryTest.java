@@ -6,10 +6,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
+import spring.myproject.dto.response.chat.query.MyChatRoomElement;
 import spring.myproject.entity.chat.ChatParticipant;
 import spring.myproject.entity.chat.ChatRoom;
-import spring.myproject.dto.response.chat.ChatMyRoomResponse;
-import spring.myproject.dto.response.chat.ChatRoomResponse;
+import spring.myproject.dto.response.chat.query.ChatRoomElement;
 import spring.myproject.entity.image.Image;
 import spring.myproject.repository.image.ImageRepository;
 import spring.myproject.entity.user.User;
@@ -56,7 +56,7 @@ class ChatRoomRepositoryTest {
         chatParticipantRepository.saveAll(List.of(createChatParticipant1,createChatParticipant2,createChatParticipant3,createChatParticipant4,createChatParticipant5));
         chatParticipantRepository.saveAll(List.of(chatParticipant1,chatParticipant2,chatParticipant3));
         //TODO : 쿼리수정
-        Page<ChatRoomResponse> page = chatRoomRepository.fetchChatRooms(PageRequest.of(0, 2), user2.getId());
+        Page<ChatRoomElement> page = chatRoomRepository.fetchChatRooms(PageRequest.of(0, 2), user2.getId());
         assertThat(page.getTotalPages()).isEqualTo(4);
         assertThat(page.getTotalElements()).isEqualTo(8);
     }
@@ -87,7 +87,7 @@ class ChatRoomRepositoryTest {
         chatParticipantRepository.saveAll(List.of(createChatParticipant1,createChatParticipant2,createChatParticipant3,createChatParticipant4,createChatParticipant5));
         chatParticipantRepository.saveAll(List.of(chatParticipant1,chatParticipant2,chatParticipant3));
         //TODO : 쿼리수정
-        Page<ChatMyRoomResponse> page = chatRoomRepository.fetchMyChatRooms(PageRequest.of(0, 2), user2.getId());
+        Page<MyChatRoomElement> page = chatRoomRepository.fetchMyChatRooms(PageRequest.of(0, 2), user2.getId());
 
         assertThat(page.getTotalPages()).isEqualTo(2);
         assertThat(page.getTotalElements()).isEqualTo(3);
