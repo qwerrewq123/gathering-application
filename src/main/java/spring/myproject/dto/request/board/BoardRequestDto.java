@@ -32,4 +32,15 @@ public class BoardRequestDto {
                     .build();
         }
     }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class UpdateBoardRequest{
+        @NotBlank(message = "cannot blank or null or space")
+        private String title;
+        @NotBlank(message = "cannot blank or null or space")
+        private String description;
+    }
 }

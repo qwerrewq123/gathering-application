@@ -8,6 +8,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
+import spring.myproject.dto.request.board.BoardRequestDto;
 import spring.myproject.dto.request.fcm.TopicNotificationRequestDto;
 import spring.myproject.dto.response.board.querydto.BoardQuery;
 import spring.myproject.dto.response.board.querydto.BoardsQuery;
@@ -34,6 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static spring.myproject.dto.request.board.BoardRequestDto.*;
+import static spring.myproject.dto.response.board.BoardResponseDto.*;
 import static spring.myproject.utils.ConstClass.*;
 
 @Service
@@ -79,7 +81,11 @@ public class BoardService {
                 .url("localhost:8080/gathering/"+gatheringId)
                 .img(null)
                 .build(),topic);
-        return AddBoardResponse.of(SUCCESS_CODE, SUCCESS_MESSAGE);
+        return AddBoardResponse.of(SUCCESS_CODE, SUCCESS_MESSAGE, board.getId());
+    }
+
+    public UpdateBoardResponse updateBoard(String username, AddBoardRequest addBoardRequest, List<MultipartFile> files, Long gatheringId) {
+        return null;
     }
 
     public BoardsResponse fetchBoards(Long gatheringId, String username, Integer pageNum, Integer pageSize) {
@@ -126,5 +132,4 @@ public class BoardService {
         }
         return images;
     }
-
 }
