@@ -25,6 +25,7 @@ class UserRepositoryTest {
     ImageRepository imageRepository;
     @Autowired
     EntityManager em;
+
     @Test
     void findByUsername(){
         Image image1 = returnDummyImage(1);
