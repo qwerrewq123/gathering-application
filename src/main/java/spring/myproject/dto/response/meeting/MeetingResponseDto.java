@@ -4,7 +4,9 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import spring.myproject.common.functional.MyFunctionalInterface;
 import spring.myproject.dto.response.meeting.querydto.MeetingDetailQuery;
+import spring.myproject.dto.response.meeting.querydto.MeetingsQuery;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -114,6 +116,20 @@ public class MeetingResponseDto {
         private String content;
         private int count;
         private String url;
+
+        public static MeetingElement from(MeetingsQuery meetingsQuery, MyFunctionalInterface myFunctionalInterface){
+            return MeetingElement.builder()
+                    .id(meetingsQuery.getId())
+                    .title(meetingsQuery.getTitle())
+                    .createdBy(meetingsQuery.getCreatedBy())
+                    .boardDate(meetingsQuery.getBoardDate())
+                    .startDate(meetingsQuery.getStartDate())
+                    .endDate(meetingsQuery.getEndDate())
+                    .content(meetingsQuery.getContent())
+                    .count(meetingsQuery.getCount())
+                    .url(myFunctionalInterface.execute(meetingsQuery.getUrl()))
+                    .build();
+        }
     }
 
 }

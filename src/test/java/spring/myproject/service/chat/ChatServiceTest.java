@@ -6,8 +6,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import spring.myproject.dto.response.chat.AddChatRoomResponse;
-import spring.myproject.dto.response.chat.LeaveChatResponse;
 import spring.myproject.entity.chat.ChatParticipant;
 import spring.myproject.entity.chat.ChatRoom;
 import spring.myproject.entity.user.Role;

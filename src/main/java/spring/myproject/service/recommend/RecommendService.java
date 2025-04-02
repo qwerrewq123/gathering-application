@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static spring.myproject.dto.response.gathering.GatheringResponseDto.*;
 import static spring.myproject.utils.ConstClass.*;
@@ -29,7 +30,6 @@ import static spring.myproject.utils.ConstClass.*;
 public class RecommendService {
 
     private final GatheringRepository gatheringRepository;
-    private final UserRepository userRepository;
     private final RecommendRepository recommendRepository;
     @Value("${server.url}")
     private String url;
@@ -39,40 +39,10 @@ public class RecommendService {
     }
     @Cacheable(value = "recommend",key="#localDate")
     public RecommendResponse fetchRecommendTop10(LocalDate localDate) {
-            List<GatheringsQuery> gatheringQueryDtos = gatheringRepository.gatheringsRecommend(localDate);
-//            List<GatheringResponse> gatheringResponses = getGatheringResponses(gatheringQueryDtos);
-            return RecommendResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE,gatheringQueryDtos);
-    }
-
-    private List<GatheringResponse> getGatheringResponses(List<GatheringDetailQuery> gatheringQueryDtos){
-        Map<Long, List<GatheringDetailQuery>> groupedById = gatheringQueryDtos.stream()
-                .collect(Collectors.groupingBy(GatheringDetailQuery::getId));
-
-        return groupedById.values().stream()
-                .map(group -> {
-                    GatheringDetailQuery representative = group.get(0);
-                    List<String> participatedBy = group.stream()
-                            .map(GatheringDetailQuery::getParticipatedBy)
-                            .filter(Objects::nonNull)
-                            .collect(Collectors.toList());
-                    GatheringResponse response = new GatheringResponse();
-                    response.setCode("SU"); // 기본값 설정 (필요 시 변경)
-                    response.setMessage("Success");
-                    response.setTitle(representative.getTitle());
-                    response.setContent(representative.getContent());
-                    response.setRegisterDate(representative.getRegisterDate());
-                    response.setCategory(representative.getCategory());
-                    response.setCreatedBy(representative.getCreatedBy());
-                    response.setParticipatedBy(participatedBy);
-                    response.setCount(representative.getCount());
-                    response.setImage(getUrl(representative.getUrl()));
-                    return response;
-                })
-                .collect(Collectors.toList());
-    }
-
-    private String getUrl(String fileUrl){
-        return url+fileUrl;
+            List<GatheringsQuery> gatheringsQueries = gatheringRepository.gatheringsRecommend(localDate);
+        List<GatheringsResponse> content = gatheringsQueries.stream().map(query -> GatheringsResponse.from(query, (fileUrl) -> (url + fileUrl)))
+                .toList();
+        return RecommendResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE,content);
     }
 
 }

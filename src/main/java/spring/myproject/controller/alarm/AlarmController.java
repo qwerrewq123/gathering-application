@@ -5,10 +5,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import spring.myproject.common.Username;
-import spring.myproject.dto.response.alarm.AlarmResponsePage;
-import spring.myproject.dto.response.alarm.CheckAlarmResponse;
-import spring.myproject.dto.response.alarm.DeleteAlarmResponse;
+import spring.myproject.dto.response.alarm.AlarmResponseDto;
 import spring.myproject.service.alarm.AlarmService;
+
+import static spring.myproject.dto.response.alarm.AlarmResponseDto.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -31,11 +31,11 @@ public class AlarmController {
     }
 
     @GetMapping("/alarm")
-    public ResponseEntity<Object> alarmList(@RequestParam int page,
+    public ResponseEntity<AlarmResponses> alarmList(@RequestParam int page,
                                             @Username String username,
                                             @RequestParam Boolean checked){
 
-        AlarmResponsePage alarmResponsePage = alarmService.alarmList(page, username, checked);
-        return new ResponseEntity<>(alarmResponsePage, HttpStatus.OK);
+        AlarmResponses alarmResponses = alarmService.alarmList(page, username, checked);
+        return new ResponseEntity<>(alarmResponses, HttpStatus.OK);
     }
 }

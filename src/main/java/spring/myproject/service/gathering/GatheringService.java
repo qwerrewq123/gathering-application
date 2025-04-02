@@ -11,8 +11,8 @@ import spring.myproject.dto.response.gathering.querydto.MainGatheringsQuery;
 import spring.myproject.dto.response.gathering.querydto.GatheringDetailQuery;
 import spring.myproject.dto.response.gathering.querydto.GatheringsQuery;
 import spring.myproject.entity.category.Category;
-import spring.myproject.dto.response.gathering.*;
 import spring.myproject.entity.fcm.Topic;
+import spring.myproject.utils.mapper.GatheringFactory;
 import spring.myproject.repository.category.CategoryRepository;
 import spring.myproject.entity.enrollment.Enrollment;
 import spring.myproject.repository.enrollment.EnrollmentRepository;
@@ -127,23 +127,10 @@ public class GatheringService {
 
     }
 
-    private GatheringResponse getGatheringResponse(List<GatheringDetailQuery> gatheringDetailQueries) throws IOException {
+    private GatheringResponse getGatheringResponse(List<GatheringDetailQuery> gatheringDetailQueries){
 
-        GatheringResponse gatheringResponse = GatheringResponse.builder()
-                .code("SU")
-                .message("Success")
-                .title(gatheringDetailQueries.getFirst().getTitle())
-                .content(gatheringDetailQueries.getFirst().getContent())
-                .registerDate(gatheringDetailQueries.getFirst().getRegisterDate())
-                .category(gatheringDetailQueries.getFirst().getCategory())
-                .createdBy(gatheringDetailQueries.getFirst().getCreatedBy())
-                .image(getUrl(gatheringDetailQueries.getFirst().getUrl()))
-                .count(gatheringDetailQueries.getFirst().getCount())
-                .participatedBy(new ArrayList<>())
-                .participatedByNickname(new ArrayList<>())
-                .participatedByUrl(new ArrayList<>())
-                .build();
-
+        GatheringResponse gatheringResponse = GatheringFactory.toGatheringResponse(gatheringDetailQueries
+                ,(fileUrl)->url+fileUrl);
         for (GatheringDetailQuery gatheringDetailQuery : gatheringDetailQueries) {
             if(StringUtils.hasText(gatheringDetailQuery.getParticipatedBy())){
                 gatheringResponse.getParticipatedByUrl().add(gatheringDetailQuery.getParticipatedBy());
@@ -159,30 +146,14 @@ public class GatheringService {
     }
 
     private List<GatheringsResponse> toContent(Page<GatheringsQuery> page) {
-        return page.map(g ->
-                GatheringsResponse.builder()
-                        .id(g.getId())
-                        .title(g.getTitle())
-                        .createdBy(g.getCreatedBy())
-                        .registerDate(g.getRegisterDate())
-                        .category(g.getCategory())
-                        .content(g.getContent())
-                        .count(g.getCount())
-                        .url(getUrl(g.getUrl()))
-                        .build()).getContent();
+
+        return page.map(g->GatheringsResponse.from(g,(fileUrl)->url+fileUrl))
+                .getContent();
     }
-    private List<GatheringsQuery> toGatheringQueriesList(List<MainGatheringsQuery> entireGatheringsQueries) {
-        return entireGatheringsQueries.stream()
-                .map(q -> GatheringsQuery.builder()
-                        .id(q.getId())
-                        .title(q.getTitle())
-                        .content(q.getContent())
-                        .registerDate(q.getRegisterDate())
-                        .category(q.getCategory())
-                        .createdBy(q.getCreatedBy())
-                        .url(q.getUrl())
-                        .count(q.getCount())
-                        .build())
+
+    private List<GatheringsQuery> toGatheringQueriesList(List<MainGatheringsQuery> mainGatheringsQueries) {
+        return mainGatheringsQueries.stream()
+                .map(query -> GatheringsQuery.of(query))
                 .collect(Collectors.toList());
     }
 
@@ -203,16 +174,7 @@ public class GatheringService {
     }
     private MainGatheringElement toGatheringsResponse(GatheringsQuery gatheringsQuery) {
 
-        return MainGatheringElement.builder().id(gatheringsQuery.getId())
-                .title(gatheringsQuery.getTitle())
-                .content(gatheringsQuery.getContent())
-                .registerDate(gatheringsQuery.getRegisterDate())
-                .category(gatheringsQuery.getCategory())
-                .createdBy(gatheringsQuery.getCreatedBy())
-                .count(gatheringsQuery.getCount())
-                .url(gatheringsQuery.getUrl())
-                .build();
-
+        return MainGatheringElement.from(gatheringsQuery, (fileUrl)->url+fileUrl);
     }
 
     private CategoryTotalGatherings processCategoryElements(List<MainGatheringElement> elements) {
@@ -228,15 +190,8 @@ public class GatheringService {
     }
 
     private MainGatheringResponse toMainGatheringResponse(Map<String, CategoryTotalGatherings> categoryMap) {
-        return MainGatheringResponse.builder()
-                .code(SUCCESS_CODE)
-                .message(SUCCESS_MESSAGE)
-                .map(categoryMap)
-                .build();
+        return MainGatheringResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE,categoryMap);
     }
-
-
-
 
     private Image saveImage(Image image,MultipartFile file) throws IOException {
         if(!file.isEmpty()){
@@ -250,7 +205,4 @@ public class GatheringService {
         return image;
     }
 
-    private String getUrl(String fileUrl){
-        return url+fileUrl;
-    }
 }

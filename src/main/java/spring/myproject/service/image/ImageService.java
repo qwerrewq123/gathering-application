@@ -22,6 +22,7 @@ import static spring.myproject.utils.ConstClass.SUCCESS_MESSAGE;
 public class ImageService {
     private final S3ImageDownloadService s3ImageDownloadService;
     private final ImageRepository imageRepository;
+
     @Value("${server.url}")
     private String url;
     public Resource image(String imageUrl) throws IOException {

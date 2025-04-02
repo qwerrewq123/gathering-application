@@ -21,4 +21,17 @@ public class GatheringsQuery {
     private String createdBy;
     private String url;
     private int count;
+
+    public static GatheringsQuery of(MainGatheringsQuery mainGatheringsQuery){
+        return GatheringsQuery.builder()
+                .id(mainGatheringsQuery.getId())
+                .title(mainGatheringsQuery.getTitle())
+                .content(mainGatheringsQuery.getContent())
+                .registerDate(mainGatheringsQuery.getRegisterDate())
+                .category(mainGatheringsQuery.getCategory())
+                .createdBy(mainGatheringsQuery.getCreatedBy())
+                .url(mainGatheringsQuery.getUrl())
+                .count(mainGatheringsQuery.getCount())
+                .build();
+    }
 }

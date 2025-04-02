@@ -8,7 +8,7 @@ import spring.myproject.entity.chat.ChatMessage;
 import spring.myproject.entity.chat.ChatParticipant;
 import spring.myproject.entity.chat.ChatRoom;
 import spring.myproject.entity.chat.ReadStatus;
-import spring.myproject.dto.response.chat.ChatMessageResponse;
+import spring.myproject.dto.response.chat.query.ChatMessageElement;
 import spring.myproject.entity.image.Image;
 import spring.myproject.repository.image.ImageRepository;
 import spring.myproject.entity.user.User;
@@ -109,9 +109,9 @@ class ChatMessageRepositoryTest {
         chatMessageRepository.saveAll(chatMessages);
         readStatusRepository.saveAll(readStatuses);
 
-        List<ChatMessageResponse> chatMessageResponses = chatMessageRepository.fetchMessages(chatRoom.getId(), chatParticipant1.getId());
-        assertThat(chatMessageResponses.size()).isEqualTo(5);
-        assertThat(chatMessageResponses).extracting("content")
+        List<ChatMessageElement> chatMessageRespons = chatMessageRepository.fetchMessages(chatRoom.getId(), chatParticipant1.getId());
+        assertThat(chatMessageRespons.size()).isEqualTo(5);
+        assertThat(chatMessageRespons).extracting("content")
                 .containsExactly(
                         "content1","content2","content3","content4","content5"
                 );

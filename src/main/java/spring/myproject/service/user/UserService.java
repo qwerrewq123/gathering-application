@@ -13,8 +13,8 @@ import org.springframework.web.multipart.MultipartFile;
 import spring.myproject.async.AsyncService;
 import spring.myproject.entity.image.Image;
 import spring.myproject.exception.user.*;
+import spring.myproject.utils.mapper.UserFactory;
 import spring.myproject.repository.image.ImageRepository;
-import spring.myproject.entity.user.Role;
 import spring.myproject.entity.user.User;
 import spring.myproject.repository.user.UserRepository;
 import spring.myproject.provider.JwtProvider;
@@ -51,18 +51,12 @@ public class UserService {
 
         boolean idCheck = !userRepository.existsByUsername(idCheckRequest.getUsername());
         if(!idCheck) throw new ExistUserException("user Exist!!");
-        return IdCheckResponse.builder()
-                .code(SUCCESS_CODE)
-                .message(SUCCESS_MESSAGE)
-                .build();
+        return IdCheckResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE);
     }
     public NicknameCheckResponse nicknameCheck(NicknameCheckRequest nicknameCheckRequest) {
         boolean nicknameCheck = !userRepository.existsByNickname(nicknameCheckRequest.getNickname());
         if(!nicknameCheck) throw new ExistUserException("user Exist!!");
-        return NicknameCheckResponse.builder()
-                .code(SUCCESS_CODE)
-                .message(SUCCESS_MESSAGE)
-                .build();
+        return NicknameCheckResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE);
 
     }
 
@@ -77,28 +71,12 @@ public class UserService {
                         .build();
             }
             imageRepository.save(image);
-            User user = User.builder()
-                    .age(signUpRequest.getAge())
-                    .email(signUpRequest.getEmail())
-                    .hobby(signUpRequest.getHobby())
-                    .address(signUpRequest.getAddress())
-                    .username(signUpRequest.getUsername())
-                    .password(passwordEncoder.encode(signUpRequest.getPassword()))
-                    .role(Role.USER)
-                    .profileImage(image)
-                    .nickname(signUpRequest.getNickname())
-                    .build();
+            User user = UserFactory.toUser(signUpRequest,image,passwordEncoder);
             userRepository.save(user);
-            return SignUpResponse.builder()
-                    .code(SUCCESS_CODE)
-                    .message(SUCCESS_MESSAGE)
-                    .build();
+            return SignUpResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE);
         }catch (Exception e){
             log.error("error", e);
-            return SignUpResponse.builder()
-                    .code(DB_ERROR_CODE)
-                    .message(DB_ERROR_MESSAGE)
-                    .build();
+            return SignUpResponse.of(DB_ERROR_CODE,DB_ERROR_MESSAGE);
         }
     }
 
@@ -114,11 +92,7 @@ public class UserService {
             Cookie cookie = getCookie("refreshToken", refreshToken,refreshExpiration);
             response.addCookie(cookie);
             user.changeRefreshToken(refreshToken);
-            return SignInResponse.builder()
-                    .code(SUCCESS_CODE)
-                    .message(SUCCESS_MESSAGE)
-                    .accessToken(accessToken)
-                    .build();
+            return SignInResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE,accessToken);
     }
 
     public EmailCertificationResponse emailCertification(EmailCertificationRequest emailCertificationRequest) {
@@ -127,10 +101,7 @@ public class UserService {
             if(users.isEmpty()) throw new NotFoundEmailExeption("Not Found Email");
             if(users.size()>1) throw new DuplicateEmailExeption("Duplicate Email");
             asyncService.asyncTask(emailCertificationRequest);
-            return EmailCertificationResponse.builder()
-                        .code(SUCCESS_CODE)
-                        .message(SUCCESS_MESSAGE)
-                        .build();
+            return EmailCertificationResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE);
     }
 
 
@@ -146,17 +117,10 @@ public class UserService {
             user.changeRefreshToken(issuedRefreshToken);
             Cookie cookie = getCookie("refreshToken", refreshToken,refreshExpiration);
             response.addCookie(cookie);
-            return GenerateTokenResponse.builder()
-                    .code(SUCCESS_CODE)
-                    .message(SUCCESS_MESSAGE)
-                    .accessToken(accessToken)
-                    .build();
+            return GenerateTokenResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE, accessToken);
 
         }catch (Exception e){
-            return GenerateTokenResponse.builder()
-                    .code(UN_VALID_TOKEN)
-                    .message(UN_VALID_TOKEN_MESSAGE)
-                    .build();
+            return GenerateTokenResponse.of(UN_VALID_TOKEN,UN_VALID_TOKEN_MESSAGE,null);
         }
     }
 
