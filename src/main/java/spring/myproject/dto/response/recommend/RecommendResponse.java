@@ -4,8 +4,11 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import spring.myproject.dto.response.gathering.GatheringResponseDto;
 
 import java.util.List;
+
+import static spring.myproject.dto.response.gathering.GatheringResponseDto.*;
 
 @Data
 @Builder
@@ -15,9 +18,9 @@ public class RecommendResponse {
 
     private String code;
     private String message;
-    List<GatheringsQuery> gatherings;
+    List<GatheringsResponse> content;
 
-    public static RecommendResponse of(String code, String message, List<GatheringsQuery> gatherings) {
-        return new RecommendResponse(code, message, gatherings);
+    public static RecommendResponse of(String code, String message, List<GatheringsResponse> content) {
+        return new RecommendResponse(code, message, content);
     }
 }

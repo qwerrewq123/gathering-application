@@ -8,7 +8,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
-import spring.myproject.dto.request.board.BoardRequestDto;
 import spring.myproject.dto.request.fcm.TopicNotificationRequestDto;
 import spring.myproject.dto.response.board.querydto.BoardQuery;
 import spring.myproject.dto.response.board.querydto.BoardsQuery;
@@ -81,11 +80,7 @@ public class BoardService {
                 .url("localhost:8080/gathering/"+gatheringId)
                 .img(null)
                 .build(),topic);
-        return AddBoardResponse.of(SUCCESS_CODE, SUCCESS_MESSAGE, board.getId());
-    }
-
-    public UpdateBoardResponse updateBoard(String username, AddBoardRequest addBoardRequest, List<MultipartFile> files, Long gatheringId) {
-        return null;
+        return AddBoardResponse.of(SUCCESS_CODE, SUCCESS_MESSAGE,board.getId());
     }
 
     public BoardsResponse fetchBoards(Long gatheringId, String username, Integer pageNum, Integer pageSize) {
@@ -94,7 +89,13 @@ public class BoardService {
         if(enrollmentRepository.findByGatheringAndEnrolledBy(gathering,user).isEmpty()) throw new NotAuthorizeException("no Authorize to fetch board");
         PageRequest pageRequest = PageRequest.of(pageNum, pageSize);
         Page<BoardsQuery> page = boardRepository.fetchBoards(pageRequest);
-        return BoardsResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE,page);
+        List<BoardElement> content = toContent(page);
+        boolean hasNext = page.hasNext();
+        return BoardsResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE,content,hasNext);
+    }
+
+    private List<BoardElement> toContent(Page<BoardsQuery> page) {
+        return page.map(query -> BoardElement.from(query)).getContent();
     }
 
     private String getUserImageUrl(List<BoardQuery> boardQueries){
@@ -132,4 +133,5 @@ public class BoardService {
         }
         return images;
     }
+
 }

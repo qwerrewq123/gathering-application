@@ -29,11 +29,11 @@ public class ChatParticipant {
         this.status = status;
     }
 
-    public static ChatParticipant of(ChatRoom chatRoom,User user){
+    public static ChatParticipant of(ChatRoom chatRoom,User user,boolean status){
         return ChatParticipant.builder()
                 .chatRoom(chatRoom)
                 .user(user)
-                .status(false)
+                .status(status)
                 .build();
     }
 

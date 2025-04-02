@@ -18,7 +18,7 @@ public class RecommendController {
     private final RecommendService recommendService;
 
     @GetMapping("/recommend")
-    public ResponseEntity<Object> recommend(@Username String username){
+    public ResponseEntity<Object> recommend(){
 
         RecommendResponse recommendResponse = recommendService.fetchRecommendTop10(LocalDateTime.now().toLocalDate());
         return new ResponseEntity<>(recommendResponse, HttpStatus.OK);

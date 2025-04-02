@@ -1,4 +1,4 @@
-package spring.myproject.dto.response.chat;
+package spring.myproject.dto.response.chat.query;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ChatMessageResponse {
+public class ChatMessageElement {
     private Long roomId;
     private String content;
     private String username;

@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public class BoardResponseDto {
+
     @AllArgsConstructor
     @NoArgsConstructor
     @Data
@@ -24,20 +25,6 @@ public class BoardResponseDto {
         private Long id;
         public static AddBoardResponse of(String successCode, String successMessage,Long id) {
             return new AddBoardResponse(successCode,successMessage,id);
-        }
-    }
-
-    @AllArgsConstructor
-    @NoArgsConstructor
-    @Data
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    public static class UpdateBoardResponse {
-
-        private String code;
-        private String message;
-        private Long id;
-        public static UpdateBoardResponse of(String successCode, String successMessage,Long id) {
-            return new UpdateBoardResponse(successCode,successMessage,id);
         }
     }
 
@@ -81,7 +68,7 @@ public class BoardResponseDto {
         private List<BoardElement> content;
         boolean hasNext;
 
-        public static BoardsResponse of(String code, String message, List<BoardElement> content, boolean hasNext) {
+        public static BoardsResponse of(String code, String message, List<BoardElement> content,boolean hasNext) {
             return BoardsResponse.builder()
                     .code(code)
                     .message(message)
@@ -91,15 +78,27 @@ public class BoardResponseDto {
         }
     }
 
-
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
+    @Builder
     public static class BoardElement {
         private String title;
         private String description;
         private String username;
         private String content;
         private LocalDateTime registerDate;
+
+        public static BoardElement from(BoardsQuery boardsQuery){
+            return BoardElement.builder()
+                    .title(boardsQuery.getTitle())
+                    .description(boardsQuery.getDescription())
+                    .username(boardsQuery.getUsername())
+                    .content(boardsQuery.getContent())
+                    .registerDate(boardsQuery.getRegisterDate())
+                    .build();
+
+
+        }
     }
 }

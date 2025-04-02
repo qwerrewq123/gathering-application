@@ -5,17 +5,17 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import spring.myproject.dto.response.alarm.AlarmResponseDto;
 import spring.myproject.entity.fcm.Alarm;
-import spring.myproject.dto.response.alarm.AlarmResponse;
-import spring.myproject.dto.response.alarm.AlarmResponsePage;
-import spring.myproject.dto.response.alarm.CheckAlarmResponse;
-import spring.myproject.dto.response.alarm.DeleteAlarmResponse;
 import spring.myproject.repository.alarm.AlarmRepository;
 import spring.myproject.entity.user.User;
 import spring.myproject.repository.user.UserRepository;
 import spring.myproject.exception.alarm.NotFoundAlarmException;
 import spring.myproject.exception.user.NotFoundUserException;
 
+import java.util.List;
+
+import static spring.myproject.dto.response.alarm.AlarmResponseDto.*;
 import static spring.myproject.utils.ConstClass.*;
 
 @RequiredArgsConstructor
@@ -40,30 +40,24 @@ public class AlarmService {
             alarmRepository.delete(alarm);
             return DeleteAlarmResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE);
     }
-    public AlarmResponsePage alarmList(Integer page, String username, Boolean checked) {
+    public AlarmResponses alarmList(Integer page, String username, Boolean checked) {
 
             User user = userRepository.findByUsername(username).orElseThrow(()-> new NotFoundUserException("no exist User!!"));
-            Page<AlarmResponse> alarmResponsePage = getAlarmResponses(page, user,checked);
-            return AlarmResponsePage.of(SUCCESS_CODE,SUCCESS_MESSAGE,alarmResponsePage);
+            return toAlarmResponses(page-1,user,checked);
     }
 
-    private Page<AlarmResponse> getAlarmResponses(Integer page, User user,boolean checked) {
+    private AlarmResponses toAlarmResponses(Integer pageNum, User user,boolean checked) {
+        Page<Alarm> page = null;
         if(checked == true){
-            PageRequest pageRequest = PageRequest.of(page - 1, 10);
-            Page<Alarm> alarmPage = alarmRepository.findCheckedAlarmPage(pageRequest, user.getId());
-            return alarmPage.map(a -> AlarmResponse.builder()
-                    .date(a.getDate())
-                    .content(a.getContent())
-                    .checked(a.getChecked())
-                    .build());
+            PageRequest pageRequest = PageRequest.of(pageNum - 1, 10);
+            page = alarmRepository.findCheckedAlarmPage(pageRequest, user.getId());
         }else{
-            PageRequest pageRequest = PageRequest.of(page - 1, 10);
-            Page<Alarm> alarmPage = alarmRepository.findUncheckedAlarmPage(pageRequest, user.getId());
-            return alarmPage.map(a -> AlarmResponse.builder()
-                    .date(a.getDate())
-                    .content(a.getContent())
-                    .checked(a.getChecked())
-                    .build());
+            PageRequest pageRequest = PageRequest.of(pageNum - 1, 10);
+            page = alarmRepository.findUncheckedAlarmPage(pageRequest, user.getId());
         }
+        boolean hasNext = page.hasNext();
+        List<AlarmElement> content = page.map(alarm -> AlarmElement.from(alarm)).getContent();
+        return AlarmResponses.of(SUCCESS_CODE,SUCCESS_MESSAGE,content,hasNext);
+
     }
 }

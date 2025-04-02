@@ -29,6 +29,7 @@ import spring.myproject.exception.meeting.NotAuthorizeException;
 import spring.myproject.exception.meeting.NotFoundMeetingExeption;
 import spring.myproject.exception.user.NotFoundUserException;
 import spring.myproject.s3.S3ImageUploadService;
+import spring.myproject.utils.change.ChangeFactory;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -38,6 +39,7 @@ import java.util.List;
 import static spring.myproject.dto.request.meeting.MeetingRequestDto.*;
 import static spring.myproject.dto.response.meeting.MeetingResponseDto.*;
 import static spring.myproject.utils.ConstClass.*;
+import static spring.myproject.utils.change.ChangeFactory.*;
 
 
 @Service
@@ -81,10 +83,7 @@ public class MeetingService {
             Attend attend = attendRepository.findByUserIdAndMeetingIdAndTrue(user.getId(), meetingId);
             attendRepository.delete(attend);
             meetingRepository.delete(meeting);
-            return DeleteMeetingResponse.builder()
-                    .code(SUCCESS_CODE)
-                    .message(SUCCESS_MESSAGE)
-                    .build();
+            return DeleteMeetingResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE);
     }
 
     public UpdateMeetingResponse updateMeeting(UpdateMeetingRequest updateMeetingRequest, String username, Long meetingId, MultipartFile file) throws IOException {
@@ -98,17 +97,8 @@ public class MeetingService {
             Image image = null;
             image = saveImage(image,file);
             if(image!=null) imageRepository.save(image);
-            meeting.setTitle(updateMeetingRequest.getTitle());
-            meeting.setContent(updateMeetingRequest.getContent());
-            meeting.setStartDate(updateMeetingRequest.getStartDate());
-            meeting.setEndDate(updateMeetingRequest.getEndDate());
-            meeting.setBoardDate(LocalDateTime.now());
-            meeting.setImage(image);
-            return UpdateMeetingResponse.builder()
-                    .code(SUCCESS_CODE)
-                    .message(SUCCESS_MESSAGE)
-                    .id(meetingId)
-                    .build();
+            changeMeeting(meeting,updateMeetingRequest,image);
+            return UpdateMeetingResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE,meetingId);
     }
     public MeetingResponse meetingDetail(Long meetingId, String username) {
 
@@ -143,19 +133,8 @@ public class MeetingService {
     }
 
     private List<MeetingElement> toContent(Page<MeetingsQuery> page) {
-        return page.map(m ->
-                MeetingElement.builder()
-                        .id(m.getId())
-                        .title(m.getTitle())
-                        .createdBy(m.getCreatedBy())
-                        .boardDate(m.getBoardDate())
-                        .startDate(m.getStartDate())
-                        .endDate(m.getEndDate())
-                        .content(m.getContent())
-                        .count(m.getCount())
-                        .url(getUrl(m.getUrl()))
-                        .build())
-                        .getContent();
+            return page.map(query -> MeetingElement.from(query,(fileUrl)->(fileUrl+url)))
+                    .getContent();
     }
 
     private Image saveImage(Image image, MultipartFile file) throws IOException {

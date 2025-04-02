@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import spring.myproject.common.functional.MyFunctionalInterface;
+import spring.myproject.dto.response.gathering.querydto.GatheringsQuery;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -104,6 +106,10 @@ public class GatheringResponseDto {
         private String code;
         private String message;
         private Map<String, CategoryTotalGatherings> map = new HashMap<>();
+
+        public static MainGatheringResponse of(String code, String message, Map<String, CategoryTotalGatherings> categoryMap) {
+            return new MainGatheringResponse(code, message, categoryMap);
+        }
     }
 
 
@@ -121,6 +127,19 @@ public class GatheringResponseDto {
         private String createdBy;
         private String url;
         private int count;
+
+        public static GatheringsResponse from(GatheringsQuery gatheringsQuery, MyFunctionalInterface myFunctionalInterface){
+            return GatheringsResponse.builder()
+                    .id(gatheringsQuery.getId())
+                    .title(gatheringsQuery.getTitle())
+                    .createdBy(gatheringsQuery.getCreatedBy())
+                    .registerDate(gatheringsQuery.getRegisterDate())
+                    .category(gatheringsQuery.getCategory())
+                    .content(gatheringsQuery.getContent())
+                    .count(gatheringsQuery.getCount())
+                    .url(myFunctionalInterface.execute(gatheringsQuery.getUrl()))
+                    .build();
+        }
     }
 
     @Data
@@ -137,6 +156,18 @@ public class GatheringResponseDto {
         private String createdBy;
         private String url;
         private int count;
+
+        public static MainGatheringElement from(GatheringsQuery gatheringsQuery, MyFunctionalInterface myFunctionalInterface){
+            return MainGatheringElement.builder().id(gatheringsQuery.getId())
+                    .title(gatheringsQuery.getTitle())
+                    .content(gatheringsQuery.getContent())
+                    .registerDate(gatheringsQuery.getRegisterDate())
+                    .category(gatheringsQuery.getCategory())
+                    .createdBy(gatheringsQuery.getCreatedBy())
+                    .count(gatheringsQuery.getCount())
+                    .url(myFunctionalInterface.execute(gatheringsQuery.getUrl()))
+                    .build();
+        }
     }
 
     @Data
