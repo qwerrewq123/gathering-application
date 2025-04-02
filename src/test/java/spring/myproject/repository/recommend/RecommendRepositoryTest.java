@@ -79,7 +79,7 @@ public class RecommendRepositoryTest {
         em.clear();
         Optional<Recommend> optionalRecommend = recommendRepository.findById(recommend.getId());
         assertThat(optionalRecommend).isNotNull();
-        assertThat(optionalRecommend.get()).extracting("score").isEqualTo(10L);
+        assertThat(optionalRecommend.get()).extracting("score").isEqualTo(11L);
     }
     @Test
     void fetchTop5(){

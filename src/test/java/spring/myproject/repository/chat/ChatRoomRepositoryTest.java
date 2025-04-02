@@ -55,10 +55,9 @@ class ChatRoomRepositoryTest {
         chatRoomRepository.saveAll(List.of(chatRoom1,chatRoom2,chatRoom3,chatRoom4,chatRoom5));
         chatParticipantRepository.saveAll(List.of(createChatParticipant1,createChatParticipant2,createChatParticipant3,createChatParticipant4,createChatParticipant5));
         chatParticipantRepository.saveAll(List.of(chatParticipant1,chatParticipant2,chatParticipant3));
-        //TODO : 쿼리수정
         Page<ChatRoomElement> page = chatRoomRepository.fetchChatRooms(PageRequest.of(0, 2), user2.getId());
-        assertThat(page.getTotalPages()).isEqualTo(4);
-        assertThat(page.getTotalElements()).isEqualTo(8);
+        assertThat(page.getTotalPages()).isEqualTo(3);
+        assertThat(page.getTotalElements()).isEqualTo(5);
     }
 
     @Test
@@ -86,7 +85,6 @@ class ChatRoomRepositoryTest {
         chatRoomRepository.saveAll(List.of(chatRoom1,chatRoom2,chatRoom3,chatRoom4,chatRoom5));
         chatParticipantRepository.saveAll(List.of(createChatParticipant1,createChatParticipant2,createChatParticipant3,createChatParticipant4,createChatParticipant5));
         chatParticipantRepository.saveAll(List.of(chatParticipant1,chatParticipant2,chatParticipant3));
-        //TODO : 쿼리수정
         Page<MyChatRoomElement> page = chatRoomRepository.fetchMyChatRooms(PageRequest.of(0, 2), user2.getId());
 
         assertThat(page.getTotalPages()).isEqualTo(2);

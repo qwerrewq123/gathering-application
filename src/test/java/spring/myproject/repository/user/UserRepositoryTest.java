@@ -88,11 +88,11 @@ class UserRepositoryTest {
         assertThat(userList1.size()).isEqualTo(1);
         assertThat(userList1.getFirst()).extracting("email").isEqualTo("email1");
         assertThat(userList2.size()).isEqualTo(1);
-        assertThat(userList2.getFirst()).extracting("email").isEqualTo("email1");
+        assertThat(userList2.getFirst()).extracting("email").isEqualTo("email2");
         assertThat(userList3.size()).isEqualTo(1);
-        assertThat(userList3.getFirst()).extracting("email").isEqualTo("email1");
+        assertThat(userList3.getFirst()).extracting("email").isEqualTo("email3");
         assertThat(userList4.size()).isEqualTo(1);
-        assertThat(userList4.getFirst()).extracting("email").isEqualTo("email1");
+        assertThat(userList4.getFirst()).extracting("email").isEqualTo("email4");
 
     }
     @Test
