@@ -17,8 +17,8 @@ import static spring.myproject.dto.request.chat.ChatRequestDto.*;
 public class KafkaProducerService {
     private static final AtomicLong counter = new AtomicLong(0);
     private final KafkaTemplate<String, String> kafkaTemplate;
-    public void publishSendMessageEvent(String topic, ChatMessageRequest chatMessageRequest) {
-        SendChatMessageEventPayload payload = SendChatMessageEventPayload.of(chatMessageRequest);
+    public void publishSendMessageEvent(String topic, Long roomId,ChatMessageRequest chatMessageRequest) {
+        SendChatMessageEventPayload payload = SendChatMessageEventPayload.of(roomId,chatMessageRequest);
         Event<EventPayload> event = Event.of(fetchEventId(), EventType.SEND_MESSAGE, payload);
         kafkaTemplate.send(topic, event.toJson());
     }

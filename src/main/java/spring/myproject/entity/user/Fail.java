@@ -18,11 +18,13 @@ public class Fail {
     private Long id;
     private String content;
     private String clientId;
+    private String email;
 
-    public static Fail of(String clientId, String content) {
+    public static Fail of(String clientId,String content,String email) {
         return Fail.builder()
                 .clientId(clientId)
                 .content(content)
+                .email(email)
                 .build();
     }
 

@@ -17,6 +17,6 @@ public class StompController {
 
     @MessageMapping("/{roomId}")
     public void sendMessage(@DestinationVariable Long roomId, ChatMessageRequest chatMessageRequest){
-        kafkaProducerService.publishSendMessageEvent(EventType.Topic.GATHERING_CHAT, chatMessageRequest);
+        kafkaProducerService.publishSendMessageEvent(EventType.Topic.GATHERING_CHAT, roomId,chatMessageRequest);
     }
 }

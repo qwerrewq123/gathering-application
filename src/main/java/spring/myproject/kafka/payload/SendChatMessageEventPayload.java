@@ -18,9 +18,9 @@ public class SendChatMessageEventPayload implements EventPayload {
     private String content;
     private String username;
 
-    public static SendChatMessageEventPayload of(ChatMessageRequest chatMessageRequest) {
+    public static SendChatMessageEventPayload of(Long roomId,ChatMessageRequest chatMessageRequest) {
         return SendChatMessageEventPayload.builder()
-                .roomId(chatMessageRequest.getRoomId())
+                .roomId(roomId)
                 .content(chatMessageRequest.getContent())
                 .username(chatMessageRequest.getUsername())
                 .build();

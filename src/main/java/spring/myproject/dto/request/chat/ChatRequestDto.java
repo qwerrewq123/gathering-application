@@ -13,8 +13,6 @@ public class ChatRequestDto {
     @AllArgsConstructor
     @Builder
     public static class ChatMessageRequest {
-        @NotNull
-        private Long roomId;
         @NotBlank
         private String content;
         @NotBlank

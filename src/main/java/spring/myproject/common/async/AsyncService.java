@@ -44,7 +44,7 @@ public class AsyncService {
         try {
             emailCertification(emailCertificationRequest);
         }catch (MessagingException e){
-            failService.send(emailCertificationRequest.getClientId());
+            failService.send(emailCertificationRequest);
         }
     }
 

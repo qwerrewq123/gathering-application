@@ -5,8 +5,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
-import spring.myproject.dto.response.fail.CloseResponse;
+import spring.myproject.dto.response.fail.FailResponseDto;
 import spring.myproject.service.fail.FailService;
+
+import static spring.myproject.dto.response.fail.FailResponseDto.*;
 
 @RestController
 @RequiredArgsConstructor
