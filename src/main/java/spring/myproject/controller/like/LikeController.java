@@ -19,7 +19,7 @@ public class LikeController {
 
     private final LikeService likeService;
 
-    @PatchMapping("/like/{gatheringId}")
+    @PatchMapping("/gathering/{gatheringId}/like")
     public ResponseEntity<LikeResponse> like(@PathVariable Long gatheringId, @Username String username){
 
         LikeResponse likeResponse = likeService.like(gatheringId, username);
@@ -27,7 +27,7 @@ public class LikeController {
     }
 
 
-    @PatchMapping("/dislike/{gatheringId}")
+    @PatchMapping("/gathering/{gatheringId}/dislike")
     public ResponseEntity<DislikeResponse> dislike(@PathVariable Long gatheringId, @Username String username){
 
         DislikeResponse dislikeResponse = likeService.dislike(gatheringId, username);

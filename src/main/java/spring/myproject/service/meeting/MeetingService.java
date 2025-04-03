@@ -28,6 +28,7 @@ import spring.myproject.common.exception.meeting.NotAuthorizeException;
 import spring.myproject.common.exception.meeting.NotFoundMeetingExeption;
 import spring.myproject.common.exception.user.NotFoundUserException;
 import spring.myproject.common.s3.S3ImageUploadService;
+import spring.myproject.service.recommend.RecommendService;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -50,6 +51,7 @@ public class MeetingService {
     private final AttendRepository attendRepository;
     private final S3ImageUploadService s3ImageUploadService;
     private final ImageRepository imageRepository;
+    private final RecommendService recommendService;
     @Value("${server.url}")
     private String url;
     public AddMeetingResponse addMeeting(AddMeetingRequest addMeetingRequest, String username, Long gatheringId, MultipartFile file) throws IOException {
@@ -63,10 +65,11 @@ public class MeetingService {
             if(image!=null) imageRepository.save(image);
             meetingRepository.save(meeting);
             attendRepository.save(attend);
+            recommendService.addScore(gatheringId,1);
             return AddMeetingResponse.of(SUCCESS_CODE, SUCCESS_MESSAGE, meeting.getId());
     }
 
-    public DeleteMeetingResponse deleteMeeting(String username, Long meetingId) {
+    public DeleteMeetingResponse deleteMeeting(String username, Long meetingId,Long gatheringId) {
 
             User user = userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
             Meeting meeting = meetingRepository.findById(meetingId).orElseThrow(()->new NotFoundMeetingExeption("no exist Meeting!!"));
@@ -80,6 +83,7 @@ public class MeetingService {
             Attend attend = attendRepository.findByUserIdAndMeetingIdAndTrue(user.getId(), meetingId);
             attendRepository.delete(attend);
             meetingRepository.delete(meeting);
+            recommendService.addScore(gatheringId,-1);
             return DeleteMeetingResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE);
     }
 
@@ -97,13 +101,14 @@ public class MeetingService {
             changeMeeting(meeting,updateMeetingRequest,image);
             return UpdateMeetingResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE,meetingId);
     }
-    public MeetingResponse meetingDetail(Long meetingId, String username) {
+    public MeetingResponse meetingDetail(Long meetingId, String username,Long gatheringId) {
 
         userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
         List<MeetingDetailQuery> meetingDetailQueries = meetingRepository.meetingDetail(meetingId);
         if(meetingDetailQueries.size() == 0) throw new NotFoundMeetingExeption("no exist Meeting!!");
         List<String> attends = attendedBy(meetingDetailQueries);
         String url = getUrl(meetingDetailQueries.getFirst().getUrl());
+        recommendService.addScore(gatheringId,1);
         return MeetingResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE,meetingDetailQueries,attends,url);
 
     }

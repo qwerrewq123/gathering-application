@@ -6,7 +6,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
+import spring.myproject.common.exception.image.NotFoundImageException;
 import spring.myproject.dto.response.image.GatheringImageResponse;
+import spring.myproject.entity.image.Image;
 import spring.myproject.repository.image.ImageRepository;
 import spring.myproject.common.s3.S3ImageDownloadService;
 
@@ -25,7 +27,10 @@ public class ImageService {
 
     @Value("${server.url}")
     private String url;
-    public Resource image(String imageUrl) throws IOException {
+    public Resource image(Long imageId) throws IOException {
+        Image image = imageRepository.findById(imageId)
+                .orElseThrow(()-> new NotFoundImageException("not found image"));
+        String imageUrl = image.getUrl();
         byte[] imageBytes = s3ImageDownloadService.getFileByteArrayFromS3(imageUrl);
         return new ByteArrayResource(imageBytes);
     }

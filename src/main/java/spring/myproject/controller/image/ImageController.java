@@ -17,9 +17,9 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class ImageController {
     private final ImageService imageService;
-    @GetMapping("/image/{imageUrl}")
-    public ResponseEntity<Resource> image(@PathVariable String imageUrl) throws IOException {
-        Resource resource = imageService.image(imageUrl);
+    @GetMapping("/image/{imageId}")
+    public ResponseEntity<Resource> image(@PathVariable Long imageId) throws IOException {
+        Resource resource = imageService.image(imageId);
         return new ResponseEntity<>(resource, HttpStatus.OK);
     }
 

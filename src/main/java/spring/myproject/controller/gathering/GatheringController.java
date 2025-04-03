@@ -63,7 +63,6 @@ public class GatheringController {
                                                                      @RequestParam Integer pageSize,
                                                                      @Username String username
                                                                ){
-
         GatheringCategoryResponse gatheringCategoryResponse = gatheringService.gatheringCategory(category,pageNum,pageSize,username);
         return new ResponseEntity<>(gatheringCategoryResponse, HttpStatus.OK);
     }
@@ -73,12 +72,11 @@ public class GatheringController {
     public ResponseEntity<GatheringLikeResponse> gatheringsLike(@RequestParam int pageNum,
                                                                   @RequestParam Integer pageSize,
                                                  @Username String username){
-
         GatheringLikeResponse gatheringLikeResponse = gatheringService.gatheringsLike(pageNum,pageSize,username);
         return new ResponseEntity<>(gatheringLikeResponse, HttpStatus.OK);
     }
 
-    @GetMapping
+    @GetMapping("/recommend")
     public ResponseEntity<RecommendResponse> fetchRecommendTop10(){
         RecommendResponse recommendResponse = recommendService.fetchRecommendTop10(LocalDate.now());
         return new ResponseEntity<>(recommendResponse, HttpStatus.OK);

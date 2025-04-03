@@ -12,6 +12,7 @@ import spring.myproject.dto.response.gathering.querydto.GatheringDetailQuery;
 import spring.myproject.dto.response.gathering.querydto.GatheringsQuery;
 import spring.myproject.entity.category.Category;
 import spring.myproject.entity.fcm.Topic;
+import spring.myproject.service.recommend.RecommendService;
 import spring.myproject.utils.mapper.GatheringFactory;
 import spring.myproject.repository.category.CategoryRepository;
 import spring.myproject.entity.enrollment.Enrollment;
@@ -44,7 +45,6 @@ import static spring.myproject.utils.RandomStringGenerator.*;
 @Transactional
 @RequiredArgsConstructor
 public class GatheringService {
-
     private final GatheringRepository gatheringRepository;
     private final EnrollmentRepository enrollmentRepository;
     private final ImageRepository imageRepository;
@@ -53,6 +53,7 @@ public class GatheringService {
     private final S3ImageUploadService s3ImageUploadService;
     private final FCMService fcmService;
     private final TopicRepository topicRepository;
+    private final RecommendService recommendService;
     @Value("${server.url}")
     private String url;
 
@@ -72,6 +73,7 @@ public class GatheringService {
                 .build();
             topicRepository.save(topic);
             fcmService.subscribeToTopics(topic.getTopicName(),username);
+            recommendService.createScore(gathering);
             return AddGatheringResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE, gathering.getId());
     }
 
@@ -94,6 +96,7 @@ public class GatheringService {
             userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
             List<GatheringDetailQuery> gatheringDetailQueries = gatheringRepository.gatheringDetail(gatheringId);
             if(gatheringDetailQueries.isEmpty()) throw new NotFoundGatheringException("no exist Gathering!!!");
+            recommendService.addScore(gatheringId,1);
             return getGatheringResponse(gatheringDetailQueries);
     }
 

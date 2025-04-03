@@ -16,7 +16,7 @@ public class ChatController {
 
     private ChatService chatService;
 
-    @PostMapping("/chat")
+    @PostMapping("/gathering/{gatheringId}/chat")
     public ResponseEntity<AddChatRoomResponse> addChatRoom(@RequestParam String roomName, @Username String username){
         AddChatRoomResponse addChatResponse = chatService.addChatRoom(roomName,username);
         return new ResponseEntity<>(addChatResponse, HttpStatus.OK);
@@ -34,7 +34,7 @@ public class ChatController {
         return new ResponseEntity<>(leaveChatResponse, HttpStatus.OK);
     }
 
-    @PostMapping("/attend/chat/{chatId}")
+    @PostMapping("/gathering/{gatheringId}/chat/{chatId}/attend")
     public ResponseEntity<AttendChatResponse> attendChat(@RequestParam Long chatId, @Username String username){
         AttendChatResponse attendChatResponse = chatService.attendChat(chatId,username);
         return new ResponseEntity<>(attendChatResponse, HttpStatus.OK);
@@ -46,13 +46,13 @@ public class ChatController {
         return new ResponseEntity<>(readChatMessageResponse, HttpStatus.OK);
     }
 
-    @GetMapping("/chats")
+    @GetMapping("/gathering/{gatheringId}/chats")
     public ResponseEntity<ChatRoomResponse> fetchChatRooms(@RequestParam Integer pageNum, @Username String username){
         ChatRoomResponse chatRoomResponse = chatService.fetchChatRooms(pageNum,username);
         return new ResponseEntity<>(chatRoomResponse, HttpStatus.OK);
     }
 
-    @GetMapping("/chats/my")
+    @GetMapping("/gathering/{gatheringId}//my/chats")
     public ResponseEntity<MyChatRoomResponse> fetchMyChatRooms(@RequestParam Integer pageNum, @Username String username){
         MyChatRoomResponse myChatRoomResponse = chatService.fetchMyChatRooms(pageNum,username);
         return new ResponseEntity<>(myChatRoomResponse, HttpStatus.OK);

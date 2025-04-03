@@ -9,6 +9,7 @@ import spring.myproject.dto.response.gathering.GatheringResponseDto;
 import spring.myproject.dto.response.gathering.querydto.GatheringDetailQuery;
 import spring.myproject.dto.response.gathering.querydto.GatheringsQuery;
 import spring.myproject.entity.gathering.Gathering;
+import spring.myproject.entity.recommend.Recommend;
 import spring.myproject.repository.gathering.GatheringRepository;
 import spring.myproject.repository.recommend.RecommendRepository;
 import spring.myproject.repository.user.UserRepository;
@@ -33,9 +34,11 @@ public class RecommendService {
     private final RecommendRepository recommendRepository;
     @Value("${server.url}")
     private String url;
-
-    public void addScore(Gathering gathering,int val){
-        recommendRepository.updateCount(gathering.getId(),val);
+    public void createScore(Gathering gathering){
+        recommendRepository.save(Recommend.from(gathering));
+    }
+    public void addScore(Long gatheringId,int val){
+        recommendRepository.updateCount(gatheringId,val);
     }
     @Cacheable(value = "recommend",key="#localDate")
     public RecommendResponse fetchRecommendTop10(LocalDate localDate) {

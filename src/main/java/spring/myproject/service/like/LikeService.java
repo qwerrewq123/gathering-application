@@ -14,6 +14,7 @@ import spring.myproject.common.exception.gathering.NotFoundGatheringException;
 import spring.myproject.common.exception.like.AlreadyLikeGatheringException;
 import spring.myproject.common.exception.like.NotFoundLikeException;
 import spring.myproject.common.exception.user.NotFoundUserException;
+import spring.myproject.service.recommend.RecommendService;
 
 import java.util.Optional;
 
@@ -29,6 +30,7 @@ public class LikeService {
     private final LikeRepository likeRepository;
     private final UserRepository userRepository;
     private final GatheringRepository gatheringRepository;
+    private final RecommendService recommendService;
 
     public LikeResponse like(Long gatheringId, String username) {
 
@@ -38,6 +40,7 @@ public class LikeService {
             Optional<Like> optionalLike = likeRepository.findLike(userId, gatheringId);
             if(optionalLike.isPresent()) throw new AlreadyLikeGatheringException("Already Like Gathering!!");
             likeRepository.save(Like.of(gathering,user));
+            recommendService.addScore(gatheringId,1);
             return LikeResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE);
     }
     public DislikeResponse dislike(Long gatheringId, String username) {
@@ -49,6 +52,7 @@ public class LikeService {
             Long likedId = like.getLikedBy().getId();
             if(!likedId.equals(userId)) throw new NotAuthorizeException("no Authorize!");
             likeRepository.delete(like);
+            recommendService.addScore(gatheringId,-1);
             return DislikeResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE);
     }
 

@@ -28,6 +28,13 @@ public class Recommend {
     private Long score;
     private LocalDate localDate;
 
+    public static Recommend from(Gathering gathering){
+        return Recommend.builder()
+                .gathering(gathering)
+                .localDate(LocalDate.now())
+                .score(1L)
+                .build();
+    }
     public void setCount(Long score){
         this.score=score;
     }

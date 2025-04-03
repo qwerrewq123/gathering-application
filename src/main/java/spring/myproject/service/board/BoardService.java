@@ -27,6 +27,7 @@ import spring.myproject.common.exception.user.NotFoundUserException;
 import spring.myproject.repository.user.UserRepository;
 import spring.myproject.common.s3.S3ImageUploadService;
 import spring.myproject.service.fcm.FCMService;
+import spring.myproject.service.recommend.RecommendService;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -48,6 +49,7 @@ public class BoardService {
     private final EnrollmentRepository enrollmentRepository;
     private final ImageRepository imageRepository;
     private final FCMService fcmService;
+    private final RecommendService recommendService;
     @Value("${server.url}")
     private String url;
 
@@ -59,6 +61,7 @@ public class BoardService {
         if(boardQueries.isEmpty()) throw new NotFoundBoardException("no board found");
         String userImageUrl = getUserImageUrl(boardQueries);
         List<String> imageUrls = getImageUrls(boardQueries);
+        recommendService.addScore(gatheringId,1);
         return BoardResponse.of(boardQueries,imageUrls,userImageUrl,SUCCESS_CODE,SUCCESS_MESSAGE);
     }
 
@@ -79,6 +82,7 @@ public class BoardService {
                 .url("localhost:8080/gathering/"+gatheringId)
                 .img(null)
                 .build(),topic);
+        recommendService.addScore(gatheringId,1);
         return AddBoardResponse.of(SUCCESS_CODE, SUCCESS_MESSAGE,board.getId());
     }
 

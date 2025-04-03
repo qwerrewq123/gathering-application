@@ -15,6 +15,7 @@ import spring.myproject.entity.user.User;
 import spring.myproject.repository.user.UserRepository;
 import spring.myproject.common.exception.meeting.NotFoundMeetingExeption;
 import spring.myproject.common.exception.user.NotFoundUserException;
+import spring.myproject.service.recommend.RecommendService;
 
 import java.time.LocalDateTime;
 
@@ -29,7 +30,8 @@ public class AttendService {
         private final UserRepository userRepository;
         private final AttendRepository attendRepository;
         private final MeetingRepository meetingRepository;
-        public AddAttendResponse addAttend(Long meetingId, String username) {
+        private final RecommendService recommendService;
+        public AddAttendResponse addAttend(Long meetingId, String username,Long gatheringId) {
 
                 User user = userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
                 Meeting meeting = meetingRepository.findById(meetingId).orElseThrow(()->new NotFoundMeetingExeption("no exist Meeting!!"));
@@ -37,10 +39,11 @@ public class AttendService {
                 if(checkAttend != null) throw new AlreadyAttendExeption("Meeting already attend");
                 Attend attend = Attend.of(false,meeting,user,LocalDateTime.now());
                 attendRepository.save(attend);
+                recommendService.addScore(gatheringId,1);
                 return AddAttendResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE);
         }
 
-        public DisAttendResponse disAttend(Long meetingId, Long attendId, String username) {
+        public DisAttendResponse disAttend(Long meetingId, Long attendId, String username,Long gatheringId) {
 
                 User user = userRepository.findByUsername(username).orElseThrow(() -> new NotFoundUserException("no exist User!!"));
                 Meeting meeting = meetingRepository.findById(meetingId).orElseThrow(()->new NotFoundMeetingExeption("no exist Meeting!!"));
@@ -48,6 +51,7 @@ public class AttendService {
                 Long createdById = meeting.getCreatedBy().getId();
                 Long userId = user.getId();
                 checkMeetingOpener(createdById, userId, meeting, attend);
+                recommendService.addScore(gatheringId,-1);
                 return DisAttendResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE);
         }
 

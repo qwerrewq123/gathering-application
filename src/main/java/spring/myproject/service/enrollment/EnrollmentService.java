@@ -53,7 +53,7 @@ public class EnrollmentService {
                             .img(null)
                     .build(),topic);
             fcmService.subscribeToTopics(topicName,username);
-            recommendService.addScore(gathering,1);
+            recommendService.addScore(gatheringId,1);
             return EnrollGatheringResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE);
     }
     public DisEnrollGatheringResponse disEnrollGathering(Long gatheringId, String username) {
@@ -75,7 +75,7 @@ public class EnrollmentService {
                     .img(null)
                     .build(),topic);
             fcmService.unsubscribeFromTopics(topicName,username);
-            recommendService.addScore(gathering,-1);
+            recommendService.addScore(gatheringId,-1);
             return DisEnrollGatheringResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE);
     }
 }

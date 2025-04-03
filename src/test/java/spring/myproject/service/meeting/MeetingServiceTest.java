@@ -114,13 +114,13 @@ public class MeetingServiceTest {
         when(meetingRepository.findById(1L)).thenReturn(Optional.of(mockMeeting));
         when(meetingRepository.findById(2L)).thenReturn(Optional.empty());
         when(attendRepository.findByUserIdAndMeetingIdAndTrue(anyLong(),anyLong())).thenReturn(mock(Attend.class));
-        assertThatThrownBy(()->meetingService.deleteMeeting("false username",2L))
+        assertThatThrownBy(()->meetingService.deleteMeeting("false username",2L,1L))
                 .isInstanceOf(NotFoundUserException.class);
-        assertThatThrownBy(()->meetingService.deleteMeeting("true username1",2L))
+        assertThatThrownBy(()->meetingService.deleteMeeting("true username1",2L,1L))
                 .isInstanceOf(NotFoundMeetingExeption.class);
-        assertThatThrownBy(()->meetingService.deleteMeeting("true username2",1L))
+        assertThatThrownBy(()->meetingService.deleteMeeting("true username2",1L,1L))
                 .isInstanceOf(NotAuthorizeException.class);
-        DeleteMeetingResponse deleteMeetingResponse = meetingService.deleteMeeting("true username1", 1L);
+        DeleteMeetingResponse deleteMeetingResponse = meetingService.deleteMeeting("true username1", 1L,1L);
         assertThat(deleteMeetingResponse)
                 .extracting("code","message")
                 .containsExactly(SUCCESS_CODE, SUCCESS_MESSAGE);
