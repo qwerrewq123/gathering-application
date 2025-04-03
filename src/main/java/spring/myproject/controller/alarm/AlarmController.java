@@ -13,7 +13,7 @@ import static spring.myproject.dto.response.alarm.AlarmResponseDto.*;
 @RestController
 @RequiredArgsConstructor
 public class AlarmController {
-    //TODO : 유저가 등록하면 알람, 유저가 모임 신청 알람
+
     private final AlarmService alarmService;
 
     @PatchMapping("/alarm/{id}")

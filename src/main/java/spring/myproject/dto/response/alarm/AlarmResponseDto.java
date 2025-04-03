@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import spring.myproject.entity.fcm.Alarm;
+import spring.myproject.entity.alarm.Alarm;
 
 import java.time.LocalDateTime;
 import java.util.List;

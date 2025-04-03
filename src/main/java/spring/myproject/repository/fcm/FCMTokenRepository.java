@@ -14,7 +14,7 @@ import java.util.Optional;
 public interface FCMTokenRepository extends JpaRepository<FCMToken, Long> {
 
     @Query("select t from FCMToken t join t.user u where t.tokenValue =:tokenValue and u.id =:userId")
-    Optional<FCMToken> findByTokenAndUser(String tokenValue, Long userid);
+    Optional<FCMToken> findByTokenValueAndUser(String tokenValue, Long userid);
 
     @Modifying
     @Query("delete from FCMToken t where t.tokenValue in :failedTokens")

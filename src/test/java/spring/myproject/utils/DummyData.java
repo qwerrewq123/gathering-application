@@ -1,6 +1,6 @@
 package spring.myproject.utils;
 
-import spring.myproject.entity.fcm.Alarm;
+import spring.myproject.entity.alarm.Alarm;
 import spring.myproject.entity.attend.Attend;
 import spring.myproject.entity.board.Board;
 import spring.myproject.entity.category.Category;

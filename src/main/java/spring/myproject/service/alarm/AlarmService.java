@@ -5,7 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import spring.myproject.entity.fcm.Alarm;
+import spring.myproject.entity.alarm.Alarm;
 import spring.myproject.repository.alarm.AlarmRepository;
 import spring.myproject.entity.user.User;
 import spring.myproject.repository.user.UserRepository;

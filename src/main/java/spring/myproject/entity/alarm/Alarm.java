@@ -1,4 +1,4 @@
-package spring.myproject.entity.fcm;
+package spring.myproject.entity.alarm;
 
 import jakarta.persistence.*;
 import lombok.*;

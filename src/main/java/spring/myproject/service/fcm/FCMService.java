@@ -158,7 +158,7 @@ public class FCMService {
 
 		User user = userRepository.findByUsername(signInRequest.getUsername())
 				.orElseThrow(() -> new NotFoundUserException("not found user"));
-		Optional<FCMToken> existingToken = fcmTokenRepository.findByTokenAndUser(signInRequest.getFcmToken(), user.getId());
+		Optional<FCMToken> existingToken = fcmTokenRepository.findByTokenValueAndUser(signInRequest.getFcmToken(), user.getId());
 		if (existingToken.isPresent()) {
 			FCMToken fcmToken = existingToken.get();
 			fcmToken.changeExpirationDate(2);

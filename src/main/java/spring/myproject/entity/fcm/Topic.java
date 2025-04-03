@@ -16,7 +16,7 @@ public class Topic {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column
+    @Column(name = "topic_name")
     private String topicName;
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "topic", optional = false)
     private Gathering gathering;
