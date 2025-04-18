@@ -6,6 +6,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.transaction.annotation.Transactional;
 import spring.myproject.common.exception.enrollment.NotDisEnrollmentException;
 import spring.myproject.entity.enrollment.Enrollment;
 import spring.myproject.entity.fcm.Topic;
