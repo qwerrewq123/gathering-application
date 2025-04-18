@@ -23,13 +23,7 @@
 
 
 
-## 🗂️ APIs
-작성한 API는 아래에서 확인할 수 있습니다.
 
-👉🏻 [API 바로보기]([/backend/APIs.md](https://www.notion.so/rest-api-a42b3300c8884c6a86ef56fccb14264c))
-
-
-<br />
 
 ## ⚙ 기술 스택
 ### Back-end
@@ -56,7 +50,6 @@
 <br />
 
 ## 🛠️ 프로젝트 아키텍쳐
-![Image](https://github.com/user-attachments/assets/31811b4f-dfb4-4fd6-943a-5b46b2a63a13)
 
 
 
