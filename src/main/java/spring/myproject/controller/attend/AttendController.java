@@ -38,7 +38,7 @@ public class AttendController {
         return new ResponseEntity<>(disAttendResponse, HttpStatus.OK);
     }
 
-    @PostMapping("/meeting/{meetingId}/permitAttend/{attendId}")
+    @PostMapping("/gathering/{gatheringId}/meeting/{meetingId}/permitAttend/{attendId}")
     public ResponseEntity<PermitAttendResponse> permitAttend(@PathVariable Long meetingId,
                                                @PathVariable Long attendId,
                                                              @Id Long userId){

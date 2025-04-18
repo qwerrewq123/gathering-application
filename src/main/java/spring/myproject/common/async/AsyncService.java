@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import spring.myproject.entity.certification.Certification;
 import spring.myproject.entity.chat.ChatMessage;
 import spring.myproject.entity.chat.ChatParticipant;
 import spring.myproject.entity.chat.ChatRoom;
@@ -15,6 +16,7 @@ import spring.myproject.common.exception.chat.NotFoundChatRoomException;
 import spring.myproject.common.exception.user.NotFoundUserException;
 import spring.myproject.rabbitmq.event.Event;
 import spring.myproject.rabbitmq.payload.SendChatMessageEventPayload;
+import spring.myproject.repository.certification.CertificationRepository;
 import spring.myproject.repository.chat.ChatMessageRepository;
 import spring.myproject.repository.chat.ChatParticipantRepository;
 import spring.myproject.repository.chat.ChatRoomRepository;
@@ -38,6 +40,7 @@ public class AsyncService {
     private final ReadStatusRepository readStatusRepository;
     private final ChatParticipantRepository chatParticipantRepository;
     private final UserRepository userRepository;
+    private final CertificationRepository certificationRepository;
 
     @Async("customAsyncExecutor")
     public void asyncTask(EmailCertificationRequest emailCertificationRequest){
@@ -87,7 +90,11 @@ public class AsyncService {
 
 
     private void emailCertification(EmailCertificationRequest emailCertificationRequest) throws MessagingException {
-        emailProvider.sendCertificationMail(emailCertificationRequest.getEmail(), certificationNumber());
+        String certificationNumber = certificationNumber();
+        String email = emailCertificationRequest.getEmail();
+        Certification certification = Certification.of(email,certificationNumber);
+        certificationRepository.save(certification);
+        emailProvider.sendCertificationMail(emailCertificationRequest.getEmail(), certificationNumber);
     }
 
     private String certificationNumber(){

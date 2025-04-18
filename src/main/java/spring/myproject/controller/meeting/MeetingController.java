@@ -30,7 +30,7 @@ public class MeetingController {
         return new ResponseEntity<>(addMeetingResponse, HttpStatus.OK);
     }
 
-    @DeleteMapping("/gathering/{gatheringId}meeting/{meetingId}")
+    @DeleteMapping("/gathering/{gatheringId}/meeting/{meetingId}")
     public ResponseEntity<Object> deleteMeeting(@Id Long userId,
                                                 @PathVariable Long meetingId,
                                                 @PathVariable Long gatheringId) {
@@ -40,7 +40,7 @@ public class MeetingController {
         return new ResponseEntity<>(deleteMeetingResponse, HttpStatus.OK);
     }
 
-    @PatchMapping("/gathering/{gatheringId}/updateMeeting/{meetingId}")
+    @PatchMapping("/gathering/{gatheringId}/meeting/{meetingId}")
     public ResponseEntity<Object> updateMeeting(@RequestPart UpdateMeetingRequest updateMeetingRequest,
                                                 @RequestPart MultipartFile file,
                                                 @Id Long userId,

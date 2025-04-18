@@ -12,6 +12,7 @@ import spring.myproject.dto.request.fcm.TopicNotificationRequestDto;
 import spring.myproject.dto.response.board.querydto.BoardQuery;
 import spring.myproject.dto.response.board.querydto.BoardsQuery;
 import spring.myproject.entity.board.Board;
+import spring.myproject.entity.enrollment.Enrollment;
 import spring.myproject.entity.fcm.Topic;
 import spring.myproject.common.exception.board.NotFoundBoardException;
 import spring.myproject.repository.board.BoardRepository;
@@ -32,6 +33,7 @@ import spring.myproject.service.recommend.RecommendService;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static spring.myproject.dto.request.board.BoardRequestDto.*;
 import static spring.myproject.dto.response.board.BoardResponseDto.*;
@@ -61,18 +63,19 @@ public class BoardService {
         String userImageUrl = getUserImageUrl(boardQueries);
         List<String> imageUrls = getImageUrls(boardQueries);
         recommendService.addScore(gatheringId,1);
-        return BoardResponse.of(boardQueries,imageUrls,userImageUrl,SUCCESS_CODE,SUCCESS_MESSAGE);
+        return BoardResponse.of(boardQueries,imageUrls,userImageUrl,SUCCESS_CODE,SUCCESS_MESSAGE,fileUrl->url + fileUrl);
     }
 
     public AddBoardResponse addBoard(Long userId, AddBoardRequest addBoardRequest, List<MultipartFile> files, Long gatheringId) throws IOException {
         User user = userRepository.findById(userId).orElseThrow(()->new NotFoundUserException("no exist User!!"));
         Gathering gathering = gatheringRepository.findById(gatheringId).orElseThrow(() -> new NotFoundGatheringException("no exist Gathering!!"));
-        if(enrollmentRepository.findByGatheringAndEnrolledBy(gathering,user).isEmpty()) throw new NotAuthorizeException("no Authorize to add board");
+        Optional<Enrollment> optionalEnrollment = enrollmentRepository.findByGatheringAndEnrolledBy(gathering, user);
+        if(optionalEnrollment.isEmpty()) throw new NotAuthorizeException("no Authorize to add board");
         Board board = AddBoardRequest.of(addBoardRequest,user,gathering);
         saveImages(files,board,gathering);
         boardRepository.save(board);
-        Topic topic = gathering.getTopic();
-        String topicName = topic.getTopicName();
+//        Topic topic = gathering.getTopic();
+//        String topicName = topic.getTopicName();
         //todo : fcm
 //        fcmService.sendByTopic(TopicNotificationRequestDto.builder()
 //                .topic(topicName)
@@ -89,7 +92,7 @@ public class BoardService {
         User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundUserException("no exist User!!"));
         Gathering gathering = gatheringRepository.findById(gatheringId).orElseThrow(() -> new NotFoundGatheringException("no exist Gathering!!"));
         if(enrollmentRepository.findByGatheringAndEnrolledBy(gathering,user).isEmpty()) throw new NotAuthorizeException("no Authorize to fetch board");
-        PageRequest pageRequest = PageRequest.of(pageNum, pageSize);
+        PageRequest pageRequest = PageRequest.of(pageNum-1, pageSize);
         Page<BoardsQuery> page = boardRepository.fetchBoards(pageRequest);
         List<BoardElement> content = toContent(page);
         boolean hasNext = page.hasNext();

@@ -3,6 +3,7 @@ package spring.myproject.service.enrollment;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import spring.myproject.common.exception.enrollment.NotDisEnrollmentException;
 import spring.myproject.dto.request.fcm.TopicNotificationRequestDto;
 import spring.myproject.entity.enrollment.Enrollment;
 import spring.myproject.entity.fcm.Topic;
@@ -43,8 +44,8 @@ public class EnrollmentService {
             gathering.changeCount(gathering.getCount()+1);
             Enrollment enrollment = Enrollment.of(true,gathering,user,LocalDateTime.now());
             enrollmentRepository.save(enrollment);
-            Topic topic = gathering.getTopic();
-            String topicName = topic.getTopicName();
+//            Topic topic = gathering.getTopic();
+//            String topicName = topic.getTopicName();
             //TODO : fcm
 //            fcmService.sendByTopic(TopicNotificationRequestDto.builder()
 //                            .topic(topicName)
@@ -62,12 +63,14 @@ public class EnrollmentService {
             User user = userRepository.findById(userId).orElseThrow(()->new NotFoundUserException("no exist User!!"));
             Gathering gathering = gatheringRepository.findById(gatheringId).orElseThrow(
                 () -> new NotFoundGatheringException("no exist Gathering!!"));
+            Long createdById = gathering.getCreateBy().getId();
+            if(createdById.equals(userId)) throw new NotDisEnrollmentException("Opener cannot disEnroll!!");
             Enrollment enrollment = enrollmentRepository.findEnrollment(gatheringId, user.getId()).orElseThrow(
                     () ->  new NotFoundEnrollmentException("no exist Enrollment!!"));
             gathering.changeCount(gathering.getCount()-1);
             enrollmentRepository.delete(enrollment);
-            Topic topic = gathering.getTopic();
-            String topicName = topic.getTopicName();
+//            Topic topic = gathering.getTopic();
+//            String topicName = topic.getTopicName();
             //TODO : fcm
 //            fcmService.sendByTopic(TopicNotificationRequestDto.builder()
 //                    .topic(topicName)

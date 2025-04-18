@@ -37,17 +37,17 @@ public class JwtProvider {
 
 
     public String createAccessToken(User user){
-        Claims claims = Jwts.claims().setSubject(user.getUsername());
-        claims.put("role", user.getRole().toString());
-        claims.put("id",user.getId());
-        Date now = new Date();
-        String token = Jwts.builder()
-                .setClaims(claims)
-                .setIssuedAt(now)
-                .setExpiration(new Date(now.getTime()+accessExpiration*60*1000L))
-                .signWith(SECRET_KEY)
-                .compact();
-        return token;
+            Claims claims = Jwts.claims().setSubject(user.getUsername());
+            claims.put("role", user.getRole().toString());
+            claims.put("id",user.getId());
+            Date now = new Date();
+            String token = Jwts.builder()
+                    .setClaims(claims)
+                    .setIssuedAt(now)
+                    .setExpiration(new Date(now.getTime()+accessExpiration*60*1000L))
+                    .signWith(SECRET_KEY)
+                    .compact();
+            return token;
     }
 
     public String createRefreshToken(User user){

@@ -18,6 +18,7 @@ import spring.myproject.common.exception.user.NotFoundUserException;
 import spring.myproject.service.recommend.RecommendService;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static spring.myproject.dto.response.attend.AttendResponseDto.*;
 import static spring.myproject.utils.ConstClass.*;
@@ -39,7 +40,6 @@ public class AttendService {
                 if(checkAttend != null) throw new AlreadyAttendExeption("Meeting already attend");
                 Attend attend = Attend.of(false,meeting,user,LocalDateTime.now());
                 attendRepository.save(attend);
-                recommendService.addScore(gatheringId,1);
                 return AddAttendResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE);
         }
 
@@ -47,8 +47,10 @@ public class AttendService {
 
                 userRepository.findById(userId).orElseThrow(() -> new NotFoundUserException("no exist User!!"));
                 Meeting meeting = meetingRepository.findById(meetingId).orElseThrow(()->new NotFoundMeetingExeption("no exist Meeting!!"));
-                Attend attend = attendRepository.findByIdAndAccepted(attendId,true).orElseThrow(() -> new NotFoundAttendException("Not Found Attend!!"));
+                Attend attend = attendRepository.findById(attendId).orElseThrow(() -> new NotFoundAttendException("Not Found Attend!!"));
                 Long createdById = meeting.getCreatedBy().getId();
+                Long attendById = attend.getAttendBy().getId();
+                if(!attendById.equals(userId)) throw new NotAuthorizeException("Not Authorized");
                 checkMeetingOpener(createdById, userId, meeting, attend);
                 recommendService.addScore(gatheringId,-1);
                 return DisAttendResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE);
@@ -57,12 +59,11 @@ public class AttendService {
         public PermitAttendResponse permitAttend(Long meetingId, Long attendId, Long userId) {
                 userRepository.findById(userId).orElseThrow(() -> new NotFoundUserException("no exist User!!"));
                 Meeting meeting = meetingRepository.findById(meetingId).orElseThrow(()->new NotFoundMeetingExeption("no exist Meeting!!"));
-                Attend attend = attendRepository.findById(attendId).orElseThrow(() -> new NotFoundAttendException("no exist Attend!!"));
+                Attend attend = attendRepository.findByIdAndAccepted(attendId,false).orElseThrow(() -> new NotFoundAttendException("no exist Attend!!"));
                 Long createdBy = meeting.getCreatedBy().getId();
                 if(!createdBy.equals(userId)) throw new NotAuthorizeException("this user has no permission");
-                if(attend.getAccepted()) throw new AlreadyAttendExeption("already attend!!");
-                meeting.setCount(meeting.getCount()+1);
                 attend.changeAccepted(true);
+                meeting.changeCount(meeting.getCount()+1);
                 return PermitAttendResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE);
         }
 
@@ -70,8 +71,8 @@ public class AttendService {
             if(createdById.equals(userId)){
                     meetingRepository.delete(meeting);
             }else{
-                meeting.changeCount(meeting.getCount()-1);
                 attendRepository.delete(attend);
             }
+            if(attend.getAccepted()) meeting.changeCount(meeting.getCount()-1);
         }
 }

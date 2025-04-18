@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import spring.myproject.common.exception.attend.*;
+import spring.myproject.common.exception.meeting.NotAuthorizeException;
 import spring.myproject.controller.attend.AttendController;
 import spring.myproject.dto.response.ErrorResponse;
 import spring.myproject.common.exception.meeting.NotFoundMeetingExeption;
@@ -30,6 +31,12 @@ public class AttendControllerAdvice {
     ResponseEntity<ErrorResponse> handleNotFoundMeetingException(){
         return new ResponseEntity<>(
                 AbstractErrorResponse.getErrorResponse(NOT_FOUND_MEETING_CODE, NOT_FOUND_ENROLLMENT_MESSAGE)
+                , HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(NotAuthorizeException.class)
+    ResponseEntity<ErrorResponse> handleNotAuthorizeException(){
+        return new ResponseEntity<>(
+                AbstractErrorResponse.getErrorResponse(NOT_AUTHORIZE_CODE, NOT_AUTHORIZED_MESSAGE)
                 , HttpStatus.BAD_REQUEST);
     }
     @ExceptionHandler(AutoAttendException.class)

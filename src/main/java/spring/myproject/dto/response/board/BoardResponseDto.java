@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.domain.Page;
+import spring.myproject.common.functional.MyFunctionalInterface;
 import spring.myproject.dto.response.board.querydto.BoardQuery;
 import spring.myproject.dto.response.board.querydto.BoardsQuery;
 
@@ -42,14 +43,15 @@ public class BoardResponseDto {
         private String userImageUrl;
         private LocalDateTime registerDate;
 
-        public static BoardResponse of(List<BoardQuery> boardQueries, List<String> imageUrls, String userImageUrl , String code, String message) {
+        public static BoardResponse of(List<BoardQuery> boardQueries, List<String> imageUrls, String userImageUrl , String code, String message, MyFunctionalInterface myFunctionalInterface) {
+            List<String> urls = imageUrls.stream().map(url -> myFunctionalInterface.execute(url)).toList();
             return BoardResponse.builder()
                     .code(code)
                     .message(message)
                     .title(boardQueries.getFirst().getTitle())
                     .description(boardQueries.getFirst().getDescription())
                     .registerDate(boardQueries.getFirst().getRegisterDate())
-                    .imageUrls(imageUrls)
+                    .imageUrls(urls)
                     .username(boardQueries.getFirst().getUsername())
                     .userImageUrl(userImageUrl)
                     .build();

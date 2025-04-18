@@ -19,7 +19,6 @@ import static spring.myproject.dto.response.user.UserResponseDto.*;
 public class UserController {
 
     private final UserService userService;
-    private final AsyncService asyncService;
     private final FCMService fcmService;
 
     @PostMapping("/auth/id-check")
@@ -51,7 +50,8 @@ public class UserController {
     public ResponseEntity<SignInResponse> signIn(@RequestBody SignInRequest signInRequest, HttpServletResponse response) {
 
         SignInResponse signInResponse = userService.signIn(signInRequest,response);
-        fcmService.saveFCMToken(signInRequest);
+        //TODO :fcm
+        //fcmService.saveFCMToken(signInRequest);
         return new ResponseEntity<>(signInResponse,HttpStatus.OK);
     }
 
@@ -59,7 +59,6 @@ public class UserController {
     public ResponseEntity<EmailCertificationResponse> emailCertification(@RequestBody EmailCertificationRequest emailCertificationRequest){
 
         EmailCertificationResponse emailCertificationResponse = userService.emailCertification(emailCertificationRequest);
-        asyncService.asyncTask(emailCertificationRequest);
         return new ResponseEntity<>(emailCertificationResponse,HttpStatus.OK);
     }
     @PostMapping(value = "/auth/check-certification")

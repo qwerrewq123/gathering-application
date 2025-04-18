@@ -19,6 +19,7 @@ public class GatheringDetailQuery {
     private LocalDateTime registerDate;
     private String category;
     private String createdBy;
+    private String createdByUrl;
     private String participatedBy;
     private String participatedByNickname;
     private String participatedByUrl;

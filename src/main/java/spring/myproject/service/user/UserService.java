@@ -101,7 +101,6 @@ public class UserService {
     public EmailCertificationResponse emailCertification(EmailCertificationRequest emailCertificationRequest) {
 
             List<User> users = userRepository.findByEmail(emailCertificationRequest.getEmail());
-            if(users.isEmpty()) throw new NotFoundEmailExeption("Not Found Email");
             if(users.size()>1) throw new DuplicateEmailExeption("Duplicate Email");
             asyncService.asyncTask(emailCertificationRequest);
             return EmailCertificationResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE);
@@ -130,7 +129,7 @@ public class UserService {
     public CheckCertificationResponse checkCertification(CheckCertificationRequest checkCertificationRequest) {
         String certification = certificationRepository.findCertificationByEmail(checkCertificationRequest.getEmail());
         if(!StringUtils.hasText(certification)) throw new NotFoundCertificationException("Not Found Certification");
-        if(certification != checkCertificationRequest.getCertification()) throw new UnCorrectCertification("UnCorrect Certification");
+        if(!certification.equals(checkCertificationRequest.getCertification())) throw new UnCorrectCertification("UnCorrect Certification");
         return CheckCertificationResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE);
     }
 }

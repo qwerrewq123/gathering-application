@@ -95,11 +95,7 @@ public class MeetingService {
         userRepository.findById(userId).orElseThrow(()->new NotFoundUserException("no exist User!!"));
         List<MeetingDetailQuery> meetingDetailQueries = meetingRepository.meetingDetail(meetingId);
         if(meetingDetailQueries.isEmpty()) throw new NotFoundMeetingExeption("no exist Meeting!!");
-        List<String> attends = attendedBy(meetingDetailQueries);
-        String url = getUrl(meetingDetailQueries.getFirst().getUrl());
-        recommendService.addScore(gatheringId,1);
-        return MeetingResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE,meetingDetailQueries,attends,url);
-
+        return toMeetingResponse(meetingDetailQueries);
     }
 
     public MeetingsResponse meetings(int pageNum, int pageSize, Long userId, String title) {
@@ -112,19 +108,35 @@ public class MeetingService {
             return MeetingsResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE,content,hasNext);
     }
 
-    private List<String> attendedBy(List<MeetingDetailQuery> meetingDetailQueries){
+    private MeetingResponse toMeetingResponse(List<MeetingDetailQuery> meetingDetailQueries) {
+        List<String> attendBy = meetingDetailQueries.stream().map(MeetingDetailQuery::getAttendedBy).toList();
+        List<String> attendByNickname = meetingDetailQueries.stream().map(MeetingDetailQuery::getAttendByNickname).toList();
+        List<String> attendByUrl = meetingDetailQueries.stream().map(query -> url + query.getAttendedByUrl()).toList();
 
-        List<String> attendedBy = new ArrayList<>();
-        for (MeetingDetailQuery meetingQueryResponse : meetingDetailQueries) {
-            if(StringUtils.hasText(meetingQueryResponse.getAttendedBy())){
-                attendedBy.add(meetingQueryResponse.getAttendedBy());
-            }
-        }
-        return attendedBy;
+        return MeetingResponse.builder()
+                .code(SUCCESS_CODE)
+                .message(SUCCESS_MESSAGE)
+                .id(meetingDetailQueries.getFirst().getId())
+                .title(meetingDetailQueries.getFirst().getTitle())
+                .createdBy(meetingDetailQueries.getFirst().getCreatedBy())
+                .createdByNickname(meetingDetailQueries.getFirst().getCreatedByNickname())
+                .createdByUrl(url+meetingDetailQueries.getFirst().getCreatedByUrl())
+                .boardDate(meetingDetailQueries.getFirst().getBoardDate())
+                .startDate(meetingDetailQueries.getFirst().getStartDate())
+                .endDate(meetingDetailQueries.getFirst().getEndDate())
+                .meetingUrl(url+meetingDetailQueries.getFirst().getUrl())
+                .attendedBy(attendBy)
+                .attendedByNickname(attendByNickname)
+                .attendedByUrl(attendByUrl)
+                .build();
+
+
     }
 
+
+
     private List<MeetingElement> toContent(Page<MeetingsQuery> page) {
-            return page.map(query -> MeetingElement.from(query,(fileUrl)->(fileUrl+url)))
+            return page.map(query -> MeetingElement.from(query,(fileUrl)->(url+fileUrl)))
                     .getContent();
     }
 
@@ -141,7 +153,5 @@ public class MeetingService {
         }
         return image;
     }
-    private String getUrl(String fileUrl){
-        return url+fileUrl;
-    }
+
 }

@@ -61,12 +61,16 @@ public class MeetingResponseDto {
         private Long id;
         private String title;
         private String createdBy;
+        private String createdByNickname;
+        private String createdByUrl;
         private List<String> attendedBy;
+        private List<String> attendedByNickname;
+        private List<String> attendedByUrl;
         private LocalDateTime boardDate;
         private LocalDateTime startDate;
         private LocalDateTime endDate;
         private String content;
-        private String url;
+        private String meetingUrl;
 
         public static MeetingResponse of(String code, String message, List<MeetingDetailQuery> meetingDetailQueries, List<String> attends, String url){
             return MeetingResponse.builder()
@@ -80,7 +84,7 @@ public class MeetingResponseDto {
                     .endDate(meetingDetailQueries.getFirst().getEndDate())
                     .createdBy(meetingDetailQueries.getFirst().getCreatedBy())
                     .attendedBy(attends)
-                    .url(url)
+                    .meetingUrl(url)
                     .build();
         }
     }

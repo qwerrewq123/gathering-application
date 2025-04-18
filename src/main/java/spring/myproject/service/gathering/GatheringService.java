@@ -70,6 +70,7 @@ public class GatheringService {
             enrollmentRepository.save(enrollment);
             Topic topic = Topic.builder()
                 .topicName(generateRandomString())
+                .gathering(gathering)
                 .build();
             topicRepository.save(topic);
             //TODO : fcm
@@ -92,7 +93,7 @@ public class GatheringService {
             return UpdateGatheringResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE, userId);
     }
 
-    public GatheringResponse gatheringDetail(Long gatheringId, Long userId) throws IOException {
+    public GatheringResponse gatheringDetail(Long gatheringId, Long userId){
 
             userRepository.findById(userId).orElseThrow(()->new NotFoundUserException("no exist User!!"));
             List<GatheringDetailQuery> gatheringDetailQueries = gatheringRepository.gatheringDetail(gatheringId);
@@ -136,13 +137,13 @@ public class GatheringService {
                 ,(fileUrl)->url+fileUrl);
         for (GatheringDetailQuery gatheringDetailQuery : gatheringDetailQueries) {
             if(StringUtils.hasText(gatheringDetailQuery.getParticipatedBy())){
-                gatheringResponse.getParticipatedByUrl().add(gatheringDetailQuery.getParticipatedBy());
+                gatheringResponse.getParticipatedBy().add(gatheringDetailQuery.getParticipatedBy());
             }
             if(StringUtils.hasText(gatheringDetailQuery.getParticipatedByNickname())){
                 gatheringResponse.getParticipatedByNickname().add(gatheringDetailQuery.getParticipatedByNickname());
             }
             if(StringUtils.hasText(gatheringDetailQuery.getParticipatedByUrl())){
-                gatheringResponse.getParticipatedByUrl().add(gatheringDetailQuery.getParticipatedByUrl());
+                gatheringResponse.getParticipatedByUrl().add(url + gatheringDetailQuery.getParticipatedByUrl());
             }
         }
         return gatheringResponse;

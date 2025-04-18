@@ -1,6 +1,8 @@
 package spring.myproject.common.s3;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
@@ -35,15 +37,13 @@ public class S3ImageDownloadService {
         this.s3Client = s3Client;
     }
 
-    public byte[] getFileByteArrayFromS3(String fileName) throws IOException {
+    public Resource getFileByteArrayFromS3(String fileName) throws IOException {
         GetObjectRequest getObjectRequest = GetObjectRequest.builder()
                 .bucket(bucket)
                 .key(fileName)
                 .build();
         InputStream inputStream = s3Client.getObject(getObjectRequest);
-        byte[] fileBytes = inputStream.readAllBytes();
-        inputStream.close();
-        return fileBytes;
+        return new InputStreamResource(inputStream);
     }
 
 

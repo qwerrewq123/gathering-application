@@ -22,6 +22,7 @@ public class EmailProvider {
             messageHelper.setTo(email);
             messageHelper.setSubject(SUBJECT);
             messageHelper.setText(htmlContent,true);
+            messageHelper.setText(htmlContent,true);
             javaMailSender.send(message);
             return true;
     }

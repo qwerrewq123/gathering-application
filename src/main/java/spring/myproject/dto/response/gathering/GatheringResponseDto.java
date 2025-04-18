@@ -57,10 +57,11 @@ public class GatheringResponseDto {
         private LocalDateTime registerDate;
         private String category;
         private String createdBy;
+        private String createdByUrl;
         private List<String> participatedBy;
         private List<String> participatedByNickname;
         private List<String> participatedByUrl;
-        private String image;
+        private String imageUrl;
         private int count;
     }
 

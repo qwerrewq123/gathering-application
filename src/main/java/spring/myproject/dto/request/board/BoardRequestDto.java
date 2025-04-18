@@ -10,6 +10,7 @@ import spring.myproject.entity.gathering.Gathering;
 import spring.myproject.entity.user.User;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 public class BoardRequestDto {
     @Data
@@ -29,6 +30,7 @@ public class BoardRequestDto {
                     .user(user)
                     .gathering(gathering)
                     .registerDate(LocalDateTime.now())
+                    .images(new ArrayList<>())
                     .build();
         }
     }

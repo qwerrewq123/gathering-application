@@ -1,5 +1,6 @@
 package spring.myproject.controller.image;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
@@ -17,10 +18,9 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class ImageController {
     private final ImageService imageService;
-    @GetMapping("/image/{imageId}")
-    public ResponseEntity<Resource> image(@PathVariable Long imageId) throws IOException {
-        Resource resource = imageService.image(imageId);
-        return new ResponseEntity<>(resource, HttpStatus.OK);
+    @GetMapping("/image/{imageUrl}")
+    public Resource fetchImage(@PathVariable String imageUrl, HttpServletResponse response) throws IOException {
+        return imageService.fetchImage(imageUrl,response);
     }
 
     @GetMapping("/gathering/image/{gatheringId}")

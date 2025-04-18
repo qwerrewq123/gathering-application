@@ -16,7 +16,11 @@ public class MeetingDetailQuery {
     private Long id;
     private String title;
     private String createdBy;
+    private String createdByNickname;
+    private String createdByUrl;
     private String attendedBy;
+    private String attendByNickname;
+    private String attendedByUrl;
     private LocalDateTime boardDate;
     private LocalDateTime startDate;
     private LocalDateTime endDate;

@@ -18,9 +18,10 @@ import java.util.List;
 public interface GatheringRepository extends JpaRepository<Gathering,Long> {
     @Query("select " +
             "new spring.myproject.dto.response.gathering.querydto.GatheringDetailQuery" +
-            "(g.id,g.title,g.content,g.registerDate,ca.name,cr.username,u.username,u.nickname,pm.url,im.url,g.count) " +
+            "(g.id,g.title,g.content,g.registerDate,ca.name,cr.username,crm.url,u.username,u.nickname,pm.url,im.url,g.count) " +
             "from Gathering g " +
             "left join g.createBy cr " +
+            "left join cr.profileImage crm " +
             "left join g.category ca " +
             "left join g.gatheringImage im " +
             "left join g.enrollments e " +
