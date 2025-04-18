@@ -1,12 +1,12 @@
-package spring.myproject.kafka.handler;
+package spring.myproject.rabbitmq.handler;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Component;
 import spring.myproject.common.async.AsyncService;
-import spring.myproject.kafka.event.Event;
-import spring.myproject.kafka.event.EventType;
-import spring.myproject.kafka.payload.SendChatMessageEventPayload;
+import spring.myproject.rabbitmq.event.Event;
+import spring.myproject.rabbitmq.event.EventType;
+import spring.myproject.rabbitmq.payload.SendChatMessageEventPayload;
 
 @Component
 @RequiredArgsConstructor

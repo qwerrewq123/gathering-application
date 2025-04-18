@@ -1,17 +1,15 @@
-package spring.myproject.kafka.event;
+package spring.myproject.rabbitmq.event;
 
 import lombok.Getter;
-import spring.myproject.kafka.serializer.DataSerializer;
+import spring.myproject.rabbitmq.serializer.DataSerializer;
 
 @Getter
 public class Event<T extends EventPayload> {
-    private Long eventId;
     private EventType type;
     private T payload;
 
-    public static Event<EventPayload> of(Long eventId, EventType type, EventPayload payload) {
+    public static Event<EventPayload> of(EventType type, EventPayload payload) {
         Event<EventPayload> event = new Event<>();
-        event.eventId = eventId;
         event.type = type;
         event.payload = payload;
         return event;
@@ -27,7 +25,6 @@ public class Event<T extends EventPayload> {
             return null;
         }
         Event<EventPayload> event = new Event<>();
-        event.eventId = eventRaw.getEventId();
         event.type = EventType.from(eventRaw.getType());
         event.payload = DataSerializer.deserialize(eventRaw.getPayload(), event.type.getPayloadClass());
         return event;
@@ -35,7 +32,6 @@ public class Event<T extends EventPayload> {
 
     @Getter
     private static class EventRaw {
-        private Long eventId;
         private String type;
         private Object payload;
     }

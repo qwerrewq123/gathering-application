@@ -16,6 +16,6 @@ public class ChatRequestDto {
         @NotBlank
         private String content;
         @NotBlank
-        private String username;
+        private Long userId;
     }
 }

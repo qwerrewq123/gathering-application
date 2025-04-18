@@ -16,6 +16,8 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import spring.myproject.common.JwtSubject;
+import spring.myproject.common.security.CustomUserDetail;
 import spring.myproject.common.validator.JwtValidator;
 
 import java.io.IOException;
@@ -37,10 +39,14 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             }
             String jwtToken = token.substring(7);
             Claims claims = jwtValidator.validateToken(jwtToken);
+            String username = claims.getSubject();
+            String role = (String) claims.get("role");
+            Long userId = (Long)claims.get("id");
+            JwtSubject jwtSubject = JwtSubject.of(userId, role, username);
             List<GrantedAuthority> authorities = new ArrayList<>();
-            authorities.add(new SimpleGrantedAuthority("ROLE_"+claims.get("role")));
-            UserDetails userDetails = new User(claims.getSubject(), "", authorities);
-            Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+            authorities.add(new SimpleGrantedAuthority("ROLE_"+role));
+            CustomUserDetail customUserDetail = new CustomUserDetail(jwtSubject,authorities);
+            Authentication authentication = new UsernamePasswordAuthenticationToken(customUserDetail, "", customUserDetail.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
         filterChain.doFilter(request, response);

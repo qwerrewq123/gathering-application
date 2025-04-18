@@ -47,14 +47,13 @@ public class BoardService {
     private final S3ImageUploadService s3ImageUploadService;
     private final GatheringRepository gatheringRepository;
     private final EnrollmentRepository enrollmentRepository;
-    private final ImageRepository imageRepository;
     private final FCMService fcmService;
     private final RecommendService recommendService;
     @Value("${server.url}")
     private String url;
 
-    public BoardResponse fetchBoard(Long gatheringId, Long boardId, String username) {
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new NotFoundUserException("no exist User!!"));
+    public BoardResponse fetchBoard(Long gatheringId, Long boardId, Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundUserException("no exist User!!"));
         Gathering gathering = gatheringRepository.findById(gatheringId).orElseThrow(() -> new NotFoundGatheringException("no exist Gathering!!"));
         if(enrollmentRepository.findByGatheringAndEnrolledBy(gathering,user).isEmpty()) throw new NotAuthorizeException("no Authorize to fetch board");
         List<BoardQuery> boardQueries = boardRepository.fetchBoard(boardId);
@@ -65,29 +64,29 @@ public class BoardService {
         return BoardResponse.of(boardQueries,imageUrls,userImageUrl,SUCCESS_CODE,SUCCESS_MESSAGE);
     }
 
-    public AddBoardResponse addBoard(String username, AddBoardRequest addBoardRequest, List<MultipartFile> files, Long gatheringId) throws IOException {
-        User user = userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
+    public AddBoardResponse addBoard(Long userId, AddBoardRequest addBoardRequest, List<MultipartFile> files, Long gatheringId) throws IOException {
+        User user = userRepository.findById(userId).orElseThrow(()->new NotFoundUserException("no exist User!!"));
         Gathering gathering = gatheringRepository.findById(gatheringId).orElseThrow(() -> new NotFoundGatheringException("no exist Gathering!!"));
         if(enrollmentRepository.findByGatheringAndEnrolledBy(gathering,user).isEmpty()) throw new NotAuthorizeException("no Authorize to add board");
         Board board = AddBoardRequest.of(addBoardRequest,user,gathering);
-        List<Image> images = saveImages(files,board,gathering);
+        saveImages(files,board,gathering);
         boardRepository.save(board);
-        imageRepository.saveAll(images);
         Topic topic = gathering.getTopic();
         String topicName = topic.getTopicName();
-        fcmService.sendByTopic(TopicNotificationRequestDto.builder()
-                .topic(topicName)
-                .title("board")
-                .content("%s add board".formatted(username))
-                .url("localhost:8080/gathering/"+gatheringId)
-                .img(null)
-                .build(),topic);
+        //todo : fcm
+//        fcmService.sendByTopic(TopicNotificationRequestDto.builder()
+//                .topic(topicName)
+//                .title("board")
+//                .content("%s add board".formatted(username))
+//                .url("localhost:8080/gathering/"+gatheringId)
+//                .img(null)
+//                .build(),topic);
         recommendService.addScore(gatheringId,1);
         return AddBoardResponse.of(SUCCESS_CODE, SUCCESS_MESSAGE,board.getId());
     }
 
-    public BoardsResponse fetchBoards(Long gatheringId, String username, Integer pageNum, Integer pageSize) {
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new NotFoundUserException("no exist User!!"));
+    public BoardsResponse fetchBoards(Long gatheringId, Long userId, Integer pageNum, Integer pageSize) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundUserException("no exist User!!"));
         Gathering gathering = gatheringRepository.findById(gatheringId).orElseThrow(() -> new NotFoundGatheringException("no exist Gathering!!"));
         if(enrollmentRepository.findByGatheringAndEnrolledBy(gathering,user).isEmpty()) throw new NotAuthorizeException("no Authorize to fetch board");
         PageRequest pageRequest = PageRequest.of(pageNum, pageSize);
@@ -119,8 +118,8 @@ public class BoardService {
         return url+fileUrl;
     }
 
-    private List<Image> saveImages(List<MultipartFile> files,Board board,Gathering gathering) throws IOException {
-        List<Image> images = new ArrayList<>();
+    private void saveImages(List<MultipartFile> files,Board board,Gathering gathering) throws IOException {
+        List<Image> images = board.getImages();
         for(MultipartFile file : files){
             if(!file.isEmpty()){
                 String url = s3ImageUploadService.upload(file);
@@ -133,11 +132,9 @@ public class BoardService {
                         .contentType(contentType)
                         .build();
                     images.add(image);
-
                 }
             }
         }
-        return images;
     }
 
 }

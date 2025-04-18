@@ -6,8 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
-import spring.myproject.common.Username;
-import spring.myproject.dto.response.enrollment.EnrollResponseDto;
+import spring.myproject.common.annotation.Id;
 import spring.myproject.service.enrollment.EnrollmentService;
 
 import static spring.myproject.dto.response.enrollment.EnrollResponseDto.*;
@@ -19,17 +18,17 @@ public class EnrollmentController {
     private final EnrollmentService enrollmentService;
     @PostMapping("/gathering/{gatheringId}/participate")
     public ResponseEntity<EnrollGatheringResponse> enrollGathering(@PathVariable Long gatheringId,
-                                                                   @Username String username){
+                                                                   @Id Long userId){
 
-        EnrollGatheringResponse enrollGatheringResponse = enrollmentService.enrollGathering(gatheringId, username);
+        EnrollGatheringResponse enrollGatheringResponse = enrollmentService.enrollGathering(gatheringId, userId);
         return new ResponseEntity<>(enrollGatheringResponse, HttpStatus.OK);
     }
 
     @PostMapping("/gathering/{gatheringId}/disParticipate")
     public ResponseEntity<DisEnrollGatheringResponse> disEnrollGathering(@PathVariable Long gatheringId,
-                                                           @Username String username){
+                                                                         @Id Long userId){
 
-        DisEnrollGatheringResponse disEnrollGatheringResponse = enrollmentService.disEnrollGathering(gatheringId, username);
+        DisEnrollGatheringResponse disEnrollGatheringResponse = enrollmentService.disEnrollGathering(gatheringId, userId);
         return new ResponseEntity<>(disEnrollGatheringResponse, HttpStatus.OK);
     }
 }

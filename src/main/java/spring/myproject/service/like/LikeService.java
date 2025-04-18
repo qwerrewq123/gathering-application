@@ -32,10 +32,9 @@ public class LikeService {
     private final GatheringRepository gatheringRepository;
     private final RecommendService recommendService;
 
-    public LikeResponse like(Long gatheringId, String username) {
+    public LikeResponse like(Long gatheringId, Long userId) {
 
-            User user = userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
-            Long userId = user.getId();
+            User user = userRepository.findById(userId).orElseThrow(()->new NotFoundUserException("no exist User!!"));
             Gathering gathering = gatheringRepository.findById(gatheringId).orElseThrow(()-> new NotFoundGatheringException("no exist Gathering!!"));
             Optional<Like> optionalLike = likeRepository.findLike(userId, gatheringId);
             if(optionalLike.isPresent()) throw new AlreadyLikeGatheringException("Already Like Gathering!!");
@@ -43,10 +42,9 @@ public class LikeService {
             recommendService.addScore(gatheringId,1);
             return LikeResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE);
     }
-    public DislikeResponse dislike(Long gatheringId, String username) {
+    public DislikeResponse dislike(Long gatheringId, Long userId) {
 
-            User user = userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
-            Long userId = user.getId();
+            User user = userRepository.findById(userId).orElseThrow(()->new NotFoundUserException("no exist User!!"));
             gatheringRepository.findById(gatheringId).orElseThrow(()-> new NotFoundGatheringException("no exist Gathering!!"));
             Like like = likeRepository.findLike(userId, gatheringId).orElseThrow(()-> new NotFoundLikeException("no exist Like"));
             Long likedId = like.getLikedBy().getId();

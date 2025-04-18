@@ -32,7 +32,7 @@ public class Meeting {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User createdBy;
-    @OneToMany(mappedBy = "meeting")
+    @OneToMany(mappedBy = "meeting",cascade = CascadeType.REMOVE)
     private List<Attend> attends = new ArrayList<>();
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "gathering_id")

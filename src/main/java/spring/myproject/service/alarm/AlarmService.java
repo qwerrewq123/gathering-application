@@ -25,23 +25,23 @@ public class AlarmService {
     private final UserRepository userRepository;
     private final AlarmRepository alarmRepository;
 
-    public CheckAlarmResponse checkAlarm(Long id, String username) {
+    public CheckAlarmResponse checkAlarm(Long id, Long userId) {
 
-            userRepository.findByUsername(username).orElseThrow(()-> new NotFoundUserException("no exist User!!"));
+            userRepository.findById(userId).orElseThrow(()-> new NotFoundUserException("no exist User!!"));
             Alarm alarm = alarmRepository.findById(id).orElseThrow(() ->  new NotFoundAlarmException("no exist alarm!!"));
             alarm.setChecked(true);
             return CheckAlarmResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE);
     }
-    public DeleteAlarmResponse deleteAlarm(Long id, String username) {
+    public DeleteAlarmResponse deleteAlarm(Long id, Long userId) {
 
-            userRepository.findByUsername(username).orElseThrow(()-> new NotFoundUserException("no exist User!!"));
+            userRepository.findById(userId).orElseThrow(()-> new NotFoundUserException("no exist User!!"));
             Alarm alarm = alarmRepository.findById(id).orElseThrow(() ->  new IllegalArgumentException("no exist alarm!!"));
             alarmRepository.delete(alarm);
             return DeleteAlarmResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE);
     }
-    public AlarmResponses alarmList(Integer page, String username, Boolean checked) {
+    public AlarmResponses alarmList(Integer page, Long userId, Boolean checked) {
 
-            User user = userRepository.findByUsername(username).orElseThrow(()-> new NotFoundUserException("no exist User!!"));
+            User user = userRepository.findById(userId).orElseThrow(()-> new NotFoundUserException("no exist User!!"));
             return toAlarmResponses(page-1,user,checked);
     }
 

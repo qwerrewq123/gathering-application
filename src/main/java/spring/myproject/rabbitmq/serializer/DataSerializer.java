@@ -1,4 +1,4 @@
-package spring.myproject.kafka.serializer;
+package spring.myproject.rabbitmq.serializer;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;

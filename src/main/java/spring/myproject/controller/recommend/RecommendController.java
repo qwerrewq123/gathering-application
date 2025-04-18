@@ -5,7 +5,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-import spring.myproject.common.Username;
 import spring.myproject.service.recommend.RecommendService;
 import spring.myproject.dto.response.recommend.RecommendResponse;
 

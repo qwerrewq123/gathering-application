@@ -92,8 +92,8 @@ public class UserService {
             if(!matches){
                 throw new UnCorrectPasswordException("doesn't match Password!");
             }
-            String accessToken = jwtProvider.createAccessToken(user.getUsername(),user.getRole().toString());
-            String refreshToken = jwtProvider.createRefreshToken(user.getUsername(),user.getRole().toString());
+            String accessToken = jwtProvider.createAccessToken(user);
+            String refreshToken = jwtProvider.createRefreshToken(user);
             Cookie cookie = getCookie("refreshToken", refreshToken,refreshExpiration);
             response.addCookie(cookie);
             user.changeRefreshToken(refreshToken);
@@ -117,8 +117,8 @@ public class UserService {
             String username = claims.getSubject();
             User user = userRepository.findByUsername(username).orElseThrow(() -> new NotFoundUserException("not Found User"));
             String role = (String)claims.get("role");
-            String accessToken = jwtProvider.createAccessToken(username, role);
-            String issuedRefreshToken = jwtProvider.createRefreshToken(username, role);
+            String accessToken = jwtProvider.createAccessToken(user);
+            String issuedRefreshToken = jwtProvider.createRefreshToken(user);
             user.changeRefreshToken(issuedRefreshToken);
             Cookie cookie = getCookie("refreshToken", refreshToken,refreshExpiration);
             response.addCookie(cookie);

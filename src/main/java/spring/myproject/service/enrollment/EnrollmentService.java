@@ -33,9 +33,9 @@ public class EnrollmentService {
     private final GatheringRepository gatheringRepository;
     private final FCMService fcmService;
     private final RecommendService recommendService;
-    public EnrollGatheringResponse enrollGathering(Long gatheringId, String username) {
+    public EnrollGatheringResponse enrollGathering(Long gatheringId, Long userId) {
 
-            User user = userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
+            User user = userRepository.findById(userId).orElseThrow(()->new NotFoundUserException("no exist User!!"));
             Gathering gathering = gatheringRepository.findById(gatheringId).orElseThrow(
                     () -> new NotFoundGatheringException("no exist Gathering!!"));
             Enrollment exist = enrollmentRepository.existEnrollment(gatheringId, user.getId());
@@ -45,20 +45,21 @@ public class EnrollmentService {
             enrollmentRepository.save(enrollment);
             Topic topic = gathering.getTopic();
             String topicName = topic.getTopicName();
-            fcmService.sendByTopic(TopicNotificationRequestDto.builder()
-                            .topic(topicName)
-                            .title("enrollment")
-                            .content("%s enrolled".formatted(username))
-                            .url("localhost:8080/gathering/"+gatheringId)
-                            .img(null)
-                    .build(),topic);
-            fcmService.subscribeToTopics(topicName,username);
+            //TODO : fcm
+//            fcmService.sendByTopic(TopicNotificationRequestDto.builder()
+//                            .topic(topicName)
+//                            .title("enrollment")
+//                            .content("%s enrolled".formatted(username))
+//                            .url("localhost:8080/gathering/"+gatheringId)
+//                            .img(null)
+//                    .build(),topic);
+//            fcmService.subscribeToTopics(topicName,username);
             recommendService.addScore(gatheringId,1);
             return EnrollGatheringResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE);
     }
-    public DisEnrollGatheringResponse disEnrollGathering(Long gatheringId, String username) {
+    public DisEnrollGatheringResponse disEnrollGathering(Long gatheringId, Long userId) {
 
-            User user = userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
+            User user = userRepository.findById(userId).orElseThrow(()->new NotFoundUserException("no exist User!!"));
             Gathering gathering = gatheringRepository.findById(gatheringId).orElseThrow(
                 () -> new NotFoundGatheringException("no exist Gathering!!"));
             Enrollment enrollment = enrollmentRepository.findEnrollment(gatheringId, user.getId()).orElseThrow(
@@ -67,14 +68,15 @@ public class EnrollmentService {
             enrollmentRepository.delete(enrollment);
             Topic topic = gathering.getTopic();
             String topicName = topic.getTopicName();
-            fcmService.sendByTopic(TopicNotificationRequestDto.builder()
-                    .topic(topicName)
-                    .title("disEnrollment")
-                    .content("%s disErolled".formatted(username))
-                    .url("localhost:8080/gathering/"+gatheringId)
-                    .img(null)
-                    .build(),topic);
-            fcmService.unsubscribeFromTopics(topicName,username);
+            //TODO : fcm
+//            fcmService.sendByTopic(TopicNotificationRequestDto.builder()
+//                    .topic(topicName)
+//                    .title("disEnrollment")
+//                    .content("%s disErolled".formatted(username))
+//                    .url("localhost:8080/gathering/"+gatheringId)
+//                    .img(null)
+//                    .build(),topic);
+//            fcmService.unsubscribeFromTopics(topicName,username);
             recommendService.addScore(gatheringId,-1);
             return DisEnrollGatheringResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE);
     }

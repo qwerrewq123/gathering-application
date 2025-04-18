@@ -57,9 +57,9 @@ public class GatheringService {
     @Value("${server.url}")
     private String url;
 
-    public AddGatheringResponse addGathering(AddGatheringRequest addGatheringRequest, MultipartFile file, String username) throws IOException {
+    public AddGatheringResponse addGathering(AddGatheringRequest addGatheringRequest, MultipartFile file, Long userId) throws IOException {
 
-            User user = userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
+            User user = userRepository.findById(userId).orElseThrow(()->new NotFoundUserException("no exist User!!"));
             Category category = categoryRepository.findByName(addGatheringRequest.getCategory()).orElseThrow(()-> new NotFoundCategoryException("no exist Category!!"));
             Image image = null;
             image = saveImage(image,file);
@@ -72,14 +72,15 @@ public class GatheringService {
                 .topicName(generateRandomString())
                 .build();
             topicRepository.save(topic);
-            fcmService.subscribeToTopics(topic.getTopicName(),username);
+            //TODO : fcm
+            //fcmService.subscribeToTopics(topic.getTopicName(),username);
             recommendService.createScore(gathering);
             return AddGatheringResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE, gathering.getId());
     }
 
-    public UpdateGatheringResponse updateGathering(UpdateGatheringRequest updateGatheringRequest, MultipartFile file, String username,Long gatheringId) throws IOException {
+    public UpdateGatheringResponse updateGathering(UpdateGatheringRequest updateGatheringRequest, MultipartFile file, Long userId, Long gatheringId) throws IOException {
 
-            User user = userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
+            User user = userRepository.findById(userId).orElseThrow(()->new NotFoundUserException("no exist User!!"));
             Category category = categoryRepository.findByName(updateGatheringRequest.getCategory()).orElseThrow(()-> new NotFoundCategoryException("no exist Category!!"));
             Gathering gathering = gatheringRepository.findById(gatheringId).orElseThrow(()->new NotFoundGatheringException("no exist Gathering!!"));
             boolean authorize = gathering.getCreateBy().getId() == user.getId();
@@ -88,20 +89,20 @@ public class GatheringService {
             image = saveImage(image,file);
             if(image!=null) imageRepository.save(image);
             gathering.changeGathering(image,category,updateGatheringRequest);
-            return UpdateGatheringResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE,gatheringId);
+            return UpdateGatheringResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE, userId);
     }
 
-    public GatheringResponse gatheringDetail(Long gatheringId, String username) throws IOException {
+    public GatheringResponse gatheringDetail(Long gatheringId, Long userId) throws IOException {
 
-            userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
+            userRepository.findById(userId).orElseThrow(()->new NotFoundUserException("no exist User!!"));
             List<GatheringDetailQuery> gatheringDetailQueries = gatheringRepository.gatheringDetail(gatheringId);
             if(gatheringDetailQueries.isEmpty()) throw new NotFoundGatheringException("no exist Gathering!!!");
             recommendService.addScore(gatheringId,1);
             return getGatheringResponse(gatheringDetailQueries);
     }
 
-    public GatheringCategoryResponse gatheringCategory(String category, Integer pageNum, Integer pageSize, String username) {
-        userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
+    public GatheringCategoryResponse gatheringCategory(String category, Integer pageNum, Integer pageSize, Long userId) {
+        userRepository.findById(userId).orElseThrow(()->new NotFoundUserException("no exist User!!"));
         PageRequest pageRequest = PageRequest.of(pageNum - 1, pageSize, Sort.Direction.ASC,"id");
         Page<GatheringsQuery> page = gatheringRepository.gatheringsCategory(pageRequest,category);
         boolean hasNext = page.hasNext();
@@ -109,19 +110,18 @@ public class GatheringService {
         return GatheringCategoryResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE,content,hasNext);
     }
 
-    public GatheringLikeResponse gatheringsLike(int pageNum, int pageSize, String username) {
+    public GatheringLikeResponse gatheringsLike(int pageNum, int pageSize, Long userId) {
 
-        User user = userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
+        User user = userRepository.findById(userId).orElseThrow(()->new NotFoundUserException("no exist User!!"));
         PageRequest pageRequest = PageRequest.of(pageNum - 1, pageSize, Sort.Direction.DESC,"id");
-        Long userId = user.getId();
         Page<GatheringsQuery> page = gatheringRepository.gatheringsLike(pageRequest, userId);
         boolean hasNext = page.hasNext();
         List<GatheringsResponse> content = toContent(page);
         return GatheringLikeResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE,content,hasNext);
     }
 
-    public MainGatheringResponse gatherings(String username, String title) {
-            userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
+    public MainGatheringResponse gatherings(Long userId, String title) {
+            userRepository.findById(userId).orElseThrow(()->new NotFoundUserException("no exist User!!"));
             List<MainGatheringsQuery> mainGatheringsQueryList = gatheringRepository.gatherings(title);
             List<GatheringsQuery> gatherings = toGatheringQueriesList(mainGatheringsQueryList);
             List<MainGatheringElement> mainGatheringElements = toGatheringsResponseList(gatherings);

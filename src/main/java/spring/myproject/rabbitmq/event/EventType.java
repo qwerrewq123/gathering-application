@@ -1,9 +1,9 @@
-package spring.myproject.kafka.event;
+package spring.myproject.rabbitmq.event;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import spring.myproject.kafka.payload.SendChatMessageEventPayload;
+import spring.myproject.rabbitmq.payload.SendChatMessageEventPayload;
 
 @Slf4j
 @Getter

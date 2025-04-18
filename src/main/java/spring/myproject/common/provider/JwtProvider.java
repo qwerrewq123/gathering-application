@@ -6,6 +6,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import spring.myproject.entity.user.User;
 
 import javax.crypto.spec.SecretKeySpec;
 import java.awt.*;
@@ -35,9 +36,10 @@ public class JwtProvider {
     }
 
 
-    public String createAccessToken(String username, String role){
-        Claims claims = Jwts.claims().setSubject(username);
-        claims.put("role", role);
+    public String createAccessToken(User user){
+        Claims claims = Jwts.claims().setSubject(user.getUsername());
+        claims.put("role", user.getRole().toString());
+        claims.put("id",user.getId());
         Date now = new Date();
         String token = Jwts.builder()
                 .setClaims(claims)
@@ -48,9 +50,10 @@ public class JwtProvider {
         return token;
     }
 
-    public String createRefreshToken(String username, String role){
-        Claims claims = Jwts.claims().setSubject(username);
-        claims.put("role", role);
+    public String createRefreshToken(User user){
+        Claims claims = Jwts.claims().setSubject(user.getUsername());
+        claims.put("role", user.getRole().toString());
+        claims.put("id",user.getId());
         Date now = new Date();
         String token = Jwts.builder()
                 .setClaims(claims)

@@ -1,10 +1,10 @@
-package spring.myproject.kafka.payload;
+package spring.myproject.rabbitmq.payload;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import spring.myproject.kafka.event.EventPayload;
+import spring.myproject.rabbitmq.event.EventPayload;
 
 import static spring.myproject.dto.request.chat.ChatRequestDto.*;
 
@@ -16,13 +16,13 @@ public class SendChatMessageEventPayload implements EventPayload {
 
     private Long roomId;
     private String content;
-    private String username;
+    private Long userId;
 
     public static SendChatMessageEventPayload of(Long roomId,ChatMessageRequest chatMessageRequest) {
         return SendChatMessageEventPayload.builder()
                 .roomId(roomId)
                 .content(chatMessageRequest.getContent())
-                .username(chatMessageRequest.getUsername())
+                .userId(chatMessageRequest.getUserId())
                 .build();
     }
 }

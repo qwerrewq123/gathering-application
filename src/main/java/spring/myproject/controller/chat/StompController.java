@@ -3,9 +3,9 @@ package spring.myproject.controller.chat;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Controller;
-import spring.myproject.kafka.event.EventType;
-import spring.myproject.kafka.producer.KafkaProducerService;
+import spring.myproject.rabbitmq.publisher.ChatPublisher;
 
 import static spring.myproject.dto.request.chat.ChatRequestDto.*;
 
@@ -13,10 +13,10 @@ import static spring.myproject.dto.request.chat.ChatRequestDto.*;
 @RequiredArgsConstructor
 public class StompController {
 
-    private final KafkaProducerService kafkaProducerService;
+    private final ChatPublisher chatPublisher;
 
-    @MessageMapping("/{roomId}")
-    public void sendMessage(@DestinationVariable Long roomId, ChatMessageRequest chatMessageRequest){
-        kafkaProducerService.publishSendMessageEvent(EventType.Topic.GATHERING_CHAT, roomId,chatMessageRequest);
+    @MessageMapping("/room/{roomId}")
+    public void sendMessage(@DestinationVariable Long roomId, @Payload ChatMessageRequest chatMessageRequest){
+        chatPublisher.publish(roomId,chatMessageRequest);
     }
 }

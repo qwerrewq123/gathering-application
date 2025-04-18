@@ -8,7 +8,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import spring.myproject.dto.response.meeting.querydto.MeetingDetailQuery;
 import spring.myproject.dto.response.meeting.querydto.MeetingsQuery;
@@ -23,7 +22,6 @@ import spring.myproject.repository.meeting.MeetingRepository;
 import spring.myproject.entity.user.User;
 import spring.myproject.repository.user.UserRepository;
 import spring.myproject.common.exception.gathering.NotFoundGatheringException;
-import spring.myproject.common.exception.meeting.MeetingIsNotEmptyException;
 import spring.myproject.common.exception.meeting.NotAuthorizeException;
 import spring.myproject.common.exception.meeting.NotFoundMeetingExeption;
 import spring.myproject.common.exception.user.NotFoundUserException;
@@ -54,9 +52,9 @@ public class MeetingService {
     private final RecommendService recommendService;
     @Value("${server.url}")
     private String url;
-    public AddMeetingResponse addMeeting(AddMeetingRequest addMeetingRequest, String username, Long gatheringId, MultipartFile file) throws IOException {
+    public AddMeetingResponse addMeeting(AddMeetingRequest addMeetingRequest, Long userId, Long gatheringId, MultipartFile file) throws IOException {
 
-            User user = userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
+            User user = userRepository.findById(userId).orElseThrow(()->new NotFoundUserException("no exist User!!"));
             Gathering gathering = gatheringRepository.findById(gatheringId).orElseThrow(() -> new NotFoundGatheringException("no exist Gathering!!"));
             Image image = null;
             image = saveImage(image,file);
@@ -69,43 +67,34 @@ public class MeetingService {
             return AddMeetingResponse.of(SUCCESS_CODE, SUCCESS_MESSAGE, meeting.getId());
     }
 
-    public DeleteMeetingResponse deleteMeeting(String username, Long meetingId,Long gatheringId) {
+    public DeleteMeetingResponse deleteMeeting(Long userId, Long meetingId,Long gatheringId) {
 
-            User user = userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
+            userRepository.findById(userId).orElseThrow(()->new NotFoundUserException("no exist User!!"));
             Meeting meeting = meetingRepository.findById(meetingId).orElseThrow(()->new NotFoundMeetingExeption("no exist Meeting!!"));
-            boolean authorize = meeting.getCreatedBy().getId() == user.getId();
-            if(authorize == false){
-                throw new NotAuthorizeException("no authority!");
-            }
-            if(meeting.getCount() > 1){
-                throw new MeetingIsNotEmptyException("meeting is not empty!!");
-            }
-            Attend attend = attendRepository.findByUserIdAndMeetingIdAndTrue(user.getId(), meetingId);
-            attendRepository.delete(attend);
+            boolean authorize = meeting.getCreatedBy().getId().equals(userId);
+            if(!authorize) throw new NotAuthorizeException("no authority!");
             meetingRepository.delete(meeting);
             recommendService.addScore(gatheringId,-1);
             return DeleteMeetingResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE);
     }
 
-    public UpdateMeetingResponse updateMeeting(UpdateMeetingRequest updateMeetingRequest, String username, Long meetingId, MultipartFile file) throws IOException {
+    public UpdateMeetingResponse updateMeeting(UpdateMeetingRequest updateMeetingRequest, Long userId, Long meetingId, MultipartFile file,Long gatheringId) throws IOException {
 
-            User user = userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
+            User user = userRepository.findById(userId).orElseThrow(()->new NotFoundUserException("no exist User!!"));
             Meeting meeting = meetingRepository.findById(meetingId).orElseThrow(()->new NotFoundMeetingExeption("no exist Meeting!!"));
             boolean authorize = meeting.getCreatedBy().getId() == user.getId();
-            if(authorize == false){
-                throw new NotAuthorizeException("no authority!");
-            }
+            if(!authorize) throw new NotAuthorizeException("no authority!");
             Image image = null;
             image = saveImage(image,file);
             if(image!=null) imageRepository.save(image);
             changeMeeting(meeting,updateMeetingRequest,image);
             return UpdateMeetingResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE,meetingId);
     }
-    public MeetingResponse meetingDetail(Long meetingId, String username,Long gatheringId) {
+    public MeetingResponse meetingDetail(Long meetingId, Long userId, Long gatheringId) {
 
-        userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
+        userRepository.findById(userId).orElseThrow(()->new NotFoundUserException("no exist User!!"));
         List<MeetingDetailQuery> meetingDetailQueries = meetingRepository.meetingDetail(meetingId);
-        if(meetingDetailQueries.size() == 0) throw new NotFoundMeetingExeption("no exist Meeting!!");
+        if(meetingDetailQueries.isEmpty()) throw new NotFoundMeetingExeption("no exist Meeting!!");
         List<String> attends = attendedBy(meetingDetailQueries);
         String url = getUrl(meetingDetailQueries.getFirst().getUrl());
         recommendService.addScore(gatheringId,1);
@@ -113,9 +102,9 @@ public class MeetingService {
 
     }
 
-    public MeetingsResponse meetings(int pageNum, int pageSize, String username, @RequestParam(defaultValue = "") String title) {
+    public MeetingsResponse meetings(int pageNum, int pageSize, Long userId, String title) {
 
-            userRepository.findByUsername(username).orElseThrow(()->new NotFoundUserException("no exist User!!"));
+            userRepository.findById(userId).orElseThrow(()->new NotFoundUserException("no exist User!!"));
             PageRequest pageRequest = PageRequest.of(pageNum - 1, pageSize, Sort.Direction.ASC,"id");
             Page<MeetingsQuery> page = meetingRepository.meetings(pageRequest,title);
             List<MeetingElement> content = toContent(page);
