@@ -64,9 +64,9 @@ public class EnrollmentService {
             Gathering gathering = gatheringRepository.findById(gatheringId).orElseThrow(
                 () -> new NotFoundGatheringException("no exist Gathering!!"));
             Long createdById = gathering.getCreateBy().getId();
-            if(createdById.equals(userId)) throw new NotDisEnrollmentException("Opener cannot disEnroll!!");
             Enrollment enrollment = enrollmentRepository.findEnrollment(gatheringId, user.getId()).orElseThrow(
-                    () ->  new NotFoundEnrollmentException("no exist Enrollment!!"));
+                () ->  new NotFoundEnrollmentException("no exist Enrollment!!"));
+            if(createdById.equals(userId)) throw new NotDisEnrollmentException("Opener cannot disEnroll!!");
             gathering.changeCount(gathering.getCount()-1);
             enrollmentRepository.delete(enrollment);
 //            Topic topic = gathering.getTopic();

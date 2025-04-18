@@ -61,16 +61,16 @@ public class MeetingServiceTest {
                 "address",1,"hobby", Role.USER,"nickname",null,null,null);
         Gathering mockGathering = new Gathering(1L,null,null,null,null,mockUser,0,null,null, Topic.builder().topicName("topicname").build());
         when(s3ImageUploadService.upload(any(MultipartFile.class))).thenReturn("url");
-        when(userRepository.findById("true username")).thenReturn(Optional.of(mockUser));
-        when(userRepository.findById("false username")).thenReturn(Optional.empty());
+        when(userRepository.findById(1L)).thenReturn(Optional.of(mockUser));
+        when(userRepository.findById(2L)).thenReturn(Optional.empty());
         when(gatheringRepository.findById(1L)).thenReturn(Optional.of(mockGathering));
         when(gatheringRepository.findById(2L)).thenReturn(Optional.empty());
         AddMeetingRequest addMeetingRequest = new AddMeetingRequest();
-        assertThatThrownBy(()->meetingService.addMeeting(addMeetingRequest,"false username",2L,mockMultipartFile))
+        assertThatThrownBy(()->meetingService.addMeeting(addMeetingRequest,2L,2L,mockMultipartFile))
                 .isInstanceOf(NotFoundUserException.class);
-        assertThatThrownBy(()->meetingService.addMeeting(addMeetingRequest,"true username",2L,mockMultipartFile))
+        assertThatThrownBy(()->meetingService.addMeeting(addMeetingRequest,1L,2L,mockMultipartFile))
                 .isInstanceOf(NotFoundGatheringException.class);
-        AddMeetingResponse addMeetingResponse = meetingService.addMeeting(addMeetingRequest, "true username", 1L, mockMultipartFile);
+        AddMeetingResponse addMeetingResponse = meetingService.addMeeting(addMeetingRequest, 1L, 1L, mockMultipartFile);
         assertThat(addMeetingResponse)
                 .extracting("code","message")
                 .containsExactly(SUCCESS_CODE, SUCCESS_MESSAGE);
@@ -83,20 +83,20 @@ public class MeetingServiceTest {
         User mockUser2 = new User(2L,"true username2","password","email",
                 "address",1,"hobby", Role.USER,"nickname",null,null,null);
         Meeting mockMeeting = Meeting.builder().createdBy(mockUser1).count(1).build();
-        when(userRepository.findById("true username1")).thenReturn(Optional.of(mockUser1));
-        when(userRepository.findById("true username2")).thenReturn(Optional.of(mockUser2));
-        when(userRepository.findById("false username")).thenReturn(Optional.empty());
+        when(userRepository.findById(1L)).thenReturn(Optional.of(mockUser1));
+        when(userRepository.findById(2L)).thenReturn(Optional.of(mockUser2));
+        when(userRepository.findById(3L)).thenReturn(Optional.empty());
         when(meetingRepository.findById(1L)).thenReturn(Optional.of(mockMeeting));
         when(meetingRepository.findById(2L)).thenReturn(Optional.empty());
         when(s3ImageUploadService.upload(any(MultipartFile.class))).thenReturn("url");
         UpdateMeetingRequest updateMeetingRequest = UpdateMeetingRequest.builder().build();
-        assertThatThrownBy(()->meetingService.updateMeeting(updateMeetingRequest,"false username",2L,mockMultipartFile))
+        assertThatThrownBy(()->meetingService.updateMeeting(updateMeetingRequest,3L,2L,mockMultipartFile,1L))
                 .isInstanceOf(NotFoundUserException.class);
-        assertThatThrownBy(()->meetingService.updateMeeting(updateMeetingRequest,"true username2",2L,mockMultipartFile))
+        assertThatThrownBy(()->meetingService.updateMeeting(updateMeetingRequest,2L,2L,mockMultipartFile,1L))
                 .isInstanceOf(NotFoundMeetingExeption.class);
-        assertThatThrownBy(()->meetingService.updateMeeting(updateMeetingRequest,"true username2",1L,mockMultipartFile))
+        assertThatThrownBy(()->meetingService.updateMeeting(updateMeetingRequest,2L,1L,mockMultipartFile,1L))
                 .isInstanceOf(NotAuthorizeException.class);
-        UpdateMeetingResponse updateMeetingResponse = meetingService.updateMeeting(updateMeetingRequest, "true username1", 1L, mockMultipartFile);
+        UpdateMeetingResponse updateMeetingResponse = meetingService.updateMeeting(updateMeetingRequest, 1L, 1L, mockMultipartFile,1L);
         assertThat(updateMeetingResponse)
                 .extracting("code","message")
                 .containsExactly(SUCCESS_CODE, SUCCESS_MESSAGE);
@@ -108,19 +108,19 @@ public class MeetingServiceTest {
         User mockUser2 = new User(2L,"true username2","password","email",
                 "address",1,"hobby", Role.USER,"nickname",null,null,null);
         Meeting mockMeeting = Meeting.builder().createdBy(mockUser1).count(1).build();
-        when(userRepository.findById("true username1")).thenReturn(Optional.of(mockUser1));
-        when(userRepository.findById("true username2")).thenReturn(Optional.of(mockUser2));
-        when(userRepository.findById("false username")).thenReturn(Optional.empty());
+        when(userRepository.findById(1L)).thenReturn(Optional.of(mockUser1));
+        when(userRepository.findById(2L)).thenReturn(Optional.of(mockUser2));
+        when(userRepository.findById(3L)).thenReturn(Optional.empty());
         when(meetingRepository.findById(1L)).thenReturn(Optional.of(mockMeeting));
         when(meetingRepository.findById(2L)).thenReturn(Optional.empty());
         when(attendRepository.findByUserIdAndMeetingIdAndTrue(anyLong(),anyLong())).thenReturn(mock(Attend.class));
-        assertThatThrownBy(()->meetingService.deleteMeeting("false username",2L,1L))
+        assertThatThrownBy(()->meetingService.deleteMeeting(3L,2L,1L))
                 .isInstanceOf(NotFoundUserException.class);
-        assertThatThrownBy(()->meetingService.deleteMeeting("true username1",2L,1L))
+        assertThatThrownBy(()->meetingService.deleteMeeting(1L,2L,1L))
                 .isInstanceOf(NotFoundMeetingExeption.class);
-        assertThatThrownBy(()->meetingService.deleteMeeting("true username2",1L,1L))
+        assertThatThrownBy(()->meetingService.deleteMeeting(2L,1L,1L))
                 .isInstanceOf(NotAuthorizeException.class);
-        DeleteMeetingResponse deleteMeetingResponse = meetingService.deleteMeeting("true username1", 1L,1L);
+        DeleteMeetingResponse deleteMeetingResponse = meetingService.deleteMeeting(1L, 1L,1L);
         assertThat(deleteMeetingResponse)
                 .extracting("code","message")
                 .containsExactly(SUCCESS_CODE, SUCCESS_MESSAGE);

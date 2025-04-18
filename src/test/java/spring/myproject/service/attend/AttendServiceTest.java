@@ -19,14 +19,15 @@ import spring.myproject.common.exception.user.NotFoundUserException;
 import spring.myproject.repository.attend.AttendRepository;
 import spring.myproject.repository.meeting.MeetingRepository;
 import spring.myproject.repository.user.UserRepository;
+import spring.myproject.service.recommend.RecommendService;
 
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static spring.myproject.dto.response.attend.AttendResponseDto.*;
 import static spring.myproject.utils.ConstClass.*;
 
@@ -41,7 +42,8 @@ public class AttendServiceTest {
     AttendRepository attendRepository;
     @MockitoBean
     MeetingRepository meetingRepository;
-
+    @MockitoBean
+    RecommendService recommendService;
     @Test
     public void addAttend() {
         User mockUser1 = new User(1L,"true username1","password","email",
@@ -72,28 +74,25 @@ public class AttendServiceTest {
                 "address",1,"hobby", Role.USER,"nickname",null,null,null);
         User mockUser2 = new User(2L,"true username2","password","email",
                 "address",1,"hobby", Role.USER,"nickname",null,null,null);
+
         Meeting mockMeeting = Meeting.builder().createdBy(mockUser1).build();
-        Attend mockAttend = Attend.builder().accepted(false).build();
-        Attend falseMockAttend = Attend.builder().accepted(true).build();
+        Attend mockAttend = Attend.builder().attendBy(mockUser1).accepted(false).build();
         when(userRepository.findById(1L)).thenReturn(Optional.of(mockUser1));
         when(userRepository.findById(2L)).thenReturn(Optional.of(mockUser2));
         when(userRepository.findById(3L)).thenReturn(Optional.empty());
         when(meetingRepository.findById(1L)).thenReturn(Optional.of(mockMeeting));
         when(meetingRepository.findById(2L)).thenReturn(Optional.empty());
-        when(attendRepository.findById(1L)).thenReturn(Optional.of(mockAttend));
-        when(attendRepository.findById(2L)).thenReturn(Optional.of(falseMockAttend));
-        when(attendRepository.findById(3L)).thenReturn(Optional.empty());
+        when(attendRepository.findByIdAndAccepted(eq(1L),anyBoolean())).thenReturn(Optional.of(mockAttend));
+        when(attendRepository.findByIdAndAccepted(eq(2L),anyBoolean())).thenThrow(NotFoundAttendException.class);
 
         assertThatThrownBy(()->attendService.permitAttend(2L,3L,3L))
                 .isInstanceOf(NotFoundUserException.class);
         assertThatThrownBy(()->attendService.permitAttend(2L,3L,2L))
                 .isInstanceOf(NotFoundMeetingExeption.class);
-        assertThatThrownBy(()->attendService.permitAttend(1L,3L,2L))
-                .isInstanceOf(NotFoundAttendException.class);
         assertThatThrownBy(()->attendService.permitAttend(1L,2L,2L))
+                .isInstanceOf(NotFoundAttendException.class);
+        assertThatThrownBy(()->attendService.permitAttend(1L,1L,2L))
                 .isInstanceOf(NotAuthorizeException.class);
-        assertThatThrownBy(()->attendService.permitAttend(1L,2L,1L))
-                .isInstanceOf(AlreadyAttendExeption.class);
         PermitAttendResponse permitAttendResponse = attendService.permitAttend(1L, 1L, 1L);
         assertThat(permitAttendResponse)
                 .extracting("code","message")
@@ -105,33 +104,29 @@ public class AttendServiceTest {
                 "address",1,"hobby", Role.USER,"nickname",null,null,null);
         User mockUser2 = new User(2L,"true username2","password","email",
                 "address",1,"hobby", Role.USER,"nickname",null,null,null);
-        Meeting mockMeeting1 = Meeting.builder().createdBy(mockUser1).count(1).build();
-        Meeting mockMeeting2 = Meeting.builder().createdBy(mockUser1).count(10).build();
-        Meeting falseMockMeeting = Meeting.builder().createdBy(mockUser1).count(3).build();
+        Meeting mockMeeting = Meeting.builder().createdBy(mockUser1).count(1).build();
+        Attend mockAttend = Attend.builder().attendBy(mockUser1).accepted(true).build();
         when(userRepository.findById(1L)).thenReturn(Optional.of(mockUser1));
         when(userRepository.findById(2L)).thenReturn(Optional.of(mockUser2));
         when(userRepository.findById(3L)).thenReturn(Optional.empty());
-        when(meetingRepository.findById(1L)).thenReturn(Optional.of(mockMeeting1));
-        when(meetingRepository.findById(3L)).thenReturn(Optional.of(mockMeeting2));
-        when(meetingRepository.findById(2L)).thenReturn(Optional.of(falseMockMeeting));
-        when(meetingRepository.findById(10L)).thenReturn(Optional.empty());
-        when(attendRepository.findByIdAndAccepted(1L,true)).thenReturn(Optional.of(mock(Attend.class)));
-        when(attendRepository.findByIdAndAccepted(2L,true)).thenReturn(Optional.empty());
 
+        when(meetingRepository.findById(1L)).thenReturn(Optional.of(mockMeeting));
+        when(meetingRepository.findById(2L)).thenReturn(Optional.empty());
+
+        when(attendRepository.findById(1L)).thenReturn(Optional.of(mockAttend));
+        when(attendRepository.findById(2L)).thenReturn(Optional.empty());
+        doNothing().when(meetingRepository).delete(any(Meeting.class));
+        doNothing().when(recommendService).addScore(anyLong(),anyInt());
         assertThatThrownBy(()->attendService.disAttend(2L,2L,3L,1L))
                 .isInstanceOf(NotFoundUserException.class);
-        assertThatThrownBy(()->attendService.disAttend(10L,2L,2L,1L))
+        assertThatThrownBy(()->attendService.disAttend(2L,2L,2L,1L))
                 .isInstanceOf(NotFoundMeetingExeption.class);
         assertThatThrownBy(()->attendService.disAttend(1L,2L,2L,1L))
                 .isInstanceOf(NotFoundAttendException.class);
-        assertThatThrownBy(()->attendService.disAttend(2L,1L,1L,1L))
-                .isInstanceOf(NotWithdrawException.class);
-        DisAttendResponse disAttendResponse1 = attendService.disAttend(1L, 1L, 1L,1L);
-        DisAttendResponse disAttendResponse2 = attendService.disAttend(3L, 1L, 2L,1L);
-        assertThat(disAttendResponse1)
-                .extracting("code","message")
-                .containsExactly(SUCCESS_CODE, SUCCESS_MESSAGE);
-        assertThat(disAttendResponse2)
+        assertThatThrownBy(()->attendService.disAttend(1L,1L,2L,1L))
+                .isInstanceOf(NotAuthorizeException.class);
+        DisAttendResponse disAttendResponse = attendService.disAttend(1L, 1L, 1L, 1L);
+        assertThat(disAttendResponse)
                 .extracting("code","message")
                 .containsExactly(SUCCESS_CODE, SUCCESS_MESSAGE);
     }

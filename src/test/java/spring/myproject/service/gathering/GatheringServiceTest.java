@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.web.multipart.MultipartFile;
 import spring.myproject.entity.category.Category;
+import spring.myproject.entity.fcm.Topic;
 import spring.myproject.entity.gathering.Gathering;
 import spring.myproject.entity.user.Role;
 import spring.myproject.entity.user.User;
@@ -21,9 +22,11 @@ import spring.myproject.repository.enrollment.EnrollmentRepository;
 import spring.myproject.repository.fcm.TopicRepository;
 import spring.myproject.repository.gathering.GatheringRepository;
 import spring.myproject.repository.image.ImageRepository;
+import spring.myproject.repository.recommend.RecommendRepository;
 import spring.myproject.repository.user.UserRepository;
 import spring.myproject.common.s3.S3ImageUploadService;
 import spring.myproject.service.fcm.FCMService;
+import spring.myproject.service.recommend.RecommendService;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -55,6 +58,8 @@ public class GatheringServiceTest {
     FCMService fcmService;
     @MockitoBean
     TopicRepository topicRepository;
+    @MockitoBean
+    RecommendService recommendService;
     @Value("${server.url}")
     private String url;
 
@@ -68,6 +73,8 @@ public class GatheringServiceTest {
         when(categoryRepository.findByName("true category")).thenReturn(Optional.of(mock(Category.class)));
         when(categoryRepository.findByName("false category")).thenReturn(Optional.empty());
         when(s3ImageUploadService.upload(any(MultipartFile.class))).thenReturn("url");
+        when(topicRepository.save(any(Topic.class))).thenReturn(mock(Topic.class));
+        doNothing().when(recommendService).createScore(any(Gathering.class));
         AddGatheringRequest trueAddGatheringRequest = AddGatheringRequest.builder()
                 .category("true category")
                 .build();

@@ -108,8 +108,8 @@ class UserServiceTest {
     void signIn() {
         User mockUser = new User(1L,"true username","password","email",
                 "address",1,"hobby", Role.USER,"nickname",null,null,null);
-        when(userRepository.findById("true username")).thenReturn(Optional.of(mockUser));
-        when(userRepository.findById("false username")).thenThrow(NotFoundUserException.class);
+        when(userRepository.findByUsername("true username")).thenReturn(Optional.of(mockUser));
+        when(userRepository.findByUsername("false username")).thenThrow(NotFoundUserException.class);
         when(passwordEncoder.matches(eq("true password"),any(String.class))).thenReturn(true);
         when(passwordEncoder.matches(eq("false password"),any(String.class))).thenReturn(false);
         when(jwtProvider.createAccessToken(mockUser)).thenReturn("accessToken");
@@ -142,22 +142,17 @@ class UserServiceTest {
 
     @Test
     void emailCertification() {
-        when(userRepository.findByEmail("true email")).thenReturn(List.of(mock(User.class)));
-        when(userRepository.findByEmail("false email1")).thenReturn(List.of());
-        when(userRepository.findByEmail("false email2")).thenReturn(List.of(mock(User.class), mock(User.class)));
+        when(userRepository.findByEmail("true email")).thenReturn(List.of());
+        when(userRepository.findByEmail("false email")).thenReturn(List.of(mock(User.class), mock(User.class)));
         EmailCertificationRequest trueEmailCertificationRequest = EmailCertificationRequest.builder()
                 .email("true email")
                 .build();
-        EmailCertificationRequest falseEmailCertificationRequest1 = EmailCertificationRequest.builder()
-                .email("false email1")
-                .build();
-        EmailCertificationRequest falseEmailCertificationRequest2 = EmailCertificationRequest.builder()
-                .email("false email2")
+        EmailCertificationRequest falseEmailCertificationRequest = EmailCertificationRequest.builder()
+                .email("false email")
                 .build();
 
-        assertThatThrownBy(()->userService.emailCertification(falseEmailCertificationRequest1))
-                .isInstanceOf(NotFoundEmailExeption.class);
-        assertThatThrownBy(()->userService.emailCertification(falseEmailCertificationRequest2))
+
+        assertThatThrownBy(()->userService.emailCertification(falseEmailCertificationRequest))
                 .isInstanceOf(DuplicateEmailExeption.class);
         EmailCertificationResponse emailCertificationResponse = userService.emailCertification(trueEmailCertificationRequest);
         assertThat(emailCertificationResponse).isInstanceOf(EmailCertificationResponse.class)

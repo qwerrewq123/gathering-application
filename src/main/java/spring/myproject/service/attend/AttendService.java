@@ -64,6 +64,7 @@ public class AttendService {
                 if(!createdBy.equals(userId)) throw new NotAuthorizeException("this user has no permission");
                 attend.changeAccepted(true);
                 meeting.changeCount(meeting.getCount()+1);
+                //todo : recommend addscore
                 return PermitAttendResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE);
         }
 

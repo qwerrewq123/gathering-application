@@ -26,20 +26,7 @@ class UserRepositoryTest {
     @Autowired
     EntityManager em;
 
-    @Test
-    void findByUsername(){
-        Image image1 = returnDummyImage(1);
-        User user1 = returnDummyUser(1,image1);
-        User user2 = returnDummyUser(2,image1);
 
-        imageRepository.save(image1);
-        userRepository.save(user1);
-        userRepository.save(user2);
-
-        Optional<User> user = userRepository.findById("user1");
-        assertThat(user).isPresent();
-        assertThat(user.get().getUsername()).isEqualTo("user1");
-    }
     @Test
     void existByUsername(){
         Image image1 = returnDummyImage(1);
