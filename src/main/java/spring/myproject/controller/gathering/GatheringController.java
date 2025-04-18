@@ -21,7 +21,6 @@ import static spring.myproject.dto.response.gathering.GatheringResponseDto.*;
 public class GatheringController {
 
     private final GatheringService gatheringService;
-    private final RecommendService recommendService;
 
     @PostMapping("/gathering")
     public ResponseEntity<AddGatheringResponse> addGathering(@RequestPart AddGatheringRequest addGatheringRequest,
@@ -74,9 +73,5 @@ public class GatheringController {
         return new ResponseEntity<>(gatheringLikeResponse, HttpStatus.OK);
     }
 
-    @GetMapping("/recommend")
-    public ResponseEntity<RecommendResponse> fetchRecommendTop10(){
-        RecommendResponse recommendResponse = recommendService.fetchRecommendTop10(LocalDate.now());
-        return new ResponseEntity<>(recommendResponse, HttpStatus.OK);
-    }
+
 }
