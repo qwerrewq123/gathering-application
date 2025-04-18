@@ -45,10 +45,10 @@ public class StompHandler implements ChannelInterceptor{
                     .build()
                     .parseClaimsJws(token)
                     .getBody();
-            String username = claims.getSubject();
+            Long userId = (Long)claims.get("id");
             String roomId = accessor.getDestination().split("/")[2];
 
-            if(!chatService.isRoomParticipant(username, Long.parseLong(roomId))){
+            if(!chatService.isRoomParticipant(userId, Long.parseLong(roomId))){
                 throw new NotAuthorizeException("No Authority");
             }
         }

@@ -54,20 +54,20 @@ public class EnrollmentServiceTest {
                 "address",1,"hobby", Role.USER,"nickname",null,null,null);
         Gathering mockGathering = new Gathering(1L,null,null,null,null,mockUser,0,null,null, Topic.builder().topicName("topicname").build());
         Gathering falseMockGathering = new Gathering(3L,null,null,null,null,mockUser,0,null,null,null);
-        when(userRepository.findByUsername("true username")).thenReturn(Optional.of(mockUser));
-        when(userRepository.findByUsername("false username")).thenReturn(Optional.empty());
+        when(userRepository.findById(1L)).thenReturn(Optional.of(mockUser));
+        when(userRepository.findById(2L)).thenReturn(Optional.empty());
         when(gatheringRepository.findById(1L)).thenReturn(Optional.of(mockGathering));
         when(gatheringRepository.findById(2L)).thenReturn(Optional.empty());
         when(gatheringRepository.findById(3L)).thenReturn(Optional.of(falseMockGathering));
         when(enrollmentRepository.existEnrollment(eq(1L),anyLong())).thenReturn(null);
         when(enrollmentRepository.existEnrollment(eq(3L),anyLong())).thenReturn(mock(Enrollment.class));
-        assertThatThrownBy(()->enrollmentService.enrollGathering(2L,"false username"))
+        assertThatThrownBy(()->enrollmentService.enrollGathering(2L,2L))
                 .isInstanceOf(NotFoundUserException.class);
-        assertThatThrownBy(()->enrollmentService.enrollGathering(2L,"true username"))
+        assertThatThrownBy(()->enrollmentService.enrollGathering(2L,1L))
                 .isInstanceOf(NotFoundGatheringException.class);
-        assertThatThrownBy(()->enrollmentService.enrollGathering(3L,"true username"))
+        assertThatThrownBy(()->enrollmentService.enrollGathering(3L,1L))
                 .isInstanceOf(AlreadyEnrollmentException.class);
-        EnrollGatheringResponse enrollGatheringResponse = enrollmentService.enrollGathering(1L, "true username");
+        EnrollGatheringResponse enrollGatheringResponse = enrollmentService.enrollGathering(1L, 1L);
         assertThat(enrollGatheringResponse)
                 .extracting("code","message")
                 .containsExactly(SUCCESS_CODE, SUCCESS_MESSAGE);
@@ -79,20 +79,20 @@ public class EnrollmentServiceTest {
                 "address",1,"hobby", Role.USER,"nickname",null,null,null);
         Gathering mockGathering = new Gathering(1L,null,null,null,null,mockUser,0,null,null, Topic.builder().topicName("topicname").build());
         Gathering falseMockGathering = new Gathering(3L,null,null,null,null,mockUser,0,null,null,null);
-        when(userRepository.findByUsername("true username")).thenReturn(Optional.of(mockUser));
-        when(userRepository.findByUsername("false username")).thenReturn(Optional.empty());
+        when(userRepository.findById(1L)).thenReturn(Optional.of(mockUser));
+        when(userRepository.findById(2L)).thenReturn(Optional.empty());
         when(gatheringRepository.findById(1L)).thenReturn(Optional.of(mockGathering));
         when(gatheringRepository.findById(2L)).thenReturn(Optional.empty());
         when(gatheringRepository.findById(3L)).thenReturn(Optional.of(falseMockGathering));
         when(enrollmentRepository.findEnrollment(eq(1L),anyLong())).thenReturn(Optional.of(mock(Enrollment.class)));
         when(enrollmentRepository.findEnrollment(eq(3L),anyLong())).thenReturn(Optional.empty());
-        assertThatThrownBy(()->enrollmentService.disEnrollGathering(2L,"false username"))
+        assertThatThrownBy(()->enrollmentService.disEnrollGathering(2L,2L))
                 .isInstanceOf(NotFoundUserException.class);
-        assertThatThrownBy(()->enrollmentService.disEnrollGathering(2L,"true username"))
+        assertThatThrownBy(()->enrollmentService.disEnrollGathering(2L,1L))
                 .isInstanceOf(NotFoundGatheringException.class);
-        assertThatThrownBy(()->enrollmentService.disEnrollGathering(3L,"true username"))
+        assertThatThrownBy(()->enrollmentService.disEnrollGathering(3L,1L))
                 .isInstanceOf(NotFoundEnrollmentException.class);
-        DisEnrollGatheringResponse disEnrollGatheringResponse = enrollmentService.disEnrollGathering(1L, "true username");
+        DisEnrollGatheringResponse disEnrollGatheringResponse = enrollmentService.disEnrollGathering(1L, 1L);
         assertThat(disEnrollGatheringResponse)
                 .extracting("code","message")
                 .containsExactly(SUCCESS_CODE, SUCCESS_MESSAGE);

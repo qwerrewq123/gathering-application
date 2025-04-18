@@ -46,8 +46,6 @@ public class UserService {
     private final AsyncService asyncService;
     @Value("${jwt.refresh.expiration}")
     private int refreshExpiration;
-    @Value("${jwt.secretKey}")
-    private String secretKey;
 
 
     public IdCheckResponse idCheck(IdCheckRequest idCheckRequest) {
@@ -114,9 +112,8 @@ public class UserService {
     public GenerateTokenResponse generateToken(String refreshToken,HttpServletResponse response) {
         try {
             Claims claims = jwtValidator.validateToken(refreshToken);
-            String username = claims.getSubject();
-            User user = userRepository.findByUsername(username).orElseThrow(() -> new NotFoundUserException("not Found User"));
-            String role = (String)claims.get("role");
+            Long userId = (Long) claims.get("id");
+            User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundUserException("not Found User"));
             String accessToken = jwtProvider.createAccessToken(user);
             String issuedRefreshToken = jwtProvider.createRefreshToken(user);
             user.changeRefreshToken(issuedRefreshToken);

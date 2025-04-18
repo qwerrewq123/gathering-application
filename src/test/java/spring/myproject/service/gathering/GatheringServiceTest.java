@@ -63,8 +63,8 @@ public class GatheringServiceTest {
         MultipartFile mockMultipartFile = mock(MultipartFile.class);
         User mockUser = new User(1L,"true username","password","email",
                 "address",1,"hobby", Role.USER,"nickname",null,null,null);
-        when(userRepository.findByUsername("true username")).thenReturn(Optional.of(mockUser));
-        when(userRepository.findByUsername("false username")).thenReturn(Optional.empty());
+        when(userRepository.findById(1L)).thenReturn(Optional.of(mockUser));
+        when(userRepository.findById(2L)).thenReturn(Optional.empty());
         when(categoryRepository.findByName("true category")).thenReturn(Optional.of(mock(Category.class)));
         when(categoryRepository.findByName("false category")).thenReturn(Optional.empty());
         when(s3ImageUploadService.upload(any(MultipartFile.class))).thenReturn("url");
@@ -74,11 +74,11 @@ public class GatheringServiceTest {
         AddGatheringRequest falseAddGatheringRequest = AddGatheringRequest.builder()
                 .category("false category")
                 .build();
-        assertThatThrownBy(()->gatheringService.addGathering(falseAddGatheringRequest,mockMultipartFile,"false username"))
+        assertThatThrownBy(()->gatheringService.addGathering(falseAddGatheringRequest,mockMultipartFile,2L))
                 .isInstanceOf(NotFoundUserException.class);
-        assertThatThrownBy(()->gatheringService.addGathering(falseAddGatheringRequest,mockMultipartFile,"true username"))
+        assertThatThrownBy(()->gatheringService.addGathering(falseAddGatheringRequest,mockMultipartFile,1L))
                 .isInstanceOf(NotFoundCategoryException.class);
-        AddGatheringResponse addGatheringResponse = gatheringService.addGathering(trueAddGatheringRequest, mockMultipartFile, "true username");
+        AddGatheringResponse addGatheringResponse = gatheringService.addGathering(trueAddGatheringRequest, mockMultipartFile, 1L);
         assertThat(addGatheringResponse)
                 .extracting("code","message")
                 .containsExactly(SUCCESS_CODE, SUCCESS_MESSAGE);
@@ -91,8 +91,8 @@ public class GatheringServiceTest {
                 "address",1,"hobby", Role.USER,"nickname",null,null,null);
         Gathering mockGathering = new Gathering(1L,null,null,null,null,mockUser,0,null,null,null);
         Gathering falseMockGathering = new Gathering(1L,null,null,null,null,User.builder().id(2L).build(),0,null,null,null);
-        when(userRepository.findByUsername("true username")).thenReturn(Optional.of(mockUser));
-        when(userRepository.findByUsername("false username")).thenReturn(Optional.empty());
+        when(userRepository.findById(1L)).thenReturn(Optional.of(mockUser));
+        when(userRepository.findById(2L)).thenReturn(Optional.empty());
         when(categoryRepository.findByName("true category")).thenReturn(Optional.of(mock(Category.class)));
         when(categoryRepository.findByName("false category")).thenReturn(Optional.empty());
         when(gatheringRepository.findById(1L)).thenReturn(Optional.of(mockGathering));
@@ -105,15 +105,15 @@ public class GatheringServiceTest {
         UpdateGatheringRequest falseUpdateGatheringRequest = UpdateGatheringRequest.builder()
                 .category("false category")
                 .build();
-        assertThatThrownBy(()->gatheringService.updateGathering(falseUpdateGatheringRequest,mockMultipartFile,"false username",2L))
+        assertThatThrownBy(()->gatheringService.updateGathering(falseUpdateGatheringRequest,mockMultipartFile,2L,2L))
                 .isInstanceOf(NotFoundUserException.class);
-        assertThatThrownBy(()->gatheringService.updateGathering(falseUpdateGatheringRequest,mockMultipartFile,"true username",2L))
+        assertThatThrownBy(()->gatheringService.updateGathering(falseUpdateGatheringRequest,mockMultipartFile,1L,2L))
                 .isInstanceOf(NotFoundCategoryException.class);
-        assertThatThrownBy(()->gatheringService.updateGathering(trueUpdateGatheringRequest,mockMultipartFile,"true username",2L))
+        assertThatThrownBy(()->gatheringService.updateGathering(trueUpdateGatheringRequest,mockMultipartFile,1L,2L))
                 .isInstanceOf(NotFoundGatheringException.class);
-        assertThatThrownBy(()->gatheringService.updateGathering(trueUpdateGatheringRequest,mockMultipartFile,"true username",3L))
+        assertThatThrownBy(()->gatheringService.updateGathering(trueUpdateGatheringRequest,mockMultipartFile,1L,3L))
                 .isInstanceOf(NotAuthorizeException.class);
-        UpdateGatheringResponse updateGatheringResponse = gatheringService.updateGathering(trueUpdateGatheringRequest, mockMultipartFile, "true username", 1L);
+        UpdateGatheringResponse updateGatheringResponse = gatheringService.updateGathering(trueUpdateGatheringRequest, mockMultipartFile, 1L, 1L);
         assertThat(updateGatheringResponse)
                 .extracting("code","message")
                 .containsExactly(SUCCESS_CODE,SUCCESS_MESSAGE);

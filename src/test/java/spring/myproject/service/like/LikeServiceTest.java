@@ -47,21 +47,21 @@ public class LikeServiceTest {
                 "address",1,"hobby", Role.USER,"nickname",null,null,null);
         User mockUser2 = new User(2L,"true username2","password","email",
                 "address",1,"hobby", Role.USER,"nickname",null,null,null);
-        when(userRepository.findByUsername("true username1")).thenReturn(Optional.of(mockUser1));
-        when(userRepository.findByUsername("true username2")).thenReturn(Optional.of(mockUser2));
-        when(userRepository.findByUsername("false username")).thenReturn(Optional.empty());
+        when(userRepository.findById(1L)).thenReturn(Optional.of(mockUser1));
+        when(userRepository.findById(2L)).thenReturn(Optional.of(mockUser2));
+        when(userRepository.findById(3L)).thenReturn(Optional.empty());
         when(gatheringRepository.findById(1L)).thenReturn(Optional.of(mock(Gathering.class)));
         when(gatheringRepository.findById(2L)).thenReturn(Optional.empty());
         when(likeRepository.findLike(eq(1L),anyLong())).thenReturn(Optional.empty());
         when(likeRepository.findLike(eq(2L),anyLong())).thenReturn(Optional.of(mock(Like.class)));
 
-        assertThatThrownBy(()->likeService.like(2L,"false username"))
+        assertThatThrownBy(()->likeService.like(2L,3L))
                 .isInstanceOf(NotFoundUserException.class);
-        assertThatThrownBy(()->likeService.like(2L,"true username2"))
+        assertThatThrownBy(()->likeService.like(2L,2L))
                 .isInstanceOf(NotFoundGatheringException.class);
-        assertThatThrownBy(()->likeService.like(1L,"true username2"))
+        assertThatThrownBy(()->likeService.like(1L,2L))
                 .isInstanceOf(AlreadyLikeGatheringException.class);
-        LikeResponse likeResponse = likeService.like(1L, "true username1");
+        LikeResponse likeResponse = likeService.like(1L, 1L);
         assertThat(likeResponse)
                 .extracting("code","message")
                 .containsExactly(SUCCESS_CODE,SUCCESS_MESSAGE);
@@ -73,21 +73,21 @@ public class LikeServiceTest {
         User mockUser2 = new User(2L,"true username2","password","email",
                 "address",1,"hobby", Role.USER,"nickname",null,null,null);
         Like mockLike = Like.builder().likedBy(mockUser1).build();
-        when(userRepository.findByUsername("true username1")).thenReturn(Optional.of(mockUser1));
-        when(userRepository.findByUsername("true username2")).thenReturn(Optional.of(mockUser2));
-        when(userRepository.findByUsername("false username")).thenReturn(Optional.empty());
+        when(userRepository.findById(1L)).thenReturn(Optional.of(mockUser1));
+        when(userRepository.findById(2L)).thenReturn(Optional.of(mockUser2));
+        when(userRepository.findById(3L)).thenReturn(Optional.empty());
         when(gatheringRepository.findById(1L)).thenReturn(Optional.of(mock(Gathering.class)));
         when(gatheringRepository.findById(2L)).thenReturn(Optional.empty());
         when(likeRepository.findLike(eq(1L),anyLong())).thenReturn(Optional.of(mockLike));
         when(likeRepository.findLike(eq(2L),anyLong())).thenReturn(Optional.empty());
 
-        assertThatThrownBy(()->likeService.dislike(2L,"false username"))
+        assertThatThrownBy(()->likeService.dislike(2L,3L))
                 .isInstanceOf(NotFoundUserException.class);
-        assertThatThrownBy(()->likeService.dislike(2L,"true username2"))
+        assertThatThrownBy(()->likeService.dislike(2L,2L))
                 .isInstanceOf(NotFoundGatheringException.class);
-        assertThatThrownBy(()->likeService.dislike(1L,"true username2"))
+        assertThatThrownBy(()->likeService.dislike(1L,2L))
                 .isInstanceOf(NotFoundLikeException.class);
-        DislikeResponse disLikeResponse = likeService.dislike(1L, "true username1");
+        DislikeResponse disLikeResponse = likeService.dislike(1L, 1L);
         assertThat(disLikeResponse)
                 .extracting("code","message")
                 .containsExactly(SUCCESS_CODE,SUCCESS_MESSAGE);

@@ -21,7 +21,7 @@ import java.util.Date;
 public class JwtProvider {
 
 
-    private final  String secretKey;
+    private final String secretKey;
     private final int accessExpiration;
     private final int refreshExpiration;
     private final Key SECRET_KEY;

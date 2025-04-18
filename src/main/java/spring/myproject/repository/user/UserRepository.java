@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
-    Optional<User> findByUsername(String username);
 
     Boolean existsByUsername(String username);
 
@@ -19,4 +18,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("select u from User u left join fetch u.profileImage where u.id = :userId")
     Optional<User> findById(Long userId);
+
+    Optional<User> findByUsername(String username);
 }

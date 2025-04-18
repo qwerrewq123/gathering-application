@@ -118,10 +118,10 @@ public class ChatService {
     }
 
 
-    public boolean isRoomParticipant(String username, long roomId) {
+    public boolean isRoomParticipant(Long userId, long roomId) {
         ChatRoom chatRoom = chatRoomRepository.findById(roomId)
                 .orElseThrow(() -> new NotFoundChatRoomException("no exist ChatRoom!!"));
-        User user = userRepository.findByUsername(username)
+        User user = userRepository.findById(userId)
                 .orElseThrow(()->new NotFoundUserException("no exist User!!"));
         chatParticipantRepository.findByChatRoomAndUserAndStatus(chatRoom,user,true)
                 .orElseThrow(()->new NotFoundChatParticipantException("no exist ChatParticipant!!"));

@@ -94,11 +94,11 @@ public class FCMService {
 	}
 
 	@Transactional
-	public void subscribeToTopics(String topicName, String username) {
+	public void subscribeToTopics(String topicName, Long userId) {
 
 		Topic topic = topicRepository.findByTopicName(topicName)
 				.orElseThrow(() -> new NotFoundTopicException("not found topic"));
-		User user = userRepository.findByUsername(username)
+		User user = userRepository.findById(userId)
 				.orElseThrow(() -> new NotFoundUserException("not found user"));
 		if (userTopicRepository.existsByTopicAndUser(topicName, user.getId())) {
 			throw new AlreadySubscribeTopicException("already subscribe topic");
@@ -138,11 +138,11 @@ public class FCMService {
 	}
 
 	@Transactional
-	public void unsubscribeFromTopics(String topicName, String username) {
+	public void unsubscribeFromTopics(String topicName, Long userId) {
 
 		Topic topic = topicRepository.findByTopicName(topicName)
 				.orElseThrow(() -> new NotFoundTopicException("not found topic"));
-		User user = userRepository.findByUsername(username)
+		User user = userRepository.findById(userId)
 				.orElseThrow(() -> new NotFoundUserException("not found user"));
 		userTopicRepository.deleteByTopicAndUser(topic, user);
 		fcmTokenTopicRepository.deleteByTopic(topic);

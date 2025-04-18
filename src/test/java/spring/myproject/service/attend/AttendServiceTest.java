@@ -48,20 +48,20 @@ public class AttendServiceTest {
                 "address",1,"hobby", Role.USER,"nickname",null,null,null);
         User mockUser2 = new User(2L,"true username2","password","email",
                 "address",1,"hobby", Role.USER,"nickname",null,null,null);
-        when(userRepository.findByUsername("true username1")).thenReturn(Optional.of(mockUser1));
-        when(userRepository.findByUsername("true username2")).thenReturn(Optional.of(mockUser2));
-        when(userRepository.findByUsername("false username")).thenReturn(Optional.empty());
+        when(userRepository.findById(1L)).thenReturn(Optional.of(mockUser1));
+        when(userRepository.findById(2L)).thenReturn(Optional.of(mockUser2));
+        when(userRepository.findById(3L)).thenReturn(Optional.empty());
         when(meetingRepository.findById(1L)).thenReturn(Optional.of(mock(Meeting.class)));
         when(meetingRepository.findById(2L)).thenReturn(Optional.empty());
         when(attendRepository.findByUserIdAndMeetingId(eq(1L),anyLong())).thenReturn(null);
         when(attendRepository.findByUserIdAndMeetingId(eq(2L),anyLong())).thenReturn(mock(Attend.class));
-        assertThatThrownBy(()->attendService.addAttend(2L,"false username"))
+        assertThatThrownBy(()->attendService.addAttend(2L,3L,1L))
                 .isInstanceOf(NotFoundUserException.class);
-        assertThatThrownBy(()->attendService.addAttend(2L,"true username2"))
+        assertThatThrownBy(()->attendService.addAttend(2L,2L,1L))
                 .isInstanceOf(NotFoundMeetingExeption.class);
-        assertThatThrownBy(()->attendService.addAttend(1L,"true username2"))
+        assertThatThrownBy(()->attendService.addAttend(1L,2L,1L))
                 .isInstanceOf(AlreadyAttendExeption.class);
-        AddAttendResponse addAttendResponse = attendService.addAttend(1L, "true username1");
+        AddAttendResponse addAttendResponse = attendService.addAttend(1L, 1L,1L);
         assertThat(addAttendResponse)
                 .extracting("code","message")
                 .containsExactly(SUCCESS_CODE, SUCCESS_MESSAGE);
@@ -75,26 +75,26 @@ public class AttendServiceTest {
         Meeting mockMeeting = Meeting.builder().createdBy(mockUser1).build();
         Attend mockAttend = Attend.builder().accepted(false).build();
         Attend falseMockAttend = Attend.builder().accepted(true).build();
-        when(userRepository.findByUsername("true username1")).thenReturn(Optional.of(mockUser1));
-        when(userRepository.findByUsername("true username2")).thenReturn(Optional.of(mockUser2));
-        when(userRepository.findByUsername("false username")).thenReturn(Optional.empty());
+        when(userRepository.findById(1L)).thenReturn(Optional.of(mockUser1));
+        when(userRepository.findById(2L)).thenReturn(Optional.of(mockUser2));
+        when(userRepository.findById(3L)).thenReturn(Optional.empty());
         when(meetingRepository.findById(1L)).thenReturn(Optional.of(mockMeeting));
         when(meetingRepository.findById(2L)).thenReturn(Optional.empty());
         when(attendRepository.findById(1L)).thenReturn(Optional.of(mockAttend));
         when(attendRepository.findById(2L)).thenReturn(Optional.of(falseMockAttend));
         when(attendRepository.findById(3L)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(()->attendService.permitAttend(2L,3L,"false username"))
+        assertThatThrownBy(()->attendService.permitAttend(2L,3L,3L))
                 .isInstanceOf(NotFoundUserException.class);
-        assertThatThrownBy(()->attendService.permitAttend(2L,3L,"true username2"))
+        assertThatThrownBy(()->attendService.permitAttend(2L,3L,2L))
                 .isInstanceOf(NotFoundMeetingExeption.class);
-        assertThatThrownBy(()->attendService.permitAttend(1L,3L,"true username2"))
+        assertThatThrownBy(()->attendService.permitAttend(1L,3L,2L))
                 .isInstanceOf(NotFoundAttendException.class);
-        assertThatThrownBy(()->attendService.permitAttend(1L,2L,"true username2"))
+        assertThatThrownBy(()->attendService.permitAttend(1L,2L,2L))
                 .isInstanceOf(NotAuthorizeException.class);
-        assertThatThrownBy(()->attendService.permitAttend(1L,2L,"true username1"))
+        assertThatThrownBy(()->attendService.permitAttend(1L,2L,1L))
                 .isInstanceOf(AlreadyAttendExeption.class);
-        PermitAttendResponse permitAttendResponse = attendService.permitAttend(1L, 1L, "true username1");
+        PermitAttendResponse permitAttendResponse = attendService.permitAttend(1L, 1L, 1L);
         assertThat(permitAttendResponse)
                 .extracting("code","message")
                 .containsExactly(SUCCESS_CODE, SUCCESS_MESSAGE);
@@ -108,9 +108,9 @@ public class AttendServiceTest {
         Meeting mockMeeting1 = Meeting.builder().createdBy(mockUser1).count(1).build();
         Meeting mockMeeting2 = Meeting.builder().createdBy(mockUser1).count(10).build();
         Meeting falseMockMeeting = Meeting.builder().createdBy(mockUser1).count(3).build();
-        when(userRepository.findByUsername("true username1")).thenReturn(Optional.of(mockUser1));
-        when(userRepository.findByUsername("true username2")).thenReturn(Optional.of(mockUser2));
-        when(userRepository.findByUsername("false username")).thenReturn(Optional.empty());
+        when(userRepository.findById(1L)).thenReturn(Optional.of(mockUser1));
+        when(userRepository.findById(2L)).thenReturn(Optional.of(mockUser2));
+        when(userRepository.findById(3L)).thenReturn(Optional.empty());
         when(meetingRepository.findById(1L)).thenReturn(Optional.of(mockMeeting1));
         when(meetingRepository.findById(3L)).thenReturn(Optional.of(mockMeeting2));
         when(meetingRepository.findById(2L)).thenReturn(Optional.of(falseMockMeeting));
@@ -118,16 +118,16 @@ public class AttendServiceTest {
         when(attendRepository.findByIdAndAccepted(1L,true)).thenReturn(Optional.of(mock(Attend.class)));
         when(attendRepository.findByIdAndAccepted(2L,true)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(()->attendService.disAttend(2L,2L,"false username"))
+        assertThatThrownBy(()->attendService.disAttend(2L,2L,3L,1L))
                 .isInstanceOf(NotFoundUserException.class);
-        assertThatThrownBy(()->attendService.disAttend(10L,2L,"true username2"))
+        assertThatThrownBy(()->attendService.disAttend(10L,2L,2L,1L))
                 .isInstanceOf(NotFoundMeetingExeption.class);
-        assertThatThrownBy(()->attendService.disAttend(1L,2L,"true username2"))
+        assertThatThrownBy(()->attendService.disAttend(1L,2L,2L,1L))
                 .isInstanceOf(NotFoundAttendException.class);
-        assertThatThrownBy(()->attendService.disAttend(2L,1L,"true username1"))
+        assertThatThrownBy(()->attendService.disAttend(2L,1L,1L,1L))
                 .isInstanceOf(NotWithdrawException.class);
-        DisAttendResponse disAttendResponse1 = attendService.disAttend(1L, 1L, "true username1");
-        DisAttendResponse disAttendResponse2 = attendService.disAttend(3L, 1L, "true username2");
+        DisAttendResponse disAttendResponse1 = attendService.disAttend(1L, 1L, 1L,1L);
+        DisAttendResponse disAttendResponse2 = attendService.disAttend(3L, 1L, 2L,1L);
         assertThat(disAttendResponse1)
                 .extracting("code","message")
                 .containsExactly(SUCCESS_CODE, SUCCESS_MESSAGE);

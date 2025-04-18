@@ -52,7 +52,7 @@ public class AsyncService {
     @Transactional
     public void insertChatMessageAndReadStatus(Event<SendChatMessageEventPayload> event){
         SendChatMessageEventPayload payload = event.getPayload();
-        User user = userRepository.findByUsername(payload.getUsername())
+        User user = userRepository.findById(payload.getUserId())
                 .orElseThrow(()-> new NotFoundUserException("not found user"));
         ChatRoom chatRoom = chatRoomRepository.findById(payload.getRoomId())
                 .orElseThrow(()-> new NotFoundChatRoomException("not found chat room"));

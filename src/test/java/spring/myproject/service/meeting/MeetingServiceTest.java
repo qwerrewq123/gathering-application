@@ -61,8 +61,8 @@ public class MeetingServiceTest {
                 "address",1,"hobby", Role.USER,"nickname",null,null,null);
         Gathering mockGathering = new Gathering(1L,null,null,null,null,mockUser,0,null,null, Topic.builder().topicName("topicname").build());
         when(s3ImageUploadService.upload(any(MultipartFile.class))).thenReturn("url");
-        when(userRepository.findByUsername("true username")).thenReturn(Optional.of(mockUser));
-        when(userRepository.findByUsername("false username")).thenReturn(Optional.empty());
+        when(userRepository.findById("true username")).thenReturn(Optional.of(mockUser));
+        when(userRepository.findById("false username")).thenReturn(Optional.empty());
         when(gatheringRepository.findById(1L)).thenReturn(Optional.of(mockGathering));
         when(gatheringRepository.findById(2L)).thenReturn(Optional.empty());
         AddMeetingRequest addMeetingRequest = new AddMeetingRequest();
@@ -83,9 +83,9 @@ public class MeetingServiceTest {
         User mockUser2 = new User(2L,"true username2","password","email",
                 "address",1,"hobby", Role.USER,"nickname",null,null,null);
         Meeting mockMeeting = Meeting.builder().createdBy(mockUser1).count(1).build();
-        when(userRepository.findByUsername("true username1")).thenReturn(Optional.of(mockUser1));
-        when(userRepository.findByUsername("true username2")).thenReturn(Optional.of(mockUser2));
-        when(userRepository.findByUsername("false username")).thenReturn(Optional.empty());
+        when(userRepository.findById("true username1")).thenReturn(Optional.of(mockUser1));
+        when(userRepository.findById("true username2")).thenReturn(Optional.of(mockUser2));
+        when(userRepository.findById("false username")).thenReturn(Optional.empty());
         when(meetingRepository.findById(1L)).thenReturn(Optional.of(mockMeeting));
         when(meetingRepository.findById(2L)).thenReturn(Optional.empty());
         when(s3ImageUploadService.upload(any(MultipartFile.class))).thenReturn("url");
@@ -108,9 +108,9 @@ public class MeetingServiceTest {
         User mockUser2 = new User(2L,"true username2","password","email",
                 "address",1,"hobby", Role.USER,"nickname",null,null,null);
         Meeting mockMeeting = Meeting.builder().createdBy(mockUser1).count(1).build();
-        when(userRepository.findByUsername("true username1")).thenReturn(Optional.of(mockUser1));
-        when(userRepository.findByUsername("true username2")).thenReturn(Optional.of(mockUser2));
-        when(userRepository.findByUsername("false username")).thenReturn(Optional.empty());
+        when(userRepository.findById("true username1")).thenReturn(Optional.of(mockUser1));
+        when(userRepository.findById("true username2")).thenReturn(Optional.of(mockUser2));
+        when(userRepository.findById("false username")).thenReturn(Optional.empty());
         when(meetingRepository.findById(1L)).thenReturn(Optional.of(mockMeeting));
         when(meetingRepository.findById(2L)).thenReturn(Optional.empty());
         when(attendRepository.findByUserIdAndMeetingIdAndTrue(anyLong(),anyLong())).thenReturn(mock(Attend.class));

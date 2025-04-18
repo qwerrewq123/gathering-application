@@ -108,12 +108,12 @@ class UserServiceTest {
     void signIn() {
         User mockUser = new User(1L,"true username","password","email",
                 "address",1,"hobby", Role.USER,"nickname",null,null,null);
-        when(userRepository.findByUsername("true username")).thenReturn(Optional.of(mockUser));
-        when(userRepository.findByUsername("false username")).thenThrow(NotFoundUserException.class);
+        when(userRepository.findById("true username")).thenReturn(Optional.of(mockUser));
+        when(userRepository.findById("false username")).thenThrow(NotFoundUserException.class);
         when(passwordEncoder.matches(eq("true password"),any(String.class))).thenReturn(true);
         when(passwordEncoder.matches(eq("false password"),any(String.class))).thenReturn(false);
-        when(jwtProvider.createAccessToken("true username","USER")).thenReturn("accessToken");
-        when(jwtProvider.createRefreshToken("true username","USER")).thenReturn("refreshToken");
+        when(jwtProvider.createAccessToken(mockUser)).thenReturn("accessToken");
+        when(jwtProvider.createRefreshToken(mockUser)).thenReturn("refreshToken");
         HttpServletResponse mockResponse = mock(HttpServletResponse.class);
         doNothing().when(mockResponse).addCookie(any(Cookie.class));
 

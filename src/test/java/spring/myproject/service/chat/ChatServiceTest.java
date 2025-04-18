@@ -48,11 +48,11 @@ class ChatServiceTest {
     void addChatRoom() {
         User mockUser = new User(1L,"true username","password","email",
                 "address",1,"hobby", Role.USER,"nickname",null,null,null);
-        when(userRepository.findByUsername("true username")).thenReturn(Optional.of(mockUser));
-        when(userRepository.findByUsername("false username")).thenReturn(Optional.empty());
-        assertThatThrownBy(()-> chatService.addChatRoom("roomName","false username"))
+        when(userRepository.findById(1L)).thenReturn(Optional.of(mockUser));
+        when(userRepository.findById(2L)).thenReturn(Optional.empty());
+        assertThatThrownBy(()-> chatService.addChatRoom("roomName",2L))
                 .isInstanceOf(NotFoundUserException.class);
-        AddChatRoomResponse addChatRoomResponse = chatService.addChatRoom("roomName", "true username");
+        AddChatRoomResponse addChatRoomResponse = chatService.addChatRoom("roomName", 1L);
         assertThat(addChatRoomResponse)
                 .extracting("code","message")
                 .containsExactly(SUCCESS_CODE,SUCCESS_MESSAGE);
@@ -65,22 +65,22 @@ class ChatServiceTest {
                 "address",1,"hobby", Role.USER,"nickname",null,null,null);
         User mockUser2 = new User(1L,"true username2","password","email",
                 "address",1,"hobby", Role.USER,"nickname",null,null,null);
-        when(userRepository.findByUsername("true username1")).thenReturn(Optional.of(mockUser1));
-        when(userRepository.findByUsername("true username2")).thenReturn(Optional.of(mockUser2));
-        when(userRepository.findByUsername("false username")).thenReturn(Optional.empty());
+        when(userRepository.findById(1L)).thenReturn(Optional.of(mockUser1));
+        when(userRepository.findById(2L)).thenReturn(Optional.of(mockUser2));
+        when(userRepository.findById(3L)).thenReturn(Optional.empty());
         when(chatRoomRepository.findById(1L)).thenReturn(Optional.of(mock(ChatRoom.class)));
         when(chatRoomRepository.findById(2L)).thenReturn(Optional.empty());
         when(chatParticipantRepository.findByChatRoomAndUserAndStatus(any(ChatRoom.class),eq(mockUser1),eq(true)))
                 .thenReturn(Optional.of(mock(ChatParticipant.class)));
         when(chatParticipantRepository.findByChatRoomAndUserAndStatus(any(ChatRoom.class),eq(mockUser2),eq(true)))
                 .thenReturn(Optional.empty());
-        assertThatThrownBy(()-> chatService.leaveChat(2L,"false username"))
+        assertThatThrownBy(()-> chatService.leaveChat(2L,3L))
                 .isInstanceOf(NotFoundUserException.class);
-        assertThatThrownBy(()-> chatService.leaveChat(2L,"true username2"))
+        assertThatThrownBy(()-> chatService.leaveChat(2L,2L))
                 .isInstanceOf(NotFoundChatRoomException.class);
-        assertThatThrownBy(()-> chatService.leaveChat(1L,"true username2"))
+        assertThatThrownBy(()-> chatService.leaveChat(1L,2L))
                 .isInstanceOf(NotFoundChatParticipantException.class);
-        LeaveChatResponse leaveChatResponse = chatService.leaveChat(1L, "true username1");
+        LeaveChatResponse leaveChatResponse = chatService.leaveChat(1L, 1L);
         assertThat(leaveChatResponse)
                 .extracting("code","message")
                 .containsExactly(SUCCESS_CODE,SUCCESS_MESSAGE);
