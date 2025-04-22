@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -37,11 +39,13 @@ public class ImageService {
         return s3ImageDownloadService.getFileByteArrayFromS3(imageUrl);
     }
 
-    public GatheringImageResponse gatheringImage(Long gatheringId) {
-
-        List<String> fetchUrls = imageRepository.gatheringImage(gatheringId);
-        List<String> urls = toList(fetchUrls);
-        return GatheringImageResponse.of(SUCCESS_CODE, SUCCESS_MESSAGE, urls);
+    public GatheringImageResponse gatheringImage(Long gatheringId,Integer pageNum) {
+        PageRequest pageRequest = PageRequest.of(pageNum, 9);
+        Page<String> page = imageRepository.gatheringImage(gatheringId, pageRequest);
+        List<String> content = page.getContent();
+        boolean hasNext = page.hasNext();
+        List<String> urls = toList(content);
+        return GatheringImageResponse.of(SUCCESS_CODE, SUCCESS_MESSAGE, urls,hasNext);
     }
 
     private List<String> toList(List<String> urls){

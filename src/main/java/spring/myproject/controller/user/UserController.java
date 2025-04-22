@@ -33,7 +33,7 @@ public class UserController {
         NicknameCheckResponse nicknameCheckResponse = userService.nicknameCheck(nicknameCheckRequest);
         return new ResponseEntity<>(nicknameCheckResponse, HttpStatus.OK);
     }
-
+    //TODO : 회원정보 수정
     @PostMapping(value = "/auth/sign-up",consumes = {
             MediaType.MULTIPART_FORM_DATA_VALUE,
             MediaType.APPLICATION_JSON_VALUE

@@ -37,7 +37,6 @@ public class BoardController {
     @GetMapping("/gathering/{gatheringId}/boards")
     public ResponseEntity<Object> fetchBoards(@Id Long userId,
                                               @PathVariable Long gatheringId,
-                                              @RequestParam(defaultValue = "") String title,
                                               Integer pageNum, Integer pageSize){
         BoardsResponse fetchBoardsResponse = boardService.fetchBoards(gatheringId,userId,pageNum,pageSize);
         return ResponseEntity.ok(fetchBoardsResponse);

@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import spring.myproject.dto.response.image.GatheringImageResponse;
 import spring.myproject.service.image.ImageService;
@@ -24,8 +25,8 @@ public class ImageController {
     }
 
     @GetMapping("/gathering/image/{gatheringId}")
-    public ResponseEntity<GatheringImageResponse> gatheringImage(@PathVariable Long gatheringId){
-        GatheringImageResponse gatheringImageResponse =imageService.gatheringImage(gatheringId);
+    public ResponseEntity<GatheringImageResponse> gatheringImage(@PathVariable Long gatheringId, @RequestParam Integer pageNum){
+        GatheringImageResponse gatheringImageResponse =imageService.gatheringImage(gatheringId,pageNum);
         return new ResponseEntity<>(gatheringImageResponse, HttpStatus.OK);
     }
 }
