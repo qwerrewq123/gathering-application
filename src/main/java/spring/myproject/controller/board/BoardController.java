@@ -35,10 +35,10 @@ public class BoardController {
         return ResponseEntity.ok(addBoardResponse);
     }
     @GetMapping("/gathering/{gatheringId}/boards")
-    public ResponseEntity<Object> fetchBoards(@Id Long userId,
+    public ResponseEntity<BoardsResponse> fetchBoards(
                                               @PathVariable Long gatheringId,
                                               Integer pageNum, Integer pageSize){
-        BoardsResponse fetchBoardsResponse = boardService.fetchBoards(gatheringId,userId,pageNum,pageSize);
+        BoardsResponse fetchBoardsResponse = boardService.fetchBoards(gatheringId,pageNum,pageSize);
         return ResponseEntity.ok(fetchBoardsResponse);
 
     }

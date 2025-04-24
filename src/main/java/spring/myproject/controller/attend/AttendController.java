@@ -28,13 +28,12 @@ public class AttendController {
     }
 
 
-    @PostMapping("/gathering/{gatheringId}/meeting/{meetingId}/disAttend/{attendId}")
+    @PostMapping("/gathering/{gatheringId}/meeting/{meetingId}/disAttend")
     public ResponseEntity<DisAttendResponse> disAttend(@PathVariable Long meetingId,
-                                                       @PathVariable Long attendId,
                                                        @Id Long userId,
                                                        @PathVariable Long gatheringId){
 
-        DisAttendResponse disAttendResponse = attendService.disAttend(meetingId, attendId, userId,gatheringId);
+        DisAttendResponse disAttendResponse = attendService.disAttend(meetingId, userId,gatheringId);
         return new ResponseEntity<>(disAttendResponse, HttpStatus.OK);
     }
 

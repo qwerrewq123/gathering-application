@@ -29,11 +29,10 @@ public class Board {
     @OneToOne
     @JoinColumn(name = "gathering_id")
     Gathering gathering;
-    @OneToMany(mappedBy = "board",cascade = {CascadeType.REMOVE,CascadeType.PERSIST})
+    @OneToMany(mappedBy = "board")
     List<Image> images = new ArrayList<>();
-
     private String title;
-    private String content;
+    @Lob
     private String description;
     private LocalDateTime registerDate;
 }

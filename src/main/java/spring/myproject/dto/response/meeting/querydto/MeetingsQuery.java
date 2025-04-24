@@ -16,10 +16,13 @@ public class MeetingsQuery {
     private Long id;
     private String title;
     private String createdBy;
+    private String createdByNickname;
     private LocalDateTime boardDate;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
     private String content;
     private int count;
     private String url;
+    private String participatedImageUrl;
+    private Long participatedId;
 }

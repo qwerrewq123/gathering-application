@@ -16,6 +16,7 @@ public class BoardQuery {
     private String description;
     private String imageUrl;
     private String username;
+    private String nickname;
     private String userImageUrl;
     private LocalDateTime registerDate;
 }

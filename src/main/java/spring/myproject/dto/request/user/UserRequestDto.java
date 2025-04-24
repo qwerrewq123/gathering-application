@@ -28,6 +28,23 @@ public class UserRequestDto {
         @NotBlank(message = "cannot blank or null or space")
         private String nickname;
     }
+    @Data
+    @Builder
+    @AllArgsConstructor
+    public static class UpdateRequest{
+
+        private String password;
+        @NotBlank(message = "cannot blank or null or space")
+        private String email;
+        @NotBlank(message = "cannot blank or null or space")
+        private String address;
+        @NotNull(message = "cannot null")
+        private Integer age;
+        @NotBlank(message = "cannot blank or null or space")
+        private String hobby;
+        @NotBlank(message = "cannot blank or null or space")
+        private String nickname;
+    }
 
     @Data
     @Builder

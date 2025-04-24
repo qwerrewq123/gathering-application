@@ -43,15 +43,14 @@ public class BoardResponseDto {
         private String userImageUrl;
         private LocalDateTime registerDate;
 
-        public static BoardResponse of(List<BoardQuery> boardQueries, List<String> imageUrls, String userImageUrl , String code, String message, MyFunctionalInterface myFunctionalInterface) {
-            List<String> urls = imageUrls.stream().map(url -> myFunctionalInterface.execute(url)).toList();
+        public static BoardResponse of(List<BoardQuery> boardQueries, List<String> imageUrls,String userImageUrl, String code, String message) {
             return BoardResponse.builder()
                     .code(code)
                     .message(message)
                     .title(boardQueries.getFirst().getTitle())
                     .description(boardQueries.getFirst().getDescription())
                     .registerDate(boardQueries.getFirst().getRegisterDate())
-                    .imageUrls(urls)
+                    .imageUrls(imageUrls)
                     .username(boardQueries.getFirst().getUsername())
                     .userImageUrl(userImageUrl)
                     .build();
@@ -85,19 +84,21 @@ public class BoardResponseDto {
     @AllArgsConstructor
     @Builder
     public static class BoardElement {
+        private Long id;
         private String title;
         private String description;
-        private String username;
-        private String content;
+        private String nickname;
         private LocalDateTime registerDate;
+        private String url;
 
-        public static BoardElement from(BoardsQuery boardsQuery){
+        public static BoardElement from(BoardsQuery boardsQuery,MyFunctionalInterface myFunctionalInterface) {
             return BoardElement.builder()
+                    .id(boardsQuery.getId())
                     .title(boardsQuery.getTitle())
                     .description(boardsQuery.getDescription())
-                    .username(boardsQuery.getUsername())
-                    .content(boardsQuery.getContent())
+                    .nickname(boardsQuery.getNickname())
                     .registerDate(boardsQuery.getRegisterDate())
+                    .url(myFunctionalInterface.execute(boardsQuery.getUrl()))
                     .build();
 
 

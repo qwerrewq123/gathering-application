@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 import static spring.myproject.dto.request.chat.ChatRequestDto.*;
 
 @Entity
@@ -22,11 +24,12 @@ public class ChatMessage {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "chat_room_id")
-    ChatRoom chatRoom;
+    private ChatRoom chatRoom;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "chat_participant_id")
-    ChatParticipant chatParticipant;
+    private ChatParticipant chatParticipant;
+    private LocalDateTime createdAt;
 
     public static ChatMessage of(ChatRoom chatRoom, ChatParticipant chatParticipant, ChatMessageRequest chatMessageRequest){
         return ChatMessage.builder()

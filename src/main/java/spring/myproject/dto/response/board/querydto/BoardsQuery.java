@@ -10,9 +10,10 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BoardsQuery {
+    private Long id;
     private String title;
     private String description;
-    private String username;
-    private String content;
+    private String nickname;
     private LocalDateTime registerDate;
+    private String url;
 }

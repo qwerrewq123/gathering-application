@@ -11,15 +11,11 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public  class MyChatRoomElement {
+public  class AbleChatRoomElement {
     private Long id;
     private String chatRoomTitle;
     private String description;
     private int count;
     private String createdBy;
-    private boolean status;
-    private long unReadCount;
     private String gatheringTitle;
-    private String lastChatMessage;
-    private LocalDateTime lastDateTime;
 }

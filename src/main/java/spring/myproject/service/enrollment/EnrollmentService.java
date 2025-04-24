@@ -46,7 +46,7 @@ public class EnrollmentService {
             enrollmentRepository.save(enrollment);
 //            Topic topic = gathering.getTopic();
 //            String topicName = topic.getTopicName();
-            //TODO : fcm
+            //TODO : 해당 topic subscribe
 //            fcmService.sendByTopic(TopicNotificationRequestDto.builder()
 //                            .topic(topicName)
 //                            .title("enrollment")
@@ -71,7 +71,7 @@ public class EnrollmentService {
             enrollmentRepository.delete(enrollment);
 //            Topic topic = gathering.getTopic();
 //            String topicName = topic.getTopicName();
-            //TODO : fcm
+            //TODO : 해당 topic unsubscribe
 //            fcmService.sendByTopic(TopicNotificationRequestDto.builder()
 //                    .topic(topicName)
 //                    .title("disEnrollment")

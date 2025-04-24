@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import spring.myproject.dto.response.gathering.querydto.GatheringDetailQuery;
 import spring.myproject.dto.response.gathering.querydto.GatheringsQuery;
+import spring.myproject.dto.response.gathering.querydto.ParticipatedQuery;
 import spring.myproject.entity.gathering.Gathering;
 import spring.myproject.dto.response.gathering.querydto.MainGatheringsQuery;
 
@@ -27,9 +28,14 @@ public interface GatheringRepository extends JpaRepository<Gathering,Long> {
             "left join g.enrollments e " +
             "left join e.enrolledBy u " +
             "left join u.profileImage pm " +
-            "where g.id = :gatheringId")
+            "where g.id = :gatheringId order by u.id asc limit 9")
     List<GatheringDetailQuery> gatheringDetail(Long gatheringId);
-
+    @Query("select new spring.myproject.dto.response.gathering.querydto.ParticipatedQuery(u.username,u.nickname,i.url) " +
+            "from Gathering g " +
+            "left join g.enrollments e " +
+            "left join e.enrolledBy u " +
+            "left join u.profileImage i")
+    Page<ParticipatedQuery> gatheringParticipated(Long gatheringId, Pageable pageable);
     @Query(value = "select id,title,content,registerDate,category,createdBy,url,count from ( " +
             "  select g.id as id, g.title as title, g.content as content, g.register_date as registerDate, ca.name as category, " +
             "         cr.username as createdBy, im.url as url, g.count as count, " +

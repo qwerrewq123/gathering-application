@@ -40,7 +40,7 @@ public class ImageService {
     }
 
     public GatheringImageResponse gatheringImage(Long gatheringId,Integer pageNum) {
-        PageRequest pageRequest = PageRequest.of(pageNum, 9);
+        PageRequest pageRequest = PageRequest.of(pageNum-1, 9);
         Page<String> page = imageRepository.gatheringImage(gatheringId, pageRequest);
         List<String> content = page.getContent();
         boolean hasNext = page.hasNext();

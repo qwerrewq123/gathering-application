@@ -5,25 +5,28 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-import spring.myproject.dto.response.chat.query.ChatMessageElement;
-import spring.myproject.dto.response.chat.query.ChatRoomElement;
-import spring.myproject.dto.response.chat.query.MyChatRoomElement;
+import spring.myproject.common.exception.gathering.NotFoundGatheringException;
+import spring.myproject.dto.request.chat.ChatRequestDto;
+import spring.myproject.dto.response.chat.query.*;
 import spring.myproject.entity.chat.ChatMessage;
 import spring.myproject.entity.chat.ChatParticipant;
 import spring.myproject.entity.chat.ChatRoom;
 import spring.myproject.common.exception.chat.NotFoundChatParticipantException;
 import spring.myproject.common.exception.chat.NotFoundChatRoomException;
+import spring.myproject.entity.gathering.Gathering;
 import spring.myproject.repository.chat.ChatMessageRepository;
 import spring.myproject.repository.chat.ChatParticipantRepository;
 import spring.myproject.repository.chat.ChatRoomRepository;
 import spring.myproject.repository.chat.ReadStatusRepository;
 import spring.myproject.entity.user.User;
 import spring.myproject.common.exception.user.NotFoundUserException;
+import spring.myproject.repository.gathering.GatheringRepository;
 import spring.myproject.repository.user.UserRepository;
 
 import java.util.List;
 import java.util.Optional;
 
+import static spring.myproject.dto.request.chat.ChatRequestDto.*;
 import static spring.myproject.dto.response.chat.ChatResponseDto.*;
 import static spring.myproject.utils.ConstClass.SUCCESS_CODE;
 import static spring.myproject.utils.ConstClass.SUCCESS_MESSAGE;
@@ -32,21 +35,75 @@ import static spring.myproject.utils.ConstClass.SUCCESS_MESSAGE;
 @RequiredArgsConstructor
 @Transactional
 public class ChatService {
-
     private final ChatRoomRepository chatRoomRepository;
+    private final GatheringRepository gatheringRepository;
     private final ChatParticipantRepository chatParticipantRepository;
     private final ChatMessageRepository chatMessageRepository;
     private final ReadStatusRepository readStatusRepository;
     private final UserRepository userRepository;
 
 
-    public AddChatRoomResponse addChatRoom(String roomName, Long userId) {
+    public ChatRoomResponse fetchChatRooms(Long gatheringId, Integer pageNum, Integer pageSize,Long userId) {
+
+        userRepository.findById(userId).orElseThrow(()->new NotFoundUserException("no exist User!!"));
+        gatheringRepository.findById(gatheringId).orElseThrow(()->new NotFoundGatheringException("no exist Gathering!!"));
+        PageRequest pageRequest = PageRequest.of(pageNum-1, pageSize);
+        Page<ChatRoomElement> page = chatRoomRepository.fetchChatRooms(pageRequest,userId);
+        List<ChatRoomElement> content = page.getContent();
+        boolean hasNext = page.hasNext();
+        return ChatRoomResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE,content,hasNext);
+    }
+
+    public MyChatRoomResponse fetchMyChatRooms(Integer pageNum, Integer pageSize,Long userId) {
+        userRepository.findById(userId).orElseThrow(()->new NotFoundUserException("no exist User!!"));
+        PageRequest pageRequest = PageRequest.of(pageNum-1, pageSize);
+        Page<MyChatRoomElement> page = chatRoomRepository.fetchMyChatRooms(pageRequest,userId);
+        List<MyChatRoomElement> content = page.getContent();
+        boolean hasNext = page.hasNext();
+        return MyChatRoomResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE,content,hasNext);
+    }
+
+
+    public AbleChatRoomResponse fetchAbleChatRooms(Long gatheringId, Integer pageNum, Integer pageSize,Long userId) {
+        gatheringRepository.findById(gatheringId).orElseThrow(()->new NotFoundGatheringException("no exist Gathering!!"));
+        PageRequest pageRequest = PageRequest.of(pageNum-1, pageSize);
+        Page<AbleChatRoomElement> page = chatRoomRepository.fetchAbleChatRooms(pageRequest, userId);
+        List<AbleChatRoomElement> content = page.getContent();
+        boolean hasNext = page.hasNext();
+        return AbleChatRoomResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE,content,hasNext);
+    }
+
+    public ParticipateChatRoomResponse fetchParticipateChatRooms(Long gatheringId, Integer pageNum, Integer pageSize, Long userId) {
+        gatheringRepository.findById(gatheringId).orElseThrow(()->new NotFoundGatheringException("no exist Gathering!!"));
+        PageRequest pageRequest = PageRequest.of(pageNum-1, pageSize);
+        Page<ParticipateChatRoomElement> page = chatRoomRepository.fetchParticipateChatRooms(pageRequest, userId);
+        List<ParticipateChatRoomElement> content = page.getContent();
+        boolean hasNext = page.hasNext();
+        return ParticipateChatRoomResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE,content,hasNext);
+    }
+
+    public AddChatRoomResponse addChatRoom(Long gatheringId,AddChatRequest addChatRequest, Long userId) {
         User user = userRepository.findById(userId).orElseThrow(()->new NotFoundUserException("no exist User!!"));
-        ChatRoom chatRoom = ChatRoom.of(roomName, user);
+        Gathering gathering = gatheringRepository.findById(gatheringId).orElseThrow(() -> new NotFoundGatheringException("no exist Gathering!!"));
+        ChatRoom chatRoom = AddChatRequest.toChatRoom(addChatRequest,user,gathering);
         ChatParticipant chatParticipant = ChatParticipant.of(chatRoom, user,false);
         chatRoomRepository.save(chatRoom);
         chatParticipantRepository.save(chatParticipant);
         return AddChatRoomResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE, chatRoom.getId());
+    }
+
+    public AttendChatResponse attendChat(Long chatId, Long userId) {
+        ChatRoom chatRoom = chatRoomRepository.findById(chatId)
+                .orElseThrow(() -> new NotFoundChatRoomException("no exist ChatRoom!!"));
+        User user = userRepository.findById(userId)
+                .orElseThrow(()->new NotFoundUserException("no exist User!!"));
+        Optional<ChatParticipant> optionalChatParticipant = chatParticipantRepository.findByChatRoomAndUserAndStatus(chatRoom,user,false);
+        if(optionalChatParticipant.isEmpty()){
+            chatParticipantRepository.save(ChatParticipant.of(chatRoom,user,true));
+            chatRoom.changeCount(chatRoom.getCount()+1);
+        }
+        if(optionalChatParticipant.isPresent()) optionalChatParticipant.get().changeStatus(true);
+        return AttendChatResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE);
     }
 
     public LeaveChatResponse leaveChat(Long chatId, Long userId) {
@@ -60,28 +117,14 @@ public class ChatService {
         return LeaveChatResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE);
     }
 
-    public AttendChatResponse attendChat(Long roomId, Long userId) {
-        ChatRoom chatRoom = chatRoomRepository.findById(roomId)
+    public ChatMessagesResponse fetchUnReadMessages(Long chatId, Long userId) {
+        ChatRoom chatRoom = chatRoomRepository.findById(chatId)
                 .orElseThrow(() -> new NotFoundChatRoomException("no exist ChatRoom!!"));
         User user = userRepository.findById(userId)
                 .orElseThrow(()->new NotFoundUserException("no exist User!!"));
-        Optional<ChatParticipant> optionalChatParticipant = chatParticipantRepository.findByChatRoomAndUserAndStatus(chatRoom,user,false);
-
-        if(optionalChatParticipant.isPresent()) optionalChatParticipant.get().changeStatus(true);
-        if(optionalChatParticipant.isEmpty()) chatParticipantRepository.save(ChatParticipant.of(chatRoom,user,true));
-        chatRoom.changeCount(chatRoom.getCount()+1);
-        return AttendChatResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE);
-    }
-
-    public ChatMessagesResponse fetchMessages(Long roomId, Long userId) {
-        ChatRoom chatRoom = chatRoomRepository.findById(roomId)
-                .orElseThrow(() -> new NotFoundChatRoomException("no exist ChatRoom!!"));
-        User user = userRepository.findById(userId)
-                .orElseThrow(()->new NotFoundUserException("no exist User!!"));
-        ChatParticipant chatParticipant = chatParticipantRepository.findByChatRoomAndUserAndStatus(chatRoom,user,true)
+        chatParticipantRepository.findByChatRoomAndUserAndStatus(chatRoom,user,true)
                 .orElseThrow(()->new NotFoundChatParticipantException("no exist ChatParticipant!!"));
-        Long chatParticipantId = chatParticipant.getId();
-        List<ChatMessageElement> content = chatMessageRepository.fetchMessages(roomId,chatParticipantId);
+        List<ChatMessageElement> content = chatMessageRepository.fetchUnReadMessages(chatId,userId);
         return ChatMessagesResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE, content);
     }
 
@@ -99,25 +142,6 @@ public class ChatService {
         return ReadChatMessageResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE);
     }
 
-    public ChatRoomResponse fetchChatRooms(Integer pageNum, Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(()->new NotFoundUserException("no exist User!!"));
-        PageRequest pageRequest = PageRequest.of(pageNum, 5);
-        Page<ChatRoomElement> page = chatRoomRepository.fetchChatRooms(pageRequest,userId);
-        List<ChatRoomElement> content = page.getContent();
-        boolean hasNext = page.hasNext();
-        return ChatRoomResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE,content,hasNext);
-    }
-
-    public MyChatRoomResponse fetchMyChatRooms(Integer pageNum, Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(()->new NotFoundUserException("no exist User!!"));
-        PageRequest pageRequest = PageRequest.of(pageNum, 5);
-        Page<MyChatRoomElement> page = chatRoomRepository.fetchMyChatRooms(pageRequest,userId);
-        List<MyChatRoomElement> content = page.getContent();
-        boolean hasNext = page.hasNext();
-        return MyChatRoomResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE,content,hasNext);
-    }
-
-
     public boolean isRoomParticipant(Long userId, long roomId) {
         ChatRoom chatRoom = chatRoomRepository.findById(roomId)
                 .orElseThrow(() -> new NotFoundChatRoomException("no exist ChatRoom!!"));
@@ -125,7 +149,7 @@ public class ChatService {
                 .orElseThrow(()->new NotFoundUserException("no exist User!!"));
         chatParticipantRepository.findByChatRoomAndUserAndStatus(chatRoom,user,true)
                 .orElseThrow(()->new NotFoundChatParticipantException("no exist ChatParticipant!!"));
+
         return true;
     }
-
 }

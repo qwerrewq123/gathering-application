@@ -29,7 +29,7 @@ public class MeetingController {
         AddMeetingResponse addMeetingResponse = meetingService.addMeeting(addMeetingRequest, userId, gatheringId,file);
         return new ResponseEntity<>(addMeetingResponse, HttpStatus.OK);
     }
-
+    //TODO :탈퇴할떄 로직
     @DeleteMapping("/gathering/{gatheringId}/meeting/{meetingId}")
     public ResponseEntity<Object> deleteMeeting(@Id Long userId,
                                                 @PathVariable Long meetingId,
@@ -40,9 +40,9 @@ public class MeetingController {
         return new ResponseEntity<>(deleteMeetingResponse, HttpStatus.OK);
     }
 
-    @PatchMapping("/gathering/{gatheringId}/meeting/{meetingId}")
+    @PutMapping("/gathering/{gatheringId}/meeting/{meetingId}")
     public ResponseEntity<Object> updateMeeting(@RequestPart UpdateMeetingRequest updateMeetingRequest,
-                                                @RequestPart MultipartFile file,
+                                                @RequestPart(required = false) MultipartFile file,
                                                 @Id Long userId,
                                                 @PathVariable Long meetingId,
                                                 @PathVariable Long gatheringId) throws IOException {
@@ -54,19 +54,17 @@ public class MeetingController {
 
     @GetMapping("/gathering/{gatheringId}/meeting/{meetingId}")
     public ResponseEntity<MeetingResponse> meetingDetail(@PathVariable Long meetingId,
-                                                         @Id Long userId,
                                                          @PathVariable Long gatheringId){
-            MeetingResponse meetingResponse = meetingService.meetingDetail(meetingId,userId,gatheringId);
+            MeetingResponse meetingResponse = meetingService.meetingDetail(meetingId,gatheringId);
             return new ResponseEntity<>(meetingResponse, HttpStatus.OK);
     }
 
-    @GetMapping("/meetings")
+    @GetMapping("/gathering/{gatheringId}/meetings")
     public ResponseEntity<Object> meetings(@RequestParam int pageNum,
-                                           @RequestParam int pageSize,
-                                           @RequestParam(defaultValue = "") String title,
-                                           @Id Long userId){
+                                           @PathVariable Long gatheringId
+                                           ){
 
-        MeetingsResponse meetingsResponse = meetingService.meetings(pageNum, pageSize,userId, title);
+        MeetingsResponse meetingsResponse = meetingService.meetings(pageNum, gatheringId);
         return new ResponseEntity<>(meetingsResponse, HttpStatus.OK);
     }
 }

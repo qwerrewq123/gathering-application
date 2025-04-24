@@ -58,12 +58,36 @@ public class GatheringResponseDto {
         private String category;
         private String createdBy;
         private String createdByUrl;
-        private List<String> participatedBy;
-        private List<String> participatedByNickname;
-        private List<String> participatedByUrl;
+        private List<ParticipatedBy> participatedByList;
         private String imageUrl;
+        private boolean hasNext;
         private int count;
     }
+
+    @Data
+    @Builder
+    @AllArgsConstructor
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public static class ParticipatedBy{
+        private String participatedBy;
+        private String participatedByNickname;
+        private String participatedByUrl;
+    }
+    @Data
+    @Builder
+    @AllArgsConstructor
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public static class ParticipatedByResponse{
+        private String code;
+        private String message;
+        private List<ParticipatedBy> participatedBy;
+        private boolean hasNext;
+        public static ParticipatedByResponse of(String code, String message, List<ParticipatedBy> participatedByList,boolean hasNext) {
+            return new ParticipatedByResponse(code,message,participatedByList,hasNext);
+
+        }
+    }
+
 
     @Data
     @Builder

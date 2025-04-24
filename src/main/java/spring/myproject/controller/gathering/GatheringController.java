@@ -21,10 +21,9 @@ import static spring.myproject.dto.response.gathering.GatheringResponseDto.*;
 public class GatheringController {
 
     private final GatheringService gatheringService;
-
     @PostMapping("/gathering")
     public ResponseEntity<AddGatheringResponse> addGathering(@RequestPart AddGatheringRequest addGatheringRequest,
-                                                             @RequestPart(required = false) MultipartFile file,
+                                                             @RequestPart MultipartFile file,
                                                              @Id Long userId) throws IOException {
 
         AddGatheringResponse addGatheringResponse = gatheringService.addGathering(addGatheringRequest, file, userId);
@@ -42,25 +41,31 @@ public class GatheringController {
     }
 
     @GetMapping("/gathering/{gatheringId}")
-    public ResponseEntity<GatheringResponse> gatheringDetail(@PathVariable Long gatheringId, @Id Long userId) throws IOException {
+    public ResponseEntity<GatheringResponse> gatheringDetail(@PathVariable Long gatheringId){
 
-        GatheringResponse gatheringResponse = gatheringService.gatheringDetail(gatheringId,userId);
+        GatheringResponse gatheringResponse = gatheringService.gatheringDetail(gatheringId);
         return new ResponseEntity<>(gatheringResponse, HttpStatus.OK);
+    }
+    @GetMapping("/gathering/participated/{gatheringId}")
+    public ResponseEntity<ParticipatedByResponse> participated(@PathVariable Long gatheringId,Integer pageNum,Integer pageSize){
+        ParticipatedByResponse participatedByResponse = gatheringService.participated(gatheringId,pageNum,pageSize);
+        return new ResponseEntity<>(participatedByResponse, HttpStatus.OK);
+
     }
 
     @GetMapping("/gatherings")
-    public ResponseEntity<MainGatheringResponse> gatherings(@RequestParam(defaultValue = "") String title,
-                                                            @Id Long userId){
+    public ResponseEntity<MainGatheringResponse> gatherings(@RequestParam(defaultValue = "") String title
+                                                            ){
 
-        MainGatheringResponse mainGatheringResponse = gatheringService.gatherings(userId, title);
+        MainGatheringResponse mainGatheringResponse = gatheringService.gatherings(title);
         return new ResponseEntity<>(mainGatheringResponse, HttpStatus.OK);
     }
     @GetMapping("/gathering")
     public ResponseEntity<GatheringCategoryResponse> gatheringCategory(@RequestParam String category,
                                                                      @RequestParam Integer pageNum,
-                                                                     @RequestParam Integer pageSize, @Id Long userId
+                                                                     @RequestParam Integer pageSize
                                                                ){
-        GatheringCategoryResponse gatheringCategoryResponse = gatheringService.gatheringCategory(category,pageNum,pageSize,userId);
+        GatheringCategoryResponse gatheringCategoryResponse = gatheringService.gatheringCategory(category,pageNum,pageSize);
         return new ResponseEntity<>(gatheringCategoryResponse, HttpStatus.OK);
     }
 

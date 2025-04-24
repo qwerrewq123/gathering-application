@@ -1,5 +1,6 @@
 package spring.myproject.controller.user;
 
+import com.google.firebase.remoteconfig.internal.TemplateResponse;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -7,9 +8,12 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import spring.myproject.common.annotation.Id;
 import spring.myproject.common.async.AsyncService;
 import spring.myproject.service.fcm.FCMService;
 import spring.myproject.service.user.UserService;
+
+import java.io.IOException;
 
 import static spring.myproject.dto.request.user.UserRequestDto.*;
 import static spring.myproject.dto.response.user.UserResponseDto.*;
@@ -33,16 +37,31 @@ public class UserController {
         NicknameCheckResponse nicknameCheckResponse = userService.nicknameCheck(nicknameCheckRequest);
         return new ResponseEntity<>(nicknameCheckResponse, HttpStatus.OK);
     }
-    //TODO : 회원정보 수정
     @PostMapping(value = "/auth/sign-up",consumes = {
             MediaType.MULTIPART_FORM_DATA_VALUE,
             MediaType.APPLICATION_JSON_VALUE
     })
     public ResponseEntity<SignUpResponse> signUp(@RequestPart SignUpRequest signUpRequest
-            , @RequestPart(required = false,name = "file") MultipartFile file){
+            , @RequestPart(name = "file") MultipartFile file) throws IOException {
 
         SignUpResponse signUpResponse = userService.signUp(signUpRequest, file);
         return new ResponseEntity<>(signUpResponse, HttpStatus.OK);
+    }
+
+    @PutMapping(value = "/auth/update/{userId}",consumes = {
+            MediaType.MULTIPART_FORM_DATA_VALUE,
+            MediaType.APPLICATION_JSON_VALUE
+    })
+    public ResponseEntity<UpdateResponse> update(@RequestPart UpdateRequest updateRequest
+            , @RequestPart(required = false,name = "file") MultipartFile file, @PathVariable Long userId, @Id Long id) throws IOException {
+
+        UpdateResponse updateResponse = userService.update(updateRequest, userId,file,id);
+        return new ResponseEntity<>(updateResponse, HttpStatus.OK);
+    }
+    @GetMapping(value = "/auth/user/{userId}")
+    public ResponseEntity<UserResponse> fetchUser(@PathVariable Long userId){
+        UserResponse userResponse = userService.fetchUser(userId);
+        return new ResponseEntity<>(userResponse, HttpStatus.OK);
     }
 
 
@@ -50,7 +69,7 @@ public class UserController {
     public ResponseEntity<SignInResponse> signIn(@RequestBody SignInRequest signInRequest, HttpServletResponse response) {
 
         SignInResponse signInResponse = userService.signIn(signInRequest,response);
-        //TODO :fcm
+        //TODO :토큰저장
         //fcmService.saveFCMToken(signInRequest);
         return new ResponseEntity<>(signInResponse,HttpStatus.OK);
     }

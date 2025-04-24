@@ -25,6 +25,7 @@ public class Gathering {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String title;
+    @Lob
     private String content;
     private LocalDateTime registerDate;
 
@@ -50,7 +51,7 @@ public class Gathering {
     private Topic topic;
 
     public void changeGathering(Image image, Category category, UpdateGatheringRequest updateGatheringRequest){
-        this.gatheringImage = image;
+        if(image != null) this.gatheringImage = image;
         this.category = category;
         this.title = updateGatheringRequest.getTitle();
         this.content = updateGatheringRequest.getContent();

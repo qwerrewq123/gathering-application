@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 import spring.myproject.dto.response.gathering.querydto.MainGatheringsQuery;
 import spring.myproject.dto.response.gathering.querydto.GatheringDetailQuery;
 import spring.myproject.dto.response.gathering.querydto.GatheringsQuery;
+import spring.myproject.dto.response.gathering.querydto.ParticipatedQuery;
 import spring.myproject.entity.category.Category;
 import spring.myproject.entity.fcm.Topic;
 import spring.myproject.service.recommend.RecommendService;
@@ -73,7 +74,7 @@ public class GatheringService {
                 .gathering(gathering)
                 .build();
             topicRepository.save(topic);
-            //TODO : fcm
+            //TODO : gathering Topic 등록
             //fcmService.subscribeToTopics(topic.getTopicName(),username);
             recommendService.createScore(gathering);
             return AddGatheringResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE, gathering.getId());
@@ -93,17 +94,15 @@ public class GatheringService {
             return UpdateGatheringResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE, userId);
     }
 
-    public GatheringResponse gatheringDetail(Long gatheringId, Long userId){
+    public GatheringResponse gatheringDetail(Long gatheringId){
 
-            userRepository.findById(userId).orElseThrow(()->new NotFoundUserException("no exist User!!"));
             List<GatheringDetailQuery> gatheringDetailQueries = gatheringRepository.gatheringDetail(gatheringId);
             if(gatheringDetailQueries.isEmpty()) throw new NotFoundGatheringException("no exist Gathering!!!");
             recommendService.addScore(gatheringId,1);
             return getGatheringResponse(gatheringDetailQueries);
     }
 
-    public GatheringCategoryResponse gatheringCategory(String category, Integer pageNum, Integer pageSize, Long userId) {
-        userRepository.findById(userId).orElseThrow(()->new NotFoundUserException("no exist User!!"));
+    public GatheringCategoryResponse gatheringCategory(String category, Integer pageNum, Integer pageSize) {
         PageRequest pageRequest = PageRequest.of(pageNum - 1, pageSize, Sort.Direction.ASC,"id");
         Page<GatheringsQuery> page = gatheringRepository.gatheringsCategory(pageRequest,category);
         boolean hasNext = page.hasNext();
@@ -121,8 +120,7 @@ public class GatheringService {
         return GatheringLikeResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE,content,hasNext);
     }
 
-    public MainGatheringResponse gatherings(Long userId, String title) {
-            userRepository.findById(userId).orElseThrow(()->new NotFoundUserException("no exist User!!"));
+    public MainGatheringResponse gatherings(String title) {
             List<MainGatheringsQuery> mainGatheringsQueryList = gatheringRepository.gatherings(title);
             List<GatheringsQuery> gatherings = toGatheringQueriesList(mainGatheringsQueryList);
             List<MainGatheringElement> mainGatheringElements = toGatheringsResponseList(gatherings);
@@ -132,20 +130,27 @@ public class GatheringService {
     }
 
     private GatheringResponse getGatheringResponse(List<GatheringDetailQuery> gatheringDetailQueries){
-
-        GatheringResponse gatheringResponse = GatheringFactory.toGatheringResponse(gatheringDetailQueries
+        boolean hasNext = gatheringDetailQueries.size() >8;
+        GatheringResponse gatheringResponse = GatheringFactory.toGatheringResponse(gatheringDetailQueries,hasNext
                 ,(fileUrl)->url+fileUrl);
-        for (GatheringDetailQuery gatheringDetailQuery : gatheringDetailQueries) {
-            if(StringUtils.hasText(gatheringDetailQuery.getParticipatedBy())){
-                gatheringResponse.getParticipatedBy().add(gatheringDetailQuery.getParticipatedBy());
-            }
-            if(StringUtils.hasText(gatheringDetailQuery.getParticipatedByNickname())){
-                gatheringResponse.getParticipatedByNickname().add(gatheringDetailQuery.getParticipatedByNickname());
-            }
-            if(StringUtils.hasText(gatheringDetailQuery.getParticipatedByUrl())){
-                gatheringResponse.getParticipatedByUrl().add(url + gatheringDetailQuery.getParticipatedByUrl());
-            }
-        }
+        gatheringDetailQueries.stream()
+                .limit(8)
+                .forEach(query -> {
+                    ParticipatedBy.ParticipatedByBuilder builder = ParticipatedBy.builder();
+                    if (StringUtils.hasText(query.getParticipatedBy())) {
+                        String participateBy = query.getParticipatedBy();
+                        builder.participatedBy(participateBy);
+                    }
+                    if (StringUtils.hasText(query.getParticipatedByNickname())) {
+                        String participateByNickname = query.getParticipatedByNickname();
+                        builder.participatedByNickname(participateByNickname);
+                    }
+                    if (StringUtils.hasText(query.getParticipatedByUrl())) {
+                        String participateByUrl = url + query.getParticipatedByUrl();
+                        builder.participatedByUrl(participateByUrl);
+                    }
+                    gatheringResponse.getParticipatedByList().add(builder.build());
+                });
         return gatheringResponse;
     }
 
@@ -198,7 +203,7 @@ public class GatheringService {
     }
 
     private Image saveImage(Image image,MultipartFile file) throws IOException {
-        if(!file.isEmpty()){
+        if(file != null && !file.isEmpty()){
             String url = s3ImageUploadService.upload(file);
             String contentType = file.getContentType();
             if(StringUtils.hasText(url)){
@@ -211,4 +216,18 @@ public class GatheringService {
         return image;
     }
 
+    public ParticipatedByResponse participated(Long gatheringId,Integer pageNum,Integer pageSize) {
+        PageRequest pageRequest = PageRequest.of(pageNum-1, pageSize);
+        Page<ParticipatedQuery> page = gatheringRepository.gatheringParticipated(gatheringId, pageRequest);
+        boolean hasNext = page.hasNext();
+        List<ParticipatedQuery> participatedQueries = page.getContent();
+        List<ParticipatedBy> list = participatedQueries.stream()
+                .map(query -> ParticipatedBy.builder()
+                        .participatedBy(query.getParticipatedBy())
+                        .participatedByNickname(query.getParticipatedByNickname())
+                        .participatedByUrl(url + query.getParticipatedByUrl())
+                        .build())
+                .toList();
+        return ParticipatedByResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE,list,hasNext);
+    }
 }

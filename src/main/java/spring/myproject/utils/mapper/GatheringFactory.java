@@ -11,12 +11,13 @@ import static spring.myproject.dto.response.gathering.GatheringResponseDto.*;
 
 public class GatheringFactory {
 
-    public static GatheringResponse toGatheringResponse(List<GatheringDetailQuery> gatheringDetailQueries,
+    public static GatheringResponse toGatheringResponse(List<GatheringDetailQuery> gatheringDetailQueries,boolean hasNext,
                                                         MyFunctionalInterface functionalInterface) {
         return GatheringResponse.builder()
                 .code("SU")
                 .message("Success")
                 .title(gatheringDetailQueries.getFirst().getTitle())
+                .hasNext(hasNext)
                 .content(gatheringDetailQueries.getFirst().getContent())
                 .registerDate(gatheringDetailQueries.getFirst().getRegisterDate())
                 .category(gatheringDetailQueries.getFirst().getCategory())
@@ -24,9 +25,7 @@ public class GatheringFactory {
                 .createdByUrl(gatheringDetailQueries.getFirst().getCreatedByUrl())
                 .imageUrl(functionalInterface.execute(gatheringDetailQueries.getFirst().getUrl()))
                 .count(gatheringDetailQueries.getFirst().getCount())
-                .participatedBy(new ArrayList<>())
-                .participatedByNickname(new ArrayList<>())
-                .participatedByUrl(new ArrayList<>())
+                .participatedByList(new ArrayList<>())
                 .build();
     }
 }

@@ -7,6 +7,7 @@ import lombok.Data;
 import spring.myproject.common.functional.MyFunctionalInterface;
 import spring.myproject.dto.response.meeting.querydto.MeetingDetailQuery;
 import spring.myproject.dto.response.meeting.querydto.MeetingsQuery;
+import spring.myproject.dto.response.meeting.querydto.Participated;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -120,6 +121,7 @@ public class MeetingResponseDto {
         private String content;
         private int count;
         private String url;
+        private List<Participated> participatedList;
 
         public static MeetingElement from(MeetingsQuery meetingsQuery, MyFunctionalInterface myFunctionalInterface){
             return MeetingElement.builder()

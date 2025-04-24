@@ -3,6 +3,7 @@ package spring.myproject.config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
@@ -18,6 +19,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import spring.myproject.common.filter.JwtAuthFilter;
 import spring.myproject.common.security.FailedAuthenticationEntryPoint;
 
+import static org.springframework.http.HttpMethod.*;
+
 
 @Configuration
 @EnableWebSecurity
@@ -26,8 +29,10 @@ public class SecurityConfig {
 
     private final FailedAuthenticationEntryPoint failedAuthenticationEntryPoint;
     private final JwtAuthFilter jwtAuthFilter;
-    private String[] whitelist = {"/auth/id-check","/auth/nickname-check","/auth/generateToken",
-            "/auth/email-certification","/auth/check-certification","/auth/sign-in","/auth/sign-up","/connect/**","/gatherings"};
+    private String[] getWhiteList = {"/connect/**","/gatherings","/gathering/*","/gathering","/gathering/*/meetings",
+            "/gathering/*/meeting/*","/image/*","/gathering/*/image","/gathering/*/boards","/auth/user/*","/gathering/participated/*"};
+    private String[] postWhiteList = {"/auth/id-check","/auth/generateToken",
+            "/auth/email-certification","/auth/check-certification","/auth/sign-in","/auth/sign-up"};
     @Bean
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
@@ -41,7 +46,8 @@ public class SecurityConfig {
                 .httpBasic(HttpBasicConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers(whitelist).permitAll()
+                        .requestMatchers(POST,postWhiteList).permitAll()
+                        .requestMatchers(GET,getWhiteList).permitAll()
                         .anyRequest().authenticated())
                 .exceptionHandling(exceptionHandle -> exceptionHandle.authenticationEntryPoint(failedAuthenticationEntryPoint))
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
@@ -53,8 +59,8 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*");
-        configuration.addAllowedOrigin("*");
-//        configuration.setAllowCredentials(true);
+        configuration.addAllowedOrigin("http://localhost:3000");
+        configuration.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**",configuration);
         return source;

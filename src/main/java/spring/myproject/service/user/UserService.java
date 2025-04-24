@@ -12,7 +12,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import spring.myproject.common.async.AsyncService;
+import spring.myproject.common.exception.meeting.NotAuthorizeException;
 import spring.myproject.common.exception.user.*;
+import spring.myproject.dto.request.user.UserRequestDto;
 import spring.myproject.entity.image.Image;
 import spring.myproject.repository.certification.CertificationRepository;
 import spring.myproject.utils.mapper.UserFactory;
@@ -23,6 +25,7 @@ import spring.myproject.common.provider.JwtProvider;
 import spring.myproject.common.s3.S3ImageUploadService;
 import spring.myproject.common.validator.JwtValidator;
 
+import java.io.IOException;
 import java.util.List;
 
 import static spring.myproject.dto.request.user.UserRequestDto.*;
@@ -46,6 +49,8 @@ public class UserService {
     private final AsyncService asyncService;
     @Value("${jwt.refresh.expiration}")
     private int refreshExpiration;
+    @Value("${server.url}")
+    private String url;
 
 
     public IdCheckResponse idCheck(IdCheckRequest idCheckRequest) {
@@ -61,26 +66,42 @@ public class UserService {
 
     }
 
-    public SignUpResponse signUp(SignUpRequest signUpRequest, MultipartFile file){
+    public SignUpResponse signUp(SignUpRequest signUpRequest, MultipartFile file) throws IOException {
 
-        try {
             Image image = null;
-            if(!file.isEmpty()){
+            if(!file.isEmpty()) {
                 String contentType = file.getContentType();
                 String url = s3ImageUploadService.upload(file);
                 image = Image.builder()
                         .contentType(contentType)
                         .url(url)
                         .build();
+                imageRepository.save(image);
             }
-            imageRepository.save(image);
             User user = UserFactory.toUser(signUpRequest,image,passwordEncoder);
             userRepository.save(user);
             return SignUpResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE);
-        }catch (Exception e){
-            log.error("error", e);
-            return SignUpResponse.of(DB_ERROR_CODE,DB_ERROR_MESSAGE);
-        }
+
+    }
+
+    public UpdateResponse update(UpdateRequest updateRequest, Long userId,MultipartFile file,Long id) throws IOException {
+            User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundUserException("user Not Found!"));
+            boolean authorize = userId.equals(id);
+            if(!authorize) throw new NotAuthorizeException("Not Authorize!");
+            Image image = null;
+            if(file != null && !file.isEmpty()){
+                String contentType = file.getContentType();
+                String url = s3ImageUploadService.upload(file);
+                image = Image.builder()
+                        .contentType(contentType)
+                        .url(url)
+                        .build();
+                imageRepository.save(image);
+                user.changeProfileImage(image);
+            }
+            user.change(updateRequest,passwordEncoder);
+
+            return UpdateResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE,userId);
     }
 
     public SignInResponse signIn(SignInRequest signInRequest, HttpServletResponse response) {
@@ -131,5 +152,10 @@ public class UserService {
         if(!StringUtils.hasText(certification)) throw new NotFoundCertificationException("Not Found Certification");
         if(!certification.equals(checkCertificationRequest.getCertification())) throw new UnCorrectCertification("UnCorrect Certification");
         return CheckCertificationResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE);
+    }
+
+    public UserResponse fetchUser(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundUserException("user Not Found!"));
+        return UserResponse.from(SUCCESS_CODE,SUCCESS_MESSAGE,user,fileUrl -> url + fileUrl);
     }
 }

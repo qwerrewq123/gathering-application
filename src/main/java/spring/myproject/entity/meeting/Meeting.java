@@ -28,6 +28,7 @@ public class Meeting {
     private LocalDateTime boardDate;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
+    @Lob
     private String content;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")

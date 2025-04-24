@@ -10,7 +10,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class ChatMessageElement {
-    private Long roomId;
+    private Long chatRoomId;
+    private Long chatMessageId;
     private String content;
     private String username;
     private boolean status;

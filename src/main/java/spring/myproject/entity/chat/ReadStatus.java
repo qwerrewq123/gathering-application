@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @Getter
-@Table(name = "chat_message")
+@Table(name = "read_status")
 public class ReadStatus {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

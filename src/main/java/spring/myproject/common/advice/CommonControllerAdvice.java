@@ -1,5 +1,6 @@
 package spring.myproject.common.advice;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,7 @@ import spring.myproject.utils.AbstractErrorResponse;
 import static spring.myproject.utils.ConstClass.*;
 @Order(2)
 @RestControllerAdvice
+@Slf4j
 public class CommonControllerAdvice {
 
     @ExceptionHandler(MethodNotAllowedException.class)
@@ -21,7 +23,8 @@ public class CommonControllerAdvice {
                 , HttpStatus.FORBIDDEN);
     }
     @ExceptionHandler(Exception.class)
-    ResponseEntity<ErrorResponse> handleException(){
+    ResponseEntity<ErrorResponse> handleException(Exception e){
+        log.error(e.getMessage(),e);
         return new ResponseEntity<>(
                 AbstractErrorResponse.getErrorResponse(DB_ERROR_CODE, DB_ERROR_MESSAGE)
                 , HttpStatus.BAD_REQUEST);

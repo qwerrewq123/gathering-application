@@ -23,4 +23,5 @@ public class UserFactory {
                     .nickname(signUpRequest.getNickname())
                     .build();
     }
+
 }

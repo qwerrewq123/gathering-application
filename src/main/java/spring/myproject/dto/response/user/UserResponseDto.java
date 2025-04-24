@@ -1,10 +1,19 @@
 package spring.myproject.dto.response.user;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import spring.myproject.common.functional.MyFunctionalInterface;
+import spring.myproject.entity.fcm.FCMToken;
+import spring.myproject.entity.image.Image;
+import spring.myproject.entity.user.Role;
+import spring.myproject.entity.user.User;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class UserResponseDto {
@@ -37,6 +46,60 @@ public class UserResponseDto {
             return new SignUpResponse(code, message);
         }
 
+    }
+    @Data
+    @Builder
+    @AllArgsConstructor
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public static class UpdateResponse {
+
+        private final String code;
+        private final String message;
+        private Long userId;
+
+        public static UpdateResponse of(String code, String message,Long userId) {
+            return new UpdateResponse(code, message,userId);
+        }
+
+    }
+    @Data
+    @Builder
+    @AllArgsConstructor
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public static class UserResponse {
+
+        private final String code;
+        private final String message;
+        private Long id;
+        private String username;
+        private String email;
+        private String address;
+        private Integer age;
+        private String hobby;
+        private String nickname;
+        private String imageUrl;
+
+        public static UserResponse of(String code, String message) {
+            return UserResponse.builder()
+                    .code(code)
+                    .message(message)
+                    .build();
+        }
+
+        public static UserResponse from(String code, String message,User user, MyFunctionalInterface functionalInterface) {
+            return UserResponse.builder()
+                    .code(code)
+                    .message(message)
+                    .id(user.getId())
+                    .age(user.getAge())
+                    .address(user.getAddress())
+                    .email(user.getEmail())
+                    .nickname(user.getNickname())
+                    .hobby(user.getHobby())
+                    .imageUrl(functionalInterface.execute(user.getProfileImage().getUrl()))
+                    .username(user.getUsername())
+                    .build();
+        }
     }
 
     @Data

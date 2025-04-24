@@ -43,11 +43,12 @@ public class AttendService {
                 return AddAttendResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE);
         }
 
-        public DisAttendResponse disAttend(Long meetingId, Long attendId, Long userId,Long gatheringId) {
+        public DisAttendResponse disAttend(Long meetingId, Long userId,Long gatheringId) {
 
                 userRepository.findById(userId).orElseThrow(() -> new NotFoundUserException("no exist User!!"));
                 Meeting meeting = meetingRepository.findById(meetingId).orElseThrow(()->new NotFoundMeetingExeption("no exist Meeting!!"));
-                Attend attend = attendRepository.findById(attendId).orElseThrow(() -> new NotFoundAttendException("Not Found Attend!!"));
+                Attend attend = attendRepository.findByUserIdAndMeetingId(userId,meetingId);
+                if(attend == null) throw  new NotFoundAttendException("Not Found Attend!!");
                 Long createdById = meeting.getCreatedBy().getId();
                 Long attendById = attend.getAttendBy().getId();
                 if(!attendById.equals(userId)) throw new NotAuthorizeException("Not Authorized");
@@ -69,10 +70,8 @@ public class AttendService {
         }
 
         private void checkMeetingOpener(Long createdById, Long userId, Meeting meeting, Attend attend) {
-            if(createdById.equals(userId)){
-                    meetingRepository.delete(meeting);
-            }else{
-                attendRepository.delete(attend);
+            if(!createdById.equals(userId)){
+                    attendRepository.delete(attend);
             }
             if(attend.getAccepted()) meeting.changeCount(meeting.getCount()-1);
         }

@@ -4,9 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import spring.myproject.dto.response.chat.query.ChatMessageElement;
-import spring.myproject.dto.response.chat.query.ChatRoomElement;
-import spring.myproject.dto.response.chat.query.MyChatRoomElement;
+import spring.myproject.dto.response.chat.query.*;
 
 import java.util.List;
 
@@ -103,6 +101,36 @@ public class ChatResponseDto {
 
         public static ChatRoomResponse of(String code, String message, List<ChatRoomElement> content, boolean hasNext) {
             return new ChatRoomResponse(code, message, content, hasNext);
+        }
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class AbleChatRoomResponse {
+        private String code;
+        private String message;
+        private List<AbleChatRoomElement> content;
+        private boolean hasNext;
+
+        public static AbleChatRoomResponse of(String code, String message, List<AbleChatRoomElement> content, boolean hasNext) {
+            return new AbleChatRoomResponse(code, message, content, hasNext);
+        }
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class ParticipateChatRoomResponse {
+        private String code;
+        private String message;
+        private List<ParticipateChatRoomElement> content;
+        private boolean hasNext;
+
+        public static ParticipateChatRoomResponse of(String code, String message, List<ParticipateChatRoomElement> content, boolean hasNext) {
+            return new ParticipateChatRoomResponse(code, message, content, hasNext);
         }
     }
 
