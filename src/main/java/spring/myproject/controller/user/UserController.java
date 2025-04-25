@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import spring.myproject.common.annotation.Id;
-import spring.myproject.common.async.AsyncService;
 import spring.myproject.service.fcm.FCMService;
 import spring.myproject.service.user.UserService;
 
@@ -69,8 +68,7 @@ public class UserController {
     public ResponseEntity<SignInResponse> signIn(@RequestBody SignInRequest signInRequest, HttpServletResponse response) {
 
         SignInResponse signInResponse = userService.signIn(signInRequest,response);
-        //TODO :토큰저장
-        //fcmService.saveFCMToken(signInRequest);
+        fcmService.saveFCMToken(signInRequest);
         return new ResponseEntity<>(signInResponse,HttpStatus.OK);
     }
 

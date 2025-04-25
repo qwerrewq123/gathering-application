@@ -11,12 +11,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class TopicNotificationRequestDto {
 	private String title;
-
 	private String content;
-
 	private String url;
-
 	private String img;
-
 	private String topic;
 }

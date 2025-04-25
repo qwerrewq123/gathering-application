@@ -38,7 +38,7 @@ public class Meeting {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "gathering_id")
     private Gathering gathering;
-    @OneToOne(fetch = FetchType.LAZY,optional = false)
+    @OneToOne(fetch = FetchType.LAZY,optional = false,cascade = CascadeType.REMOVE)
     @JoinColumn(name = "image_id")
     private Image image;
     private int count;

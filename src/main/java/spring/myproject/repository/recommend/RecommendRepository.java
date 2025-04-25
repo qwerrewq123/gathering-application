@@ -14,7 +14,10 @@ public interface RecommendRepository extends JpaRepository<Recommend,Long> {
     @Modifying
     void resetCount();
 
-    @Query("update Recommend  r set r.score = r.score+:val where r.gathering.id = :gatheringId")
+    @Query(value =
+            "update recommend r set r.score = r.score + :val " +
+                    "where r.gathering_id = :gatheringId"
+            ,nativeQuery = true)
     @Modifying
     int updateCount(Long gatheringId,int val);
 

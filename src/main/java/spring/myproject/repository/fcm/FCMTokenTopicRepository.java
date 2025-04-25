@@ -17,7 +17,7 @@ public interface FCMTokenTopicRepository extends JpaRepository<FCMTokenTopic, Lo
 
     List<FCMTokenTopic> findByFcmTokenIn(List<FCMToken> tokens);
 
-    @Transactional
+
     @Modifying
     @Query("DELETE FROM FCMTokenTopic tt WHERE tt.fcmToken.tokenValue IN :tokenValues")
     void deleteByTokenValueIn(@Param("tokenValues") List<String> tokenValues);

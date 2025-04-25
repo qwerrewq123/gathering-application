@@ -29,7 +29,6 @@ public class MeetingController {
         AddMeetingResponse addMeetingResponse = meetingService.addMeeting(addMeetingRequest, userId, gatheringId,file);
         return new ResponseEntity<>(addMeetingResponse, HttpStatus.OK);
     }
-    //TODO :탈퇴할떄 로직
     @DeleteMapping("/gathering/{gatheringId}/meeting/{meetingId}")
     public ResponseEntity<Object> deleteMeeting(@Id Long userId,
                                                 @PathVariable Long meetingId,

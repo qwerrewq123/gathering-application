@@ -33,7 +33,7 @@ public class AttendService {
         private final MeetingRepository meetingRepository;
         private final RecommendService recommendService;
         public AddAttendResponse addAttend(Long meetingId, Long userId,Long gatheringId) {
-
+                //todo : recommend add score
                 User user = userRepository.findById(userId).orElseThrow(()->new NotFoundUserException("no exist User!!"));
                 Meeting meeting = meetingRepository.findById(meetingId).orElseThrow(()->new NotFoundMeetingExeption("no exist Meeting!!"));
                 Attend checkAttend = attendRepository.findByUserIdAndMeetingId(user.getId(),meetingId);
@@ -65,7 +65,6 @@ public class AttendService {
                 if(!createdBy.equals(userId)) throw new NotAuthorizeException("this user has no permission");
                 attend.changeAccepted(true);
                 meeting.changeCount(meeting.getCount()+1);
-                //todo : recommend addscore
                 return PermitAttendResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE);
         }
 
