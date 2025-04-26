@@ -9,7 +9,8 @@ import java.util.Optional;
 public interface LikeRepository extends JpaRepository<Like,Long> {
 
     @Query("select l from Like l " +
-            "where l.gathering.id = :gatheringId and l.likedBy.id = :userId")
+            "left join l.gathering g left join l.likedBy u " +
+            "where g.id = :gatheringId and u.id = :userId")
     Optional<Like> findLike(Long userId, Long gatheringId);
 
 

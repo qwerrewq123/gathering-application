@@ -3,6 +3,7 @@ package spring.myproject.controller.enrollment;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,11 +25,17 @@ public class EnrollmentController {
         return new ResponseEntity<>(enrollGatheringResponse, HttpStatus.OK);
     }
 
-    @PostMapping("/gathering/{gatheringId}/disParticipate")
+    @PatchMapping("/gathering/{gatheringId}/disParticipate")
     public ResponseEntity<DisEnrollGatheringResponse> disEnrollGathering(@PathVariable Long gatheringId,
                                                                          @Id Long userId){
 
         DisEnrollGatheringResponse disEnrollGatheringResponse = enrollmentService.disEnrollGathering(gatheringId, userId);
         return new ResponseEntity<>(disEnrollGatheringResponse, HttpStatus.OK);
+    }
+
+    @PatchMapping("/gathering/{gatheringId}/permit")
+    public ResponseEntity<PermitEnrollmentResponse> permit(@PathVariable Long gatheringId, @Id Long userId){
+        PermitEnrollmentResponse permitEnrollmentResponse = enrollmentService.permit(gatheringId,userId);
+        return new ResponseEntity<>(permitEnrollmentResponse, HttpStatus.OK);
     }
 }

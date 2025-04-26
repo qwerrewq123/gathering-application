@@ -69,9 +69,6 @@ public class Gathering {
                 .count(1)
                 .build();
     }
-    public void changeCount(int count){
-        this.count = count;
-    }
 
     public void enroll(List<Enrollment> enrollments){
         this.enrollments = enrollments;

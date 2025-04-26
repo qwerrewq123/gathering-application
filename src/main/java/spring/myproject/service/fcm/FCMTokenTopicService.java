@@ -77,7 +77,7 @@ public class FCMTokenTopicService {
     }
 
     @Transactional
-    public void subscribeToTopics(String topicName, Long userId) {
+    public void subscribeToTopic(String topicName, Long userId) {
 
         Topic topic = topicRepository.findByTopicName(topicName)
                 .orElseThrow(() -> new NotFoundTopicException("Not Found Topic"));
@@ -110,7 +110,7 @@ public class FCMTokenTopicService {
     }
 
     @Transactional
-    public void unsubscribeFromTopics(String topicName, Long userId) {
+    public void unsubscribeFromTopic(String topicName, Long userId) {
 
         Topic topic = topicRepository.findByTopicName(topicName)
                 .orElseThrow(() -> new NotFoundTopicException("Not Found Topic"));

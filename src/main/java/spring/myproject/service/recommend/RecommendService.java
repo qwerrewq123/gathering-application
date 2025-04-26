@@ -34,15 +34,12 @@ public class RecommendService {
     private final RecommendRepository recommendRepository;
     @Value("${server.url}")
     private String url;
-    public void createScore(Gathering gathering){
-        recommendRepository.save(Recommend.from(gathering));
-    }
     public void addScore(Long gatheringId,int val){
-        recommendRepository.updateCount(gatheringId,val);
+        recommendRepository.updateCount(gatheringId, LocalDate.now(), val);
     }
     @Cacheable(value = "recommend",key="#localDate")
     public RecommendResponse fetchRecommendTop10(LocalDate localDate) {
-            List<GatheringsQuery> gatheringsQueries = gatheringRepository.gatheringsRecommend(localDate);
+        List<GatheringsQuery> gatheringsQueries = gatheringRepository.gatheringsRecommend(localDate);
         List<GatheringsResponse> content = gatheringsQueries.stream().map(query -> GatheringsResponse.from(query, (fileUrl) -> (url + fileUrl)))
                 .toList();
         return RecommendResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE,content);

@@ -23,7 +23,7 @@ public class FCMService {
 	private final FCMTokenTopicRepository fcmTokenTopicRepository;
 
 
-	public void sendByTopic(TopicNotificationRequestDto topicNotificationRequestDto,Topic topic) {
+	public void sendByTopic(TopicNotificationRequestDto topicNotificationRequestDto) {
 		Message message = Message.builder()
 			.setTopic(topicNotificationRequestDto.getTopic())
 			.setNotification(Notification.builder()

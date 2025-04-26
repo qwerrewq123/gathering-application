@@ -22,6 +22,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("select u from User u left join fetch FCMToken t on t.user.id = u.id where u.id =:userId")
     Optional<User> findAndTokenByUserId(Long userId);
 
-    @Query("select u from User u join fetch FCMToken t on t.user.id = u.id")
+    @Query("select u from User u where u.username =:username")
     Optional<User> findByUsername(String username);
 }

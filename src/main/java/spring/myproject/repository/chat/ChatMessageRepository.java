@@ -9,15 +9,19 @@ import spring.myproject.dto.response.chat.query.ChatMessageElement;
 import java.util.List;
 
 public interface ChatMessageRepository extends JpaRepository<ChatMessage, Long> {
-    List<ChatMessage> findChatMessageByChatRoom(ChatRoom chatRoom);
-
     @Query("select new spring.myproject.dto.response.chat.query." +
-            "ChatMessageElement(cr.id,cm.id,cm.content,uu.username,r.status) " +
+            "ChatMessageElement(cm.id,cr.id,cm.content,uu.id,uu.username,r.status," +
+            "case when cp.id=cpp.id then true else false end," +
+            "cm.createdAt) " +
             "from ReadStatus r " +
-            "left join r.chatParticipant cp left join cp.user u " +
+            "left join r.chatParticipant cp " +
             "left join r.chatMessage cm " +
-            "left join cm.chatRoom cr left join cm.chatParticipant cpp left join cpp.user uu " +
+            "left join cp.user u " +
+            "left join cm.chatRoom cr " +
+            "left join cm.chatParticipant cpp left join cpp.user uu " +
             "where u.id =:userId and cr.id =:chatId and r.status = false"
     )
     List<ChatMessageElement> fetchUnReadMessages(Long chatId, Long userId);
+
+    List<ChatMessage> findChatMessageByChatRoom(ChatRoom chatRoom);
 }

@@ -72,8 +72,7 @@ public class DummyData {
 
     public static Meeting returnDummyMeeting(int i, User createdBy, Gathering gathering,Image image){
         return Meeting.builder()
-                .boardDate(LocalDateTime.now())
-                .startDate(LocalDateTime.now())
+                .meetingDate(LocalDateTime.now())
                 .endDate(LocalDateTime.now())
                 .title(String.format("title%d",i))
                 .content(String.format("content%d",i))
@@ -86,7 +85,6 @@ public class DummyData {
     }
     public static Attend returnDummyAttend(User attendBy,Meeting meeting){
         return Attend.builder()
-                .accepted(true)
                 .meeting(meeting)
                 .attendBy(attendBy)
                 .date(LocalDateTime.now())
@@ -104,7 +102,7 @@ public class DummyData {
         return Recommend.builder()
                 .score(Long.valueOf(score))
                 .gathering(gathering)
-                .localDate(LocalDate.now())
+                .date(LocalDate.now())
                 .build();
     }
     public static Like returnDummyLike(User likedBy, Gathering gathering){

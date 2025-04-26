@@ -43,4 +43,7 @@ public interface MeetingRepository extends JpaRepository<Meeting,Long> {
     where g.id = :gatheringId
     """, nativeQuery = true)
     List<MeetingsQueryInterface> meetings(Integer offset,Long gatheringId);
+    @Query(value = "update meeting set count = count + :val where id = :meetingId",
+    nativeQuery = true)
+    void updateCount(Long meetingId, int val);
 }

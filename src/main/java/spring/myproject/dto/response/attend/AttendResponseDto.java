@@ -33,16 +33,4 @@ public class AttendResponseDto {
         }
     }
 
-    @Data
-    @Builder
-    @AllArgsConstructor
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    public static class PermitAttendResponse {
-        private String code;
-        private String message;
-
-        public static PermitAttendResponse of(String code, String message) {
-            return new PermitAttendResponse(code, message);
-        }
-    }
 }

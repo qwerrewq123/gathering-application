@@ -13,7 +13,9 @@ import spring.myproject.dto.response.gathering.querydto.GatheringsQuery;
 import spring.myproject.dto.response.gathering.querydto.ParticipatedQuery;
 import spring.myproject.entity.category.Category;
 import spring.myproject.entity.fcm.Topic;
+import spring.myproject.service.fcm.FCMTokenTopicService;
 import spring.myproject.service.recommend.RecommendService;
+import spring.myproject.utils.TopicGenerator;
 import spring.myproject.utils.mapper.GatheringFactory;
 import spring.myproject.repository.category.CategoryRepository;
 import spring.myproject.entity.enrollment.Enrollment;
@@ -40,7 +42,6 @@ import java.util.stream.Collectors;
 import static spring.myproject.dto.request.gathering.GatheringRequestDto.*;
 import static spring.myproject.dto.response.gathering.GatheringResponseDto.*;
 import static spring.myproject.utils.ConstClass.*;
-import static spring.myproject.utils.RandomStringGenerator.*;
 
 @Service
 @Transactional
@@ -52,9 +53,9 @@ public class GatheringService {
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
     private final S3ImageUploadService s3ImageUploadService;
-    private final FCMService fcmService;
     private final TopicRepository topicRepository;
     private final RecommendService recommendService;
+    private final FCMTokenTopicService fcmTokenTopicService;
     @Value("${server.url}")
     private String url;
 
@@ -69,14 +70,9 @@ public class GatheringService {
             if(image!=null) imageRepository.save(image);
             gatheringRepository.save(gathering);
             enrollmentRepository.save(enrollment);
-            Topic topic = Topic.builder()
-                .topicName(generateRandomString())
-                .gathering(gathering)
-                .build();
+            Topic topic = TopicGenerator.generateTopic(gathering);
             topicRepository.save(topic);
-            //TODO : gathering Topic 등록
-            //fcmService.subscribeToTopics(topic.getTopicName(),username);
-            recommendService.createScore(gathering);
+            fcmTokenTopicService.subscribeToTopic(topic.getTopicName(),userId);
             return AddGatheringResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE, gathering.getId());
     }
 
@@ -85,7 +81,7 @@ public class GatheringService {
             User user = userRepository.findById(userId).orElseThrow(()->new NotFoundUserException("no exist User!!"));
             Category category = categoryRepository.findByName(updateGatheringRequest.getCategory()).orElseThrow(()-> new NotFoundCategoryException("no exist Category!!"));
             Gathering gathering = gatheringRepository.findById(gatheringId).orElseThrow(()->new NotFoundGatheringException("no exist Gathering!!"));
-            boolean authorize = gathering.getCreateBy().getId() == user.getId();
+            boolean authorize = Objects.equals(gathering.getCreateBy().getId(), user.getId());
             if(!authorize) throw new NotAuthorizeException("no authorize!!");
             Image image = null;
             image = saveImage(image,file);
@@ -112,7 +108,7 @@ public class GatheringService {
 
     public GatheringLikeResponse gatheringsLike(int pageNum, int pageSize, Long userId) {
 
-        User user = userRepository.findById(userId).orElseThrow(()->new NotFoundUserException("no exist User!!"));
+        userRepository.findById(userId).orElseThrow(()->new NotFoundUserException("no exist User!!"));
         PageRequest pageRequest = PageRequest.of(pageNum - 1, pageSize, Sort.Direction.DESC,"id");
         Page<GatheringsQuery> page = gatheringRepository.gatheringsLike(pageRequest, userId);
         boolean hasNext = page.hasNext();
@@ -162,7 +158,7 @@ public class GatheringService {
 
     private List<GatheringsQuery> toGatheringQueriesList(List<MainGatheringsQuery> mainGatheringsQueries) {
         return mainGatheringsQueries.stream()
-                .map(query -> GatheringsQuery.of(query))
+                .map(GatheringsQuery::of)
                 .collect(Collectors.toList());
     }
 

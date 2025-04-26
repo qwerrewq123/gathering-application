@@ -26,12 +26,12 @@ public class Recommend {
     @JoinColumn(name = "gathering_id")
     private Gathering gathering;
     private Long score;
-    private LocalDate localDate;
+    private LocalDate date;
 
     public static Recommend from(Gathering gathering){
         return Recommend.builder()
                 .gathering(gathering)
-                .localDate(LocalDate.now())
+                .date(LocalDate.now())
                 .score(1L)
                 .build();
     }

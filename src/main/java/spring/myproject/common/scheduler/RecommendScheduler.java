@@ -10,10 +10,9 @@ import spring.myproject.repository.recommend.RecommendRepository;
 @Component
 @Transactional
 public class RecommendScheduler {
-
+    //TODO :고민
     private final RecommendRepository recommendRepository;
     @Scheduled(cron = "0 0 0 * * ?")
     public void executeAtMidnight() {
-        recommendRepository.resetCount();
     }
 }

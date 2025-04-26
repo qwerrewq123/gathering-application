@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import spring.myproject.common.annotation.Id;
 import spring.myproject.service.fcm.FCMService;
+import spring.myproject.service.fcm.FCMTokenTopicService;
 import spring.myproject.service.user.UserService;
 
 import java.io.IOException;
@@ -22,7 +23,7 @@ import static spring.myproject.dto.response.user.UserResponseDto.*;
 public class UserController {
 
     private final UserService userService;
-    private final FCMService fcmService;
+    private final FCMTokenTopicService fcmTokenTopicService;
 
     @PostMapping("/auth/id-check")
     public ResponseEntity<IdCheckResponse> idCheck(@RequestBody IdCheckRequest idCheckRequest) {
@@ -68,7 +69,7 @@ public class UserController {
     public ResponseEntity<SignInResponse> signIn(@RequestBody SignInRequest signInRequest, HttpServletResponse response) {
 
         SignInResponse signInResponse = userService.signIn(signInRequest,response);
-        fcmService.saveFCMToken(signInRequest);
+//        fcmTokenTopicService.saveFCMToken(signInRequest);
         return new ResponseEntity<>(signInResponse,HttpStatus.OK);
     }
 

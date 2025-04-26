@@ -44,11 +44,6 @@ public class MeetingControllerAdvice {
                 AbstractErrorResponse.getErrorResponse(NOT_AUTHORIZE_CODE, NOT_AUTHORIZED_MESSAGE)
                 , HttpStatus.BAD_REQUEST);
     }
-    @ExceptionHandler(MeetingIsNotEmptyException.class)
-    ResponseEntity<ErrorResponse> handleMeetingIsNotEmptyException(){
-        return new ResponseEntity<>(
-                AbstractErrorResponse.getErrorResponse(MEETING_IS_NOT_EMPTY_CODE, MEETING_IS_NOT_EMPTY_MESSAGE)
-                , HttpStatus.BAD_REQUEST);
-    }
+
 
 }

@@ -1,10 +1,17 @@
 package spring.myproject.dto.response.chat;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import spring.myproject.dto.response.chat.query.*;
+import spring.myproject.entity.chat.ChatRoom;
+import spring.myproject.entity.gathering.Gathering;
+import spring.myproject.entity.user.User;
 
 import java.util.List;
 
@@ -133,6 +140,56 @@ public class ChatResponseDto {
             return new ParticipateChatRoomResponse(code, message, content, hasNext);
         }
     }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class FetchChatRoomResponse {
+        private String code;
+        private String message;
+        private String title;
+        private String description;
+        private Long createdById;
+        private String createdByUsername;
+        private String createdByNickname;
+        private int count;
+
+
+        public static FetchChatRoomResponse of(String code, String message, ChatRoom chatRoom) {
+            User user = chatRoom.getCreatedBy();
+            return FetchChatRoomResponse.builder()
+                    .code(code)
+                    .message(message)
+                    .title(chatRoom.getTitle())
+                    .description(chatRoom.getDescription())
+                    .count(chatRoom.getCount())
+                    .createdById(user != null ? user.getId() : null)
+                    .createdByUsername(user != null ? user.getUsername() : null)
+                    .createdByNickname(user != null ? user.getNickname() : null)
+                    .build();
+        }
+        @NoArgsConstructor
+        @AllArgsConstructor
+        @Builder
+        @Data
+        public static class FetchParticipantResponse {
+            private String code;
+            private String message;
+            private List<ParticipantElement> content;
+            private boolean hasNext;
+
+
+            public static FetchParticipantResponse of(String code, String message, List<ParticipantElement> content, boolean hasNext) {
+                return new FetchParticipantResponse(code, message, content, hasNext);
+            }
+
+        }
+
+
+    }
+
+
 
 
 }

@@ -14,9 +14,10 @@ public interface EnrollmentRepository extends JpaRepository<Enrollment,Long> {
     Enrollment existEnrollment(Long gatheringId,Long userId);
 
 
-    @Query("select e from Enrollment e join e.enrolledBy u " +
-            "where e.gathering.id = :gatheringId and u.id = :userId and e.accepted = true")
-    Optional<Enrollment> findEnrollment(Long gatheringId, Long userId);
+    @Query("select e from Enrollment e " +
+            "join fetch e.enrolledBy u " +
+            "where e.gathering.id = :gatheringId and u.id = :userId and e.accepted = :accepted")
+    Optional<Enrollment> findEnrollment(Long gatheringId, Long userId,boolean accepted);
 
 
     Optional<Enrollment> findByGatheringAndEnrolledBy(Gathering gathering, User enrolledBy);

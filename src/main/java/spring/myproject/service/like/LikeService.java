@@ -34,8 +34,10 @@ public class LikeService {
 
     public LikeResponse like(Long gatheringId, Long userId) {
 
-            User user = userRepository.findById(userId).orElseThrow(()->new NotFoundUserException("no exist User!!"));
-            Gathering gathering = gatheringRepository.findById(gatheringId).orElseThrow(()-> new NotFoundGatheringException("no exist Gathering!!"));
+            User user = userRepository.findById(userId)
+                    .orElseThrow(()->new NotFoundUserException("no exist User!!"));
+            Gathering gathering = gatheringRepository.findById(gatheringId)
+                    .orElseThrow(()-> new NotFoundGatheringException("no exist Gathering!!"));
             Optional<Like> optionalLike = likeRepository.findLike(userId, gatheringId);
             if(optionalLike.isPresent()) throw new AlreadyLikeGatheringException("Already Like Gathering!!");
             likeRepository.save(Like.of(gathering,user));
@@ -44,9 +46,12 @@ public class LikeService {
     }
     public DislikeResponse dislike(Long gatheringId, Long userId) {
 
-            User user = userRepository.findById(userId).orElseThrow(()->new NotFoundUserException("no exist User!!"));
-            gatheringRepository.findById(gatheringId).orElseThrow(()-> new NotFoundGatheringException("no exist Gathering!!"));
-            Like like = likeRepository.findLike(userId, gatheringId).orElseThrow(()-> new NotFoundLikeException("no exist Like"));
+            userRepository.findById(userId)
+                    .orElseThrow(()->new NotFoundUserException("no exist User!!"));
+            gatheringRepository.findById(gatheringId)
+                    .orElseThrow(()-> new NotFoundGatheringException("no exist Gathering!!"));
+            Like like = likeRepository.findLike(userId, gatheringId)
+                    .orElseThrow(()-> new NotFoundLikeException("no exist Like"));
             Long likedId = like.getLikedBy().getId();
             if(!likedId.equals(userId)) throw new NotAuthorizeException("no Authorize!");
             likeRepository.delete(like);

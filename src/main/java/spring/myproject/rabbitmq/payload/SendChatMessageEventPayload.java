@@ -17,12 +17,24 @@ public class SendChatMessageEventPayload implements EventPayload {
     private Long roomId;
     private String content;
     private Long userId;
+    private String username;
 
-    public static SendChatMessageEventPayload of(Long roomId,ChatMessageRequest chatMessageRequest) {
+    public static SendChatMessageEventPayload of(Long chatRoomId,ChatMessageRequest chatMessageRequest) {
         return SendChatMessageEventPayload.builder()
-                .roomId(roomId)
+                .roomId(chatRoomId)
                 .content(chatMessageRequest.getContent())
                 .userId(chatMessageRequest.getUserId())
+                .username(chatMessageRequest.getUsername())
                 .build();
     }
+
+    public static ChatMessageResponse from(SendChatMessageEventPayload payload) {
+        return ChatMessageResponse.builder()
+                .content(payload.getContent())
+                .userId(payload.getUserId())
+                .username(payload.getUsername())
+                .build();
+    }
+
+
 }

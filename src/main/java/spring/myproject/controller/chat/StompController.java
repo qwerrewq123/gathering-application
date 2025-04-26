@@ -15,8 +15,10 @@ public class StompController {
 
     private final ChatPublisher chatPublisher;
 
-    @MessageMapping("/room/{roomId}")
-    public void sendMessage(@DestinationVariable Long roomId, @Payload ChatMessageRequest chatMessageRequest){
-        chatPublisher.publish(roomId,chatMessageRequest);
+    @MessageMapping("/chatRoom/{chatRoomId}")
+    public void sendMessage(@DestinationVariable Long chatRoomId, @Payload ChatMessageRequest chatMessageRequest){
+        System.out.println(chatRoomId);
+        System.out.println(chatMessageRequest.toString());
+        chatPublisher.publish(chatRoomId,chatMessageRequest);
     }
 }

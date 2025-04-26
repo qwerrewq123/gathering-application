@@ -17,8 +17,8 @@ public class SendMessageEventHandler implements EventHandler<SendChatMessageEven
     @Override
     public void handle(Event<SendChatMessageEventPayload> event) {
         SendChatMessageEventPayload payload = event.getPayload();
-        messageTemplate.convertAndSend("/topic/"+payload.getRoomId(), payload.getContent());
-        asyncService.insertChatMessageAndReadStatus(event);
+        messageTemplate.convertAndSend("/chatRoom/"+payload.getRoomId(), SendChatMessageEventPayload.from(payload));
+//        asyncService.insertChatMessageAndReadStatus(event);
     }
 
     @Override

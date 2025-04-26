@@ -41,5 +41,19 @@ public class ChatRequestDto {
         private String content;
         @NotBlank
         private Long userId;
+        @NotBlank
+        private String username;
+    }
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class ChatMessageResponse {
+        @NotBlank
+        private String content;
+        @NotBlank
+        private Long userId;
+        @NotBlank
+        private String username;
     }
 }

@@ -30,6 +30,14 @@ public class ConstClass {
     public static String UN_VALID_TOKEN = "UV";
     public static String NOT_FOUND_CERTIFICATION_CODE = "NF";
     public static String UN_CORRECT_CERTIFICATION_CODE = "UC";
+    public static String NOT_FOUND_BOARD_CODE = "NB";
+    public static String NOT_FOUND_CHAT_ROOM_CODE = "NC";
+    public static String NOT_FOUND_CHAT_PARTICIPANT_CODE = "NC";
+    public static String NOT_DIS_ENROLLMENT_CODE = "ND";
+    public static String NOT_FOUND_IMAGE_CODE = "NF";
+
+
+
 
     public static String NOT_FOUND_ALARM_MESSAGE = "Not Found Alarm!!";
     public static String AUTO_ATTEND_MESSAGE = "Auto Attend Meeting";
@@ -59,4 +67,9 @@ public class ConstClass {
     public static String UN_VALID_TOKEN_MESSAGE = "Un Valid Token";
     public static String NOT_FOUND_CERTIFICATION_MESSAGE = "Not Found Certification";
     public static String UN_CORRECT_CERTIFICATION_MESSAGE = "Un Correct Certification";
+    public static String NOT_FOUND_BOARD_MESSAGE = "Not Found Board";
+    public static String NOT_FOUND_CHAT_ROOM_MESSAGE = "NOT Found Chat Room";
+    public static String NOT_FOUND_CHAT_PARTICIPANT_MESSAGE = "NOT Found Chat Participant";
+    public static String NOT_DIS_ENROLLMENT_MESSAGE = "Opener Cannot  Enrollment";
+    public static String NOT_FOUND_IMAGE_MESSAGE = "Not Found Image";
 }

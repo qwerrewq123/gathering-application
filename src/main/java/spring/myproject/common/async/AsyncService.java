@@ -5,11 +5,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import spring.myproject.dto.request.fcm.TopicNotificationRequestDto;
 import spring.myproject.entity.certification.Certification;
 import spring.myproject.entity.chat.ChatMessage;
 import spring.myproject.entity.chat.ChatParticipant;
 import spring.myproject.entity.chat.ChatRoom;
 import spring.myproject.entity.chat.ReadStatus;
+import spring.myproject.entity.fcm.Topic;
 import spring.myproject.entity.user.User;
 import spring.myproject.common.exception.chat.NotFoundChatParticipantException;
 import spring.myproject.common.exception.chat.NotFoundChatRoomException;
@@ -24,6 +26,7 @@ import spring.myproject.repository.chat.ReadStatusRepository;
 import spring.myproject.repository.user.UserRepository;
 import spring.myproject.service.fail.FailService;
 import spring.myproject.common.provider.EmailProvider;
+import spring.myproject.service.fcm.FCMService;
 
 import java.util.List;
 
@@ -41,6 +44,7 @@ public class AsyncService {
     private final ChatParticipantRepository chatParticipantRepository;
     private final UserRepository userRepository;
     private final CertificationRepository certificationRepository;
+    private final FCMService fcmService;
 
     @Async("customAsyncExecutor")
     public void asyncTask(EmailCertificationRequest emailCertificationRequest){
@@ -49,6 +53,11 @@ public class AsyncService {
         }catch (MessagingException e){
             failService.send(emailCertificationRequest);
         }
+    }
+
+    @Async("customAsyncExecutor")
+    public void sendTopic(TopicNotificationRequestDto topicNotificationRequestDto){
+        fcmService.sendByTopic(topicNotificationRequestDto);
     }
 
     @Async("customAsyncExecutor")

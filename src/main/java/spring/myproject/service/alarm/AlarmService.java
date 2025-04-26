@@ -27,27 +27,31 @@ public class AlarmService {
 
     public CheckAlarmResponse checkAlarm(Long id, Long userId) {
 
-            userRepository.findById(userId).orElseThrow(()-> new NotFoundUserException("no exist User!!"));
-            Alarm alarm = alarmRepository.findById(id).orElseThrow(() ->  new NotFoundAlarmException("no exist alarm!!"));
+            userRepository.findById(userId)
+                    .orElseThrow(()-> new NotFoundUserException("no exist User!!"));
+            Alarm alarm = alarmRepository.findById(id)
+                    .orElseThrow(() ->  new NotFoundAlarmException("no exist alarm!!"));
             alarm.setChecked(true);
             return CheckAlarmResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE);
     }
     public DeleteAlarmResponse deleteAlarm(Long id, Long userId) {
 
-            userRepository.findById(userId).orElseThrow(()-> new NotFoundUserException("no exist User!!"));
-            Alarm alarm = alarmRepository.findById(id).orElseThrow(() ->  new IllegalArgumentException("no exist alarm!!"));
+            userRepository.findById(userId)
+                    .orElseThrow(()-> new NotFoundUserException("no exist User!!"));
+            Alarm alarm = alarmRepository
+                    .findById(id).orElseThrow(() ->  new NotFoundAlarmException("no exist alarm!!"));
             alarmRepository.delete(alarm);
             return DeleteAlarmResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE);
     }
     public AlarmResponses alarmList(Integer page, Long userId, Boolean checked) {
 
-            User user = userRepository.findById(userId).orElseThrow(()-> new NotFoundUserException("no exist User!!"));
+            User user = userRepository.findById(userId)
+                    .orElseThrow(()-> new NotFoundUserException("no exist User!!"));
             return toAlarmResponses(page-1,user,checked);
     }
-
     private AlarmResponses toAlarmResponses(Integer pageNum, User user,boolean checked) {
         Page<Alarm> page = null;
-        if(checked == true){
+        if(checked){
             PageRequest pageRequest = PageRequest.of(pageNum - 1, 10);
             page = alarmRepository.findCheckedAlarmPage(pageRequest, user.getId());
         }else{
@@ -55,7 +59,7 @@ public class AlarmService {
             page = alarmRepository.findUncheckedAlarmPage(pageRequest, user.getId());
         }
         boolean hasNext = page.hasNext();
-        List<AlarmElement> content = page.map(alarm -> AlarmElement.from(alarm)).getContent();
+        List<AlarmElement> content = page.map(AlarmElement::from).getContent();
         return AlarmResponses.of(SUCCESS_CODE,SUCCESS_MESSAGE,content,hasNext);
 
     }

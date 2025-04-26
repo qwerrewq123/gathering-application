@@ -30,4 +30,16 @@ public class EnrollResponseDto {
             return new DisEnrollGatheringResponse(code, message);
         }
     }
+    @Data
+    @Builder
+    @AllArgsConstructor
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public static class PermitEnrollmentResponse {
+        private String code;
+        private String message;
+
+        public static PermitEnrollmentResponse of(String code, String message) {
+            return new PermitEnrollmentResponse(code, message);
+        }
+    }
 }

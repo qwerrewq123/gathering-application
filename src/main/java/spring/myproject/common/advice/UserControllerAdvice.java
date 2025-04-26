@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import spring.myproject.common.exception.meeting.NotAuthorizeException;
 import spring.myproject.common.exception.user.*;
 import spring.myproject.dto.response.ErrorResponse;
 import spring.myproject.controller.user.UserController;
@@ -15,10 +16,22 @@ import static spring.myproject.utils.ConstClass.*;
 @Order(1)
 @RestControllerAdvice(basePackageClasses = UserController.class)
 public class UserControllerAdvice {
+    @ExceptionHandler(ExistUserException.class)
+    ResponseEntity<ErrorResponse> handleExistUserException(){
+        return new ResponseEntity<>(
+                AbstractErrorResponse.getErrorResponse(EXIST_CODE, EXIST_MESSAGE)
+                , HttpStatus.BAD_REQUEST);
+    }
     @ExceptionHandler(NotFoundUserException.class)
     ResponseEntity<ErrorResponse> handleNotFoundUserException(){
         return new ResponseEntity<>(
                 AbstractErrorResponse.getErrorResponse(NOT_FOUND_USER_CODE, NOT_FOUND_USER_MESSAGE)
+                , HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(NotAuthorizeException.class)
+    ResponseEntity<ErrorResponse> handleNotAuthorizeException(){
+        return new ResponseEntity<>(
+                AbstractErrorResponse.getErrorResponse(NOT_AUTHORIZE_CODE, NOT_AUTHORIZED_MESSAGE)
                 , HttpStatus.BAD_REQUEST);
     }
     @ExceptionHandler(UnCorrectPasswordException.class)
@@ -31,18 +44,6 @@ public class UserControllerAdvice {
     ResponseEntity<ErrorResponse> handleMessagingException(){
         return new ResponseEntity<>(
                 AbstractErrorResponse.getErrorResponse(FAIL_MESSAGE_CODE, FAIL_MESSAGE_MESSAGE)
-                , HttpStatus.BAD_REQUEST);
-    }
-    @ExceptionHandler(ExistUserException.class)
-    ResponseEntity<ErrorResponse> handleExistUserException(){
-        return new ResponseEntity<>(
-                AbstractErrorResponse.getErrorResponse(EXIST_CODE, EXIST_MESSAGE)
-                , HttpStatus.BAD_REQUEST);
-    }
-    @ExceptionHandler(NotFoundEmailExeption.class)
-    ResponseEntity<ErrorResponse> handleNotFoundEmailException(){
-        return new ResponseEntity<>(
-                AbstractErrorResponse.getErrorResponse(NOT_EMAIL_CODE, NOT_EMAIL_MESSAGE)
                 , HttpStatus.BAD_REQUEST);
     }
     @ExceptionHandler(DuplicateEmailExeption.class)
@@ -63,5 +64,6 @@ public class UserControllerAdvice {
                 AbstractErrorResponse.getErrorResponse(UN_CORRECT_CERTIFICATION_CODE, UN_CORRECT_CERTIFICATION_MESSAGE)
                 , HttpStatus.BAD_REQUEST);
     }
+
 
 }

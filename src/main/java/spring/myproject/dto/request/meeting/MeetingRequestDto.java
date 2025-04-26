@@ -20,9 +20,9 @@ public class MeetingRequestDto {
         @NotBlank(message = "cannot blank or null or space")
         private String content;
         @NotNull(message = "cannot null")
-        private LocalDateTime startDate;
-        @NotNull(message = "cannot null")
         private LocalDateTime endDate;
+        @NotNull(message = "cannot null")
+        private LocalDateTime meetingDate;
     }
 
     @Data
@@ -31,7 +31,7 @@ public class MeetingRequestDto {
     public static class UpdateMeetingRequest {
         private String title;
         private String content;
-        private LocalDateTime startDate;
         private LocalDateTime endDate;
+        private LocalDateTime meetingDate;
     }
 }

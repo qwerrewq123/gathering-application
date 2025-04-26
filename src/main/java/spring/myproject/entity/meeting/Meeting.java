@@ -25,8 +25,7 @@ public class Meeting {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String title;
-    private LocalDateTime boardDate;
-    private LocalDateTime startDate;
+    private LocalDateTime meetingDate;
     private LocalDateTime endDate;
     @Lob
     private String content;
@@ -43,9 +42,6 @@ public class Meeting {
     private Image image;
     private int count;
 
-    public void changeCount(int count){
-        this.count = count;
-    }
     public void attend(List<Attend> attends){
         for (Attend attend : attends) {
             attend.addMeeting(this);
@@ -57,8 +53,7 @@ public class Meeting {
                 .title(addMeetingRequest.getTitle())
                 .content(addMeetingRequest.getContent())
                 .createdBy(user)
-                .boardDate(LocalDateTime.now())
-                .startDate(addMeetingRequest.getStartDate())
+                .meetingDate(addMeetingRequest.getMeetingDate())
                 .endDate(addMeetingRequest.getEndDate())
                 .gathering(gathering)
                 .count(1)

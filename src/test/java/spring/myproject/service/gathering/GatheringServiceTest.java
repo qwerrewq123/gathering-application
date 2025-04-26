@@ -75,7 +75,6 @@ public class GatheringServiceTest {
         when(categoryRepository.findByName("false category")).thenReturn(Optional.empty());
         when(s3ImageUploadService.upload(any(MultipartFile.class))).thenReturn("url");
         when(topicRepository.save(any(Topic.class))).thenReturn(mock(Topic.class));
-        doNothing().when(recommendService).createScore(any(Gathering.class));
         AddGatheringRequest trueAddGatheringRequest = AddGatheringRequest.builder()
                 .category("true category")
                 .build();

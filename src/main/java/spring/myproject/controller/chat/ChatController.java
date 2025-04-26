@@ -9,6 +9,7 @@ import spring.myproject.service.chat.ChatService;
 
 import static spring.myproject.dto.request.chat.ChatRequestDto.*;
 import static spring.myproject.dto.response.chat.ChatResponseDto.*;
+import static spring.myproject.dto.response.chat.ChatResponseDto.FetchChatRoomResponse.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -67,6 +68,19 @@ public class ChatController {
     public ResponseEntity<ReadChatMessageResponse> readChatMessage(@PathVariable Long chatId, @Id Long userId){
         ReadChatMessageResponse readChatMessageResponse = chatService.readChatMessage(chatId,userId);
         return new ResponseEntity<>(readChatMessageResponse, HttpStatus.OK);
+    }
+
+    @GetMapping("/chat/{chatId}")
+    public ResponseEntity<FetchChatRoomResponse> fetchChat(@PathVariable Long chatId, @Id Long userId){
+        FetchChatRoomResponse fetchChatRoomResponse = chatService.fetchChat(chatId,userId);
+        return new ResponseEntity<>(fetchChatRoomResponse,HttpStatus.OK);
+
+    }
+    @GetMapping("/chat/participant/{chatId}")
+    public ResponseEntity<?> fetchParticipant(@PathVariable Long chatId, @Id Long userId,
+                                              @RequestParam Integer pageNum, @RequestParam Integer pageSize){
+        FetchParticipantResponse fetchParticipantResponse = chatService.fetchParticipant(chatId,userId,pageNum,pageSize);
+        return new ResponseEntity<>(fetchParticipantResponse,HttpStatus.OK);
     }
 
 

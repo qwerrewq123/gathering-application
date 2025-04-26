@@ -8,6 +8,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
+import spring.myproject.common.async.AsyncService;
 import spring.myproject.dto.response.board.querydto.BoardQuery;
 import spring.myproject.dto.response.board.querydto.BoardsQuery;
 import spring.myproject.entity.board.Board;
@@ -46,14 +47,16 @@ public class BoardService {
     private final S3ImageUploadService s3ImageUploadService;
     private final GatheringRepository gatheringRepository;
     private final EnrollmentRepository enrollmentRepository;
-    private final FCMService fcmService;
+    private final AsyncService asyncService;
     private final RecommendService recommendService;
     @Value("${server.url}")
     private String url;
 
     public BoardResponse fetchBoard(Long gatheringId, Long boardId, Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundUserException("no exist User!!"));
-        Gathering gathering = gatheringRepository.findById(gatheringId).orElseThrow(() -> new NotFoundGatheringException("no exist Gathering!!"));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundUserException("no exist User!!"));
+        Gathering gathering = gatheringRepository.findById(gatheringId)
+                .orElseThrow(() -> new NotFoundGatheringException("no exist Gathering!!"));
         if(enrollmentRepository.findByGatheringAndEnrolledBy(gathering,user).isEmpty()) throw new NotAuthorizeException("no Authorize to fetch board");
         List<BoardQuery> boardQueries = boardRepository.fetchBoard(boardId);
         if(boardQueries.isEmpty()) throw new NotFoundBoardException("no board found");
@@ -71,17 +74,8 @@ public class BoardService {
         Board board = AddBoardRequest.of(addBoardRequest,user,gathering);
         saveImages(files,board,gathering);
         boardRepository.save(board);
-//        Topic topic = gathering.getTopic();
-//        String topicName = topic.getTopicName();
-        //todo : fcm
-//        fcmService.sendByTopic(TopicNotificationRequestDto.builder()
-//                .topic(topicName)
-//                .title("board")
-//                .content("%s add board".formatted(username))
-//                .url("localhost:8080/gathering/"+gatheringId)
-//                .img(null)
-//                .build(),topic);
         recommendService.addScore(gatheringId,1);
+
         return AddBoardResponse.of(SUCCESS_CODE, SUCCESS_MESSAGE,board.getId());
     }
 

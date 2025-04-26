@@ -10,6 +10,8 @@ import org.springframework.web.server.MethodNotAllowedException;
 import spring.myproject.dto.response.ErrorResponse;
 import spring.myproject.utils.AbstractErrorResponse;
 
+import java.io.IOException;
+
 import static spring.myproject.utils.ConstClass.*;
 @Order(2)
 @RestControllerAdvice
@@ -20,6 +22,12 @@ public class CommonControllerAdvice {
     ResponseEntity<ErrorResponse> handleNotFoundUserException(){
         return new ResponseEntity<>(
                 AbstractErrorResponse.getErrorResponse(METHOD_NOT_ALLOWED_CODE, METHOD_NOT_ALLOWED_MESSAGE)
+                , HttpStatus.FORBIDDEN);
+    }
+    @ExceptionHandler(IOException.class)
+    ResponseEntity<ErrorResponse> handleIOException(){
+        return new ResponseEntity<>(
+                AbstractErrorResponse.getErrorResponse(UPLOAD_FAIL_CODE, UPLOAD_FAIL_MESSAGE)
                 , HttpStatus.FORBIDDEN);
     }
     @ExceptionHandler(Exception.class)

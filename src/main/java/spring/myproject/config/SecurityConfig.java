@@ -49,6 +49,7 @@ public class SecurityConfig {
                         .requestMatchers(POST,postWhiteList).permitAll()
                         .requestMatchers(GET,getWhiteList).permitAll()
                         .requestMatchers("/connect").permitAll()
+                        .requestMatchers("/fcm/**").permitAll()
                         .anyRequest().authenticated())
                 .exceptionHandling(exceptionHandle -> exceptionHandle.authenticationEntryPoint(failedAuthenticationEntryPoint))
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);

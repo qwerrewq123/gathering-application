@@ -14,6 +14,7 @@ import spring.myproject.dto.response.gathering.querydto.MainGatheringsQuery;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 
 public interface GatheringRepository extends JpaRepository<Gathering,Long> {
@@ -74,6 +75,13 @@ public interface GatheringRepository extends JpaRepository<Gathering,Long> {
             "join g.category ca " +
             "join g.createBy cr " +
             "left join g.gatheringImage im " +
-            "where r.localDate = :localDate order by r.score desc limit 10")
+            "where r.date = :localDate order by r.score desc limit 10")
     List<GatheringsQuery> gatheringsRecommend(LocalDate localDate);
+
+    @Query("select g from Gathering g left join fetch g.topic t where g.id = :gatheringId")
+    Optional<Gathering> findTopicById(Long gatheringId);
+
+    @Query(value = "update gathering set count = count + :val where id = :gatheringId"
+            ,nativeQuery = true)
+    void updatecount(Long gatheringId, int val);
 }
