@@ -18,6 +18,7 @@ import spring.myproject.entity.user.User;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 import static spring.myproject.entity.user.Role.USER;
 
@@ -116,16 +117,18 @@ public class DummyData {
                 .user(user)
                 .gathering(gathering)
                 .title(String.format("title%d",i))
-                .content(String.format("content%d",i))
                 .description(String.format("description%d",i))
                 .registerDate(LocalDateTime.now())
+                .images(new ArrayList<>())
                 .build();
     }
-    public static ChatRoom returnDummyChatRoom(User createdBy, int i){
+    public static ChatRoom returnDummyChatRoom(User createdBy, Gathering gathering,int i){
         return ChatRoom.builder()
                 .count(1)
                 .createdBy(createdBy)
-                .name(String.format("name%d",i))
+                .title(String.format("title%d",i))
+                .description(String.format("description%d",i))
+                .gathering(gathering)
                 .build();
     }
     public static ChatParticipant returnDummyChatParticipant(User user, ChatRoom chatRoom){

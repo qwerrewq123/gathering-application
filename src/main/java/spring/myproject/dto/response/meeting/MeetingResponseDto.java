@@ -115,8 +115,7 @@ public class MeetingResponseDto {
         private Long id;
         private String title;
         private String createdBy;
-        private LocalDateTime boardDate;
-        private LocalDateTime startDate;
+        private LocalDateTime meetingDate;
         private LocalDateTime endDate;
         private String content;
         private int count;

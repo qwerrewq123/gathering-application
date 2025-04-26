@@ -17,8 +17,7 @@ public class MeetingsQuery {
     private String title;
     private String createdBy;
     private String createdByNickname;
-    private LocalDateTime boardDate;
-    private LocalDateTime startDate;
+    private LocalDateTime meetingDate;
     private LocalDateTime endDate;
     private String content;
     private int count;

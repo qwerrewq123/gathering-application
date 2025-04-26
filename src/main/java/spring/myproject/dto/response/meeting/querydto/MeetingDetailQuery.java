@@ -21,8 +21,7 @@ public class MeetingDetailQuery {
     private String attendedBy;
     private String attendByNickname;
     private String attendedByUrl;
-    private LocalDateTime boardDate;
-    private LocalDateTime startDate;
+    private LocalDateTime meetingDate;
     private LocalDateTime endDate;
     private String content;
     private int count;

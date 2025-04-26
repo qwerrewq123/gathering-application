@@ -3,8 +3,6 @@ package spring.myproject.service.meeting;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -31,7 +29,6 @@ import spring.myproject.common.exception.meeting.NotAuthorizeException;
 import spring.myproject.common.exception.meeting.NotFoundMeetingExeption;
 import spring.myproject.common.exception.user.NotFoundUserException;
 import spring.myproject.common.s3.S3ImageUploadService;
-import spring.myproject.service.fcm.FCMService;
 import spring.myproject.service.recommend.RecommendService;
 
 import java.io.IOException;
@@ -139,8 +136,7 @@ public class MeetingService {
                 .title(q.getTitle())
                 .createdBy(q.getCreatedBy())
                 .createdByNickname(q.getCreatedByNickname())
-                .boardDate(q.getBoardDate())
-                .startDate(q.getStartDate())
+                .meetingDate(q.getMeetingDate())
                 .endDate(q.getEndDate())
                 .content(q.getContent())
                 .count(q.getCount())
@@ -163,8 +159,7 @@ public class MeetingService {
                         .id(query.getId())
                         .title(query.getTitle())
                         .createdBy(query.getCreatedBy())
-                        .boardDate(query.getBoardDate())
-                        .startDate(query.getStartDate())
+                        .meetingDate(query.getMeetingDate())
                         .endDate(query.getEndDate())
                         .content(query.getContent())
                         .count(query.getCount())
@@ -198,8 +193,7 @@ public class MeetingService {
                 .createdBy(meetingDetailQueries.getFirst().getCreatedBy())
                 .createdByNickname(meetingDetailQueries.getFirst().getCreatedByNickname())
                 .createdByUrl(url+meetingDetailQueries.getFirst().getCreatedByUrl())
-                .boardDate(meetingDetailQueries.getFirst().getBoardDate())
-                .startDate(meetingDetailQueries.getFirst().getStartDate())
+                .endDate(meetingDetailQueries.getFirst().getEndDate())
                 .endDate(meetingDetailQueries.getFirst().getEndDate())
                 .content(meetingDetailQueries.getFirst().getContent())
                 .meetingUrl(url+meetingDetailQueries.getFirst().getUrl())
@@ -207,17 +201,7 @@ public class MeetingService {
                 .attendedByNickname(attendByNickname)
                 .attendedByUrl(attendByUrl)
                 .build();
-
-
     }
-
-
-
-    private List<MeetingElement> toContent(Page<MeetingsQuery> page) {
-            return page.map(query -> MeetingElement.from(query,(fileUrl)->(url+fileUrl)))
-                    .getContent();
-    }
-
     private Image saveImage(Image image, MultipartFile file) throws IOException {
         if(file != null && !file.isEmpty()){
             String url = s3ImageUploadService.upload(file);

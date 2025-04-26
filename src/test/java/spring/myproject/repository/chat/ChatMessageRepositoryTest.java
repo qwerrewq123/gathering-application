@@ -4,11 +4,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
+import spring.myproject.entity.category.Category;
 import spring.myproject.entity.chat.ChatMessage;
 import spring.myproject.entity.chat.ChatParticipant;
 import spring.myproject.entity.chat.ChatRoom;
 import spring.myproject.entity.chat.ReadStatus;
 import spring.myproject.dto.response.chat.query.ChatMessageElement;
+import spring.myproject.entity.gathering.Gathering;
 import spring.myproject.entity.image.Image;
 import spring.myproject.repository.image.ImageRepository;
 import spring.myproject.entity.user.User;
@@ -45,7 +47,9 @@ class ChatMessageRepositoryTest {
         User user3 = returnDummyUser(3, image);
         User user4 = returnDummyUser(3, image);
         User user5 = returnDummyUser(3, image);
-        ChatRoom chatRoom = returnDummyChatRoom(user1, 1);
+        Category category = returnDummyCategory(1);
+        Gathering gathering = returnDummyGathering(1, category, user1, image);
+        ChatRoom chatRoom = returnDummyChatRoom(user1, gathering,1);
         ChatParticipant chatParticipant1 = returnDummyChatParticipant(user1, chatRoom);
         ChatParticipant chatParticipant2 = returnDummyChatParticipant(user2, chatRoom);
         ChatParticipant chatParticipant3 = returnDummyChatParticipant(user3, chatRoom);
@@ -85,7 +89,9 @@ class ChatMessageRepositoryTest {
         User user3 = returnDummyUser(3, image);
         User user4 = returnDummyUser(3, image);
         User user5 = returnDummyUser(3, image);
-        ChatRoom chatRoom = returnDummyChatRoom(user1, 1);
+        Category category = returnDummyCategory(1);
+        Gathering gathering = returnDummyGathering(1, category, user1, image);
+        ChatRoom chatRoom = returnDummyChatRoom(user1, gathering,1);
         ChatParticipant chatParticipant1 = returnDummyChatParticipant(user1, chatRoom);
         ChatParticipant chatParticipant2 = returnDummyChatParticipant(user2, chatRoom);
         ChatParticipant chatParticipant3 = returnDummyChatParticipant(user3, chatRoom);
@@ -109,7 +115,7 @@ class ChatMessageRepositoryTest {
         chatMessageRepository.saveAll(chatMessages);
         readStatusRepository.saveAll(readStatuses);
 
-        List<ChatMessageElement> chatMessageResponse = chatMessageRepository.fetchMessages(chatRoom.getId(), chatParticipant1.getId());
+        List<ChatMessageElement> chatMessageResponse = chatMessageRepository.fetchUnReadMessages(chatRoom.getId(), chatParticipant1.getId());
         assertThat(chatMessageResponse.size()).isEqualTo(5);
         assertThat(chatMessageResponse).extracting("content")
                 .containsExactly(

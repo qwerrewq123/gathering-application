@@ -6,6 +6,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
+import spring.myproject.dto.response.meeting.querydto.MeetingsQuery;
+import spring.myproject.dto.response.meeting.querydto.MeetingsQueryInterface;
 import spring.myproject.entity.attend.Attend;
 import spring.myproject.repository.attend.AttendRepository;
 import spring.myproject.entity.category.Category;
@@ -17,7 +19,6 @@ import spring.myproject.repository.gathering.GatheringRepository;
 import spring.myproject.entity.image.Image;
 import spring.myproject.repository.image.ImageRepository;
 import spring.myproject.entity.meeting.Meeting;
-import spring.myproject.dto.response.meeting.querydto.MeetingsQuery;
 import spring.myproject.dto.response.meeting.querydto.MeetingDetailQuery;
 import spring.myproject.entity.user.User;
 import spring.myproject.repository.user.UserRepository;
@@ -116,8 +117,7 @@ class MeetingRepositoryTest {
         meetingRepository.saveAll(List.of(meeting1,meeting2));
         attendRepository.saveAll(List.of(attend1,attend2,attend3,attend4,attend5,attend6));
         PageRequest pageRequest = PageRequest.of(0, 1);
-//        Page<MeetingsQuery> meetingsQueries = meetingRepository.meetings(pageRequest, "");
-//        assertThat(meetingsQueries.getTotalPages()).isEqualTo(2);
-//        assertThat(meetingsQueries.getTotalElements()).isEqualTo(2);
+        List<MeetingsQueryInterface> meetings = meetingRepository.meetings(0, 1L);
+        assertThat(meetings).hasSize(2);
     }
 }

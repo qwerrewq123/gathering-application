@@ -78,8 +78,8 @@ class EnrollmentRepositoryTest {
         gatheringRepository.saveAll(List.of(gathering));
         enrollmentRepository.saveAll(List.of(enrollment1,enrollment2));
 
-        Optional<Enrollment> enrollmentOptional1 = enrollmentRepository.findEnrollment(gathering.getId(), user2.getId());
-        Optional<Enrollment> enrollmentOptional2 = enrollmentRepository.findEnrollment(gathering.getId(), user3.getId());
+        Optional<Enrollment> enrollmentOptional1 = enrollmentRepository.findEnrollment(gathering.getId(), user2.getId(),true);
+        Optional<Enrollment> enrollmentOptional2 = enrollmentRepository.findEnrollment(gathering.getId(), user3.getId(),true);
 
         assertThat(enrollmentOptional1.isPresent()).isTrue();
         assertThat(enrollmentOptional1.get()).extracting("enrolledBy").isEqualTo(user2);

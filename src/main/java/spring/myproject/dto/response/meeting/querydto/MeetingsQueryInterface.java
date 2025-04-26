@@ -13,8 +13,7 @@ public interface MeetingsQueryInterface {
     String getTitle();
     String getCreatedBy();
     String getCreatedByNickname();
-    LocalDateTime getBoardDate();
-    LocalDateTime getStartDate();
+    LocalDateTime getMeetingDate();
     LocalDateTime getEndDate();
     String getContent();
     int getCount();
