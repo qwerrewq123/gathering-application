@@ -8,6 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import spring.myproject.common.async.AsyncService;
 import spring.myproject.entity.attend.Attend;
 import spring.myproject.entity.fcm.Topic;
 import spring.myproject.entity.gathering.Gathering;
@@ -24,15 +25,16 @@ import spring.myproject.repository.image.ImageRepository;
 import spring.myproject.repository.meeting.MeetingRepository;
 import spring.myproject.repository.user.UserRepository;
 import spring.myproject.common.s3.S3ImageUploadService;
+import spring.myproject.service.recommend.RecommendService;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static spring.myproject.dto.request.meeting.MeetingRequestDto.*;
 import static spring.myproject.dto.response.meeting.MeetingResponseDto.*;
 import static spring.myproject.utils.ConstClass.*;
@@ -53,19 +55,23 @@ public class MeetingServiceTest {
     @MockitoBean
     S3ImageUploadService s3ImageUploadService;
     @MockitoBean
-    ImageRepository imageRepository;
+    RecommendService recommendService;
+    @MockitoBean
+    AsyncService asyncService;
 
     @Test
     void addMeeting() throws IOException {
         MultipartFile mockMultipartFile = mock(MultipartFile.class);
         User mockUser = new User(1L,"true username","password","email",
                 "address",1,"hobby", Role.USER,"nickname",null,null,null);
-        Gathering mockGathering = new Gathering(1L,null,null,null,null,mockUser,0,null,null, Topic.builder().topicName("topicname").build());
+        Gathering mockGathering = new Gathering(1L,null,null,null,null,mockUser,0,null,null, Topic.builder().build());
         when(s3ImageUploadService.upload(any(MultipartFile.class))).thenReturn("url");
         when(userRepository.findById(1L)).thenReturn(Optional.of(mockUser));
         when(userRepository.findById(2L)).thenReturn(Optional.empty());
-        when(gatheringRepository.findById(1L)).thenReturn(Optional.of(mockGathering));
-        when(gatheringRepository.findById(2L)).thenReturn(Optional.empty());
+        when(gatheringRepository.findTopicById(1L)).thenReturn(Optional.of(mockGathering));
+        when(gatheringRepository.findTopicById(2L)).thenReturn(Optional.empty());
+        doNothing().when(recommendService).addScore(anyLong(),anyInt());
+        doNothing().when(asyncService).sendTopic(any());
         AddMeetingRequest addMeetingRequest = new AddMeetingRequest();
         assertThatThrownBy(()->meetingService.addMeeting(addMeetingRequest,2L,2L,mockMultipartFile))
                 .isInstanceOf(NotFoundUserException.class);
@@ -83,16 +89,22 @@ public class MeetingServiceTest {
                 "address",1,"hobby", Role.USER,"nickname",null,null,null);
         User mockUser2 = new User(2L,"true username2","password","email",
                 "address",1,"hobby", Role.USER,"nickname",null,null,null);
-        Meeting mockMeeting = Meeting.builder().createdBy(mockUser1).count(1).build();
+        Gathering mockGathering = new Gathering(1L,null,null,null,null,mockUser1,0,null,null, Topic.builder().build());
+        Meeting mockMeeting = Meeting.builder().createdBy(mockUser1).count(1).meetingDate(LocalDateTime.now()).build();
         when(userRepository.findById(1L)).thenReturn(Optional.of(mockUser1));
         when(userRepository.findById(2L)).thenReturn(Optional.of(mockUser2));
         when(userRepository.findById(3L)).thenReturn(Optional.empty());
+        when(gatheringRepository.findTopicById(1L)).thenReturn(Optional.of(mockGathering));
+        when(gatheringRepository.findTopicById(2L)).thenReturn(Optional.empty());
         when(meetingRepository.findById(1L)).thenReturn(Optional.of(mockMeeting));
         when(meetingRepository.findById(2L)).thenReturn(Optional.empty());
         when(s3ImageUploadService.upload(any(MultipartFile.class))).thenReturn("url");
-        UpdateMeetingRequest updateMeetingRequest = UpdateMeetingRequest.builder().build();
-        assertThatThrownBy(()->meetingService.updateMeeting(updateMeetingRequest,3L,2L,mockMultipartFile,1L))
+        doNothing().when(asyncService).sendTopic(any());
+        UpdateMeetingRequest updateMeetingRequest = UpdateMeetingRequest.builder().meetingDate(LocalDateTime.now().plusHours(1)).build();
+        assertThatThrownBy(()->meetingService.updateMeeting(updateMeetingRequest,3L,2L,mockMultipartFile,2L))
                 .isInstanceOf(NotFoundUserException.class);
+        assertThatThrownBy(()->meetingService.updateMeeting(updateMeetingRequest,2L,2L,mockMultipartFile,2L))
+                .isInstanceOf(NotFoundGatheringException.class);
         assertThatThrownBy(()->meetingService.updateMeeting(updateMeetingRequest,2L,2L,mockMultipartFile,1L))
                 .isInstanceOf(NotFoundMeetingExeption.class);
         assertThatThrownBy(()->meetingService.updateMeeting(updateMeetingRequest,2L,1L,mockMultipartFile,1L))
@@ -114,10 +126,11 @@ public class MeetingServiceTest {
         when(userRepository.findById(3L)).thenReturn(Optional.empty());
         when(meetingRepository.findById(1L)).thenReturn(Optional.of(mockMeeting));
         when(meetingRepository.findById(2L)).thenReturn(Optional.empty());
-        when(attendRepository.findByUserIdAndMeetingIdAndTrue(anyLong(),anyLong())).thenReturn(mock(Attend.class));
+        doNothing().when(meetingRepository).delete(any(Meeting.class));
+        doNothing().when(recommendService).addScore(anyLong(),anyInt());
         assertThatThrownBy(()->meetingService.deleteMeeting(3L,2L,1L))
                 .isInstanceOf(NotFoundUserException.class);
-        assertThatThrownBy(()->meetingService.deleteMeeting(1L,2L,1L))
+        assertThatThrownBy(()->meetingService.deleteMeeting(2L,2L,1L))
                 .isInstanceOf(NotFoundMeetingExeption.class);
         assertThatThrownBy(()->meetingService.deleteMeeting(2L,1L,1L))
                 .isInstanceOf(NotAuthorizeException.class);

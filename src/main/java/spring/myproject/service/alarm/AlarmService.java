@@ -63,4 +63,12 @@ public class AlarmService {
         return AlarmResponses.of(SUCCESS_CODE,SUCCESS_MESSAGE,content,hasNext);
 
     }
+
+    public void save(Alarm alarm) {
+        alarmRepository.save(alarm);
+    }
+
+    public void saveAll(List<Alarm> list) {
+        alarmRepository.saveAll(list);
+    }
 }

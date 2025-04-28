@@ -6,7 +6,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.transaction.annotation.Transactional;
 import spring.myproject.entity.gathering.Gathering;
 import spring.myproject.entity.like.Like;
 import spring.myproject.entity.user.Role;
@@ -18,14 +17,14 @@ import spring.myproject.common.exception.user.NotFoundUserException;
 import spring.myproject.repository.gathering.GatheringRepository;
 import spring.myproject.repository.like.LikeRepository;
 import spring.myproject.repository.user.UserRepository;
+import spring.myproject.service.recommend.RecommendService;
 
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static spring.myproject.dto.response.like.LikeResponseDto.*;
 import static spring.myproject.utils.ConstClass.SUCCESS_CODE;
 import static spring.myproject.utils.ConstClass.SUCCESS_MESSAGE;
@@ -41,6 +40,8 @@ public class LikeServiceTest {
     UserRepository userRepository;
     @MockitoBean
     GatheringRepository gatheringRepository;
+    @MockitoBean
+    RecommendService recommendService;
 
     @Test
     void like(){
@@ -55,6 +56,7 @@ public class LikeServiceTest {
         when(gatheringRepository.findById(2L)).thenReturn(Optional.empty());
         when(likeRepository.findLike(eq(1L),anyLong())).thenReturn(Optional.empty());
         when(likeRepository.findLike(eq(2L),anyLong())).thenReturn(Optional.of(mock(Like.class)));
+        doNothing().when(recommendService).addScore(anyLong(),anyInt());
 
         assertThatThrownBy(()->likeService.like(2L,3L))
                 .isInstanceOf(NotFoundUserException.class);
@@ -81,6 +83,7 @@ public class LikeServiceTest {
         when(gatheringRepository.findById(2L)).thenReturn(Optional.empty());
         when(likeRepository.findLike(eq(1L),anyLong())).thenReturn(Optional.of(mockLike));
         when(likeRepository.findLike(eq(2L),anyLong())).thenReturn(Optional.empty());
+        doNothing().when(recommendService).addScore(anyLong(),anyInt());
 
         assertThatThrownBy(()->likeService.dislike(2L,3L))
                 .isInstanceOf(NotFoundUserException.class);

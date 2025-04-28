@@ -16,6 +16,7 @@ public interface EnrollmentRepository extends JpaRepository<Enrollment,Long> {
 
     @Query("select e from Enrollment e " +
             "join fetch e.enrolledBy u " +
+            "left join fetch u.tokens t " +
             "where e.gathering.id = :gatheringId and u.id = :userId and e.accepted = :accepted")
     Optional<Enrollment> findEnrollment(Long gatheringId, Long userId,boolean accepted);
 

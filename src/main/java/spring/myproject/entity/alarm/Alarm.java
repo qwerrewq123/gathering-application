@@ -24,4 +24,13 @@ public class Alarm {
     @JoinColumn(name = "user_id")
     private User user;
 
+    public static Alarm from(String content,User user){
+        return Alarm.builder()
+                .content(content)
+                .user(user)
+                .date(LocalDateTime.now())
+                .checked(false)
+                .build();
+    }
+
 }

@@ -4,22 +4,19 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import spring.myproject.entity.fcm.Topic;
 
 @Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class TopicNotificationRequestDto {
+public class TokenNotificationRequestDto {
 	private String title;
 	private String content;
 	private String url;
 	private String img;
-	private String topic;
 
-	public static TopicNotificationRequestDto from(String title, String content, Topic topic){
-		   return TopicNotificationRequestDto.builder()
-				.topic(topic.getTopicName())
+	public static TokenNotificationRequestDto from(String title,String content){
+		return TokenNotificationRequestDto.builder()
 				.title(title)
 				.content(content)
 				.url(null)

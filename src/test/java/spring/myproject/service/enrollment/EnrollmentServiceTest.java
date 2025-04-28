@@ -6,7 +6,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.transaction.annotation.Transactional;
 import spring.myproject.common.exception.enrollment.NotDisEnrollmentException;
 import spring.myproject.entity.enrollment.Enrollment;
 import spring.myproject.entity.fcm.Topic;
@@ -58,17 +57,17 @@ public class EnrollmentServiceTest {
         Gathering falseMockGathering = new Gathering(3L,null,null,null,null,mockUser,0,null,null,null);
         when(userRepository.findById(1L)).thenReturn(Optional.of(mockUser));
         when(userRepository.findById(2L)).thenReturn(Optional.empty());
-        when(gatheringRepository.findById(1L)).thenReturn(Optional.of(mockGathering));
-        when(gatheringRepository.findById(2L)).thenReturn(Optional.empty());
-        when(gatheringRepository.findById(3L)).thenReturn(Optional.of(falseMockGathering));
+        when(gatheringRepository.findTopicById(1L)).thenReturn(Optional.of(mockGathering));
+        when(gatheringRepository.findTopicById(2L)).thenReturn(Optional.of(falseMockGathering));
+        when(gatheringRepository.findTopicById(3L)).thenReturn(Optional.empty());
         when(enrollmentRepository.existEnrollment(eq(1L),anyLong())).thenReturn(null);
-        when(enrollmentRepository.existEnrollment(eq(3L),anyLong())).thenReturn(mock(Enrollment.class));
+        when(enrollmentRepository.existEnrollment(eq(2L),anyLong())).thenReturn(mock(Enrollment.class));
         doNothing().when(recommendService).addScore(anyLong(),anyInt());
-        assertThatThrownBy(()->enrollmentService.enrollGathering(2L,2L))
+        assertThatThrownBy(()->enrollmentService.enrollGathering(3L,2L))
                 .isInstanceOf(NotFoundUserException.class);
-        assertThatThrownBy(()->enrollmentService.enrollGathering(2L,1L))
-                .isInstanceOf(NotFoundGatheringException.class);
         assertThatThrownBy(()->enrollmentService.enrollGathering(3L,1L))
+                .isInstanceOf(NotFoundGatheringException.class);
+        assertThatThrownBy(()->enrollmentService.enrollGathering(2L,1L))
                 .isInstanceOf(AlreadyEnrollmentException.class);
         EnrollGatheringResponse enrollGatheringResponse = enrollmentService.enrollGathering(1L, 1L);
         assertThat(enrollGatheringResponse)
@@ -84,11 +83,11 @@ public class EnrollmentServiceTest {
         Gathering falseMockGathering = new Gathering(3L,null,null,null,null,mockUser,0,null,null,null);
         when(userRepository.findById(1L)).thenReturn(Optional.of(mockUser));
         when(userRepository.findById(2L)).thenReturn(Optional.empty());
-        when(gatheringRepository.findById(1L)).thenReturn(Optional.of(mockGathering));
-        when(gatheringRepository.findById(2L)).thenReturn(Optional.empty());
-        when(gatheringRepository.findById(3L)).thenReturn(Optional.of(falseMockGathering));
-        when(enrollmentRepository.findEnrollment(eq(1L),anyLong())).thenThrow(NotDisEnrollmentException.class);
-        when(enrollmentRepository.findEnrollment(eq(3L),anyLong())).thenReturn(Optional.empty());
+        when(gatheringRepository.findTopicById(1L)).thenReturn(Optional.of(mockGathering));
+        when(gatheringRepository.findTopicById(2L)).thenReturn(Optional.empty());
+        when(gatheringRepository.findTopicById(3L)).thenReturn(Optional.of(falseMockGathering));
+        when(enrollmentRepository.findEnrollment(eq(1L),anyLong(),eq(true))).thenThrow(NotDisEnrollmentException.class);
+        when(enrollmentRepository.findEnrollment(eq(3L),anyLong(),eq(true))).thenReturn(Optional.empty());
         doNothing().when(recommendService).addScore(anyLong(),anyInt());
         assertThatThrownBy(()->enrollmentService.disEnrollGathering(2L,2L))
                 .isInstanceOf(NotFoundUserException.class);

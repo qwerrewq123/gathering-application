@@ -22,4 +22,6 @@ public interface FCMTokenRepository extends JpaRepository<FCMToken, Long> {
 
     @Query("select t from FCMToken t where t.expirationDate > :now")
     List<FCMToken> findByExpirationDate(LocalDate now);
+
+
 }

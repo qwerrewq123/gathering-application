@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import spring.myproject.dto.response.gathering.querydto.GatheringDetailQuery;
@@ -11,6 +12,7 @@ import spring.myproject.dto.response.gathering.querydto.GatheringsQuery;
 import spring.myproject.dto.response.gathering.querydto.ParticipatedQuery;
 import spring.myproject.entity.gathering.Gathering;
 import spring.myproject.dto.response.gathering.querydto.MainGatheringsQuery;
+import spring.myproject.entity.user.User;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -81,7 +83,15 @@ public interface GatheringRepository extends JpaRepository<Gathering,Long> {
     @Query("select g from Gathering g left join fetch g.topic t where g.id = :gatheringId")
     Optional<Gathering> findTopicById(Long gatheringId);
 
+    @Query("select g from Gathering g " +
+            "left join fetch g.createBy u " +
+            "left join fetch u.tokens t " +
+            "where g.id = :gatheringId")
+    Optional<Gathering> findGatheringFetchCreatedById(Long gatheringId);
+
     @Query(value = "update gathering set count = count + :val where id = :gatheringId"
             ,nativeQuery = true)
-    void updatecount(Long gatheringId, int val);
+    @Modifying
+    void updateCount(Long gatheringId, int val);
+
 }

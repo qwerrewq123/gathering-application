@@ -43,22 +43,26 @@ class EnrollmentRepositoryTest {
         User user2 = returnDummyUser(2, userImage);
         User user3 = returnDummyUser(3, userImage);
         Gathering gathering = returnDummyGathering(1, category, user1, gatheringImage);
-        Enrollment enrollment1 = returnDummyEnrollment(user2,gathering);
-        Enrollment enrollment2 = returnDummyEnrollment(user3,gathering);
+        Enrollment enrollment1 = returnDummyEnrollment(user1,gathering);
+        Enrollment enrollment2 = returnDummyEnrollment(user2,gathering);
+        Enrollment enrollment3 = returnDummyEnrollment(user3,gathering);
         gathering.enroll(List.of(enrollment1,enrollment2));
         categoryRepository.save(category);
         userRepository.saveAll(List.of(user1,user2,user3));
         imageRepository.saveAll(List.of(userImage,gatheringImage));
         gatheringRepository.saveAll(List.of(gathering));
-        enrollmentRepository.saveAll(List.of(enrollment1,enrollment2));
+        enrollmentRepository.saveAll(List.of(enrollment1,enrollment2,enrollment3));
 
-        Enrollment fetchEnrollment1 = enrollmentRepository.existEnrollment(gathering.getId(), user2.getId());
-        Enrollment fetchEnrollment2 = enrollmentRepository.existEnrollment(gathering.getId(), user3.getId());
+        Enrollment fetchEnrollment1 = enrollmentRepository.existEnrollment(gathering.getId(), user1.getId());
+        Enrollment fetchEnrollment2 = enrollmentRepository.existEnrollment(gathering.getId(), user2.getId());
+        Enrollment fetchEnrollment3 = enrollmentRepository.existEnrollment(gathering.getId(), user3.getId());
 
         assertThat(fetchEnrollment1).isNotNull();
-        assertThat(fetchEnrollment1.getEnrolledBy()).isEqualTo(user2);
+        assertThat(fetchEnrollment1.getEnrolledBy()).isEqualTo(user1);
         assertThat(fetchEnrollment2).isNotNull();
-        assertThat(fetchEnrollment2.getEnrolledBy()).isEqualTo(user3);
+        assertThat(fetchEnrollment2.getEnrolledBy()).isEqualTo(user2);
+        assertThat(fetchEnrollment3).isNotNull();
+        assertThat(fetchEnrollment3.getEnrolledBy()).isEqualTo(user3);
     }
     @Test
     void findEnrollment(){
@@ -69,22 +73,26 @@ class EnrollmentRepositoryTest {
         User user2 = returnDummyUser(2, userImage);
         User user3 = returnDummyUser(3, userImage);
         Gathering gathering = returnDummyGathering(1, category, user1, gatheringImage);
-        Enrollment enrollment1 = returnDummyEnrollment(user2,gathering);
-        Enrollment enrollment2 = returnDummyEnrollment(user3,gathering);
-        gathering.enroll(List.of(enrollment1,enrollment2));
+        Enrollment enrollment1 = returnDummyEnrollment(user1,gathering);
+        Enrollment enrollment2 = returnDummyEnrollment(user2,gathering);
+        Enrollment enrollment3 = returnDummyEnrollment(user3,gathering);
+        gathering.enroll(List.of(enrollment1,enrollment2,enrollment3));
         categoryRepository.save(category);
         userRepository.saveAll(List.of(user1,user2,user3));
         imageRepository.saveAll(List.of(userImage,gatheringImage));
         gatheringRepository.saveAll(List.of(gathering));
-        enrollmentRepository.saveAll(List.of(enrollment1,enrollment2));
+        enrollmentRepository.saveAll(List.of(enrollment1,enrollment2,enrollment3));
 
-        Optional<Enrollment> enrollmentOptional1 = enrollmentRepository.findEnrollment(gathering.getId(), user2.getId(),true);
-        Optional<Enrollment> enrollmentOptional2 = enrollmentRepository.findEnrollment(gathering.getId(), user3.getId(),true);
+        Optional<Enrollment> enrollmentOptional1 = enrollmentRepository.findEnrollment(gathering.getId(), user1.getId(),true);
+        Optional<Enrollment> enrollmentOptional2 = enrollmentRepository.findEnrollment(gathering.getId(), user2.getId(),true);
+        Optional<Enrollment> enrollmentOptional3 = enrollmentRepository.findEnrollment(gathering.getId(), user3.getId(),true);
 
         assertThat(enrollmentOptional1.isPresent()).isTrue();
-        assertThat(enrollmentOptional1.get()).extracting("enrolledBy").isEqualTo(user2);
+        assertThat(enrollmentOptional1.get()).extracting("enrolledBy").isEqualTo(user1);
         assertThat(enrollmentOptional2.isPresent()).isTrue();
-        assertThat(enrollmentOptional2.get()).extracting("enrolledBy").isEqualTo(user3);
+        assertThat(enrollmentOptional2.get()).extracting("enrolledBy").isEqualTo(user2);
+        assertThat(enrollmentOptional3.isPresent()).isTrue();
+        assertThat(enrollmentOptional3.get()).extracting("enrolledBy").isEqualTo(user3);
     }
     @Test
     void findByGatheringAndEnrolledBy(){
@@ -95,22 +103,26 @@ class EnrollmentRepositoryTest {
         User user2 = returnDummyUser(2, userImage);
         User user3 = returnDummyUser(3, userImage);
         Gathering gathering = returnDummyGathering(1, category, user1, gatheringImage);
-        Enrollment enrollment1 = returnDummyEnrollment(user2,gathering);
-        Enrollment enrollment2 = returnDummyEnrollment(user3,gathering);
-        gathering.enroll(List.of(enrollment1,enrollment2));
+        Enrollment enrollment1 = returnDummyEnrollment(user1,gathering);
+        Enrollment enrollment2 = returnDummyEnrollment(user2,gathering);
+        Enrollment enrollment3 = returnDummyEnrollment(user3,gathering);
+        gathering.enroll(List.of(enrollment1,enrollment2,enrollment3));
         categoryRepository.save(category);
         userRepository.saveAll(List.of(user1,user2,user3));
         imageRepository.saveAll(List.of(userImage,gatheringImage));
         gatheringRepository.saveAll(List.of(gathering));
-        enrollmentRepository.saveAll(List.of(enrollment1,enrollment2));
+        enrollmentRepository.saveAll(List.of(enrollment1,enrollment2,enrollment3));
 
-        Optional<Enrollment> optionalEnrollment1 = enrollmentRepository.findByGatheringAndEnrolledBy(gathering, user2);
-        Optional<Enrollment> optionalEnrollment2 = enrollmentRepository.findByGatheringAndEnrolledBy(gathering, user3);
+        Optional<Enrollment> optionalEnrollment1 = enrollmentRepository.findByGatheringAndEnrolledBy(gathering, user1);
+        Optional<Enrollment> optionalEnrollment2 = enrollmentRepository.findByGatheringAndEnrolledBy(gathering, user2);
+        Optional<Enrollment> optionalEnrollment3 = enrollmentRepository.findByGatheringAndEnrolledBy(gathering, user3);
 
         assertThat(optionalEnrollment1).isPresent();
-        assertThat(optionalEnrollment1.get().getEnrolledBy()).isEqualTo(user2);
+        assertThat(optionalEnrollment1.get().getEnrolledBy()).isEqualTo(user1);
         assertThat(optionalEnrollment2).isPresent();
-        assertThat(optionalEnrollment2.get().getEnrolledBy()).isEqualTo(user3);
+        assertThat(optionalEnrollment2.get().getEnrolledBy()).isEqualTo(user2);
+        assertThat(optionalEnrollment3).isPresent();
+        assertThat(optionalEnrollment3.get().getEnrolledBy()).isEqualTo(user3);
     }
 
 

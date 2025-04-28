@@ -1,6 +1,7 @@
 package spring.myproject.repository.meeting;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import spring.myproject.dto.response.meeting.querydto.MeetingsQueryInterface;
 import spring.myproject.entity.meeting.Meeting;
@@ -43,5 +44,6 @@ public interface MeetingRepository extends JpaRepository<Meeting,Long> {
 
     @Query(value = "update meeting set count = count + :val where id = :meetingId",
     nativeQuery = true)
+    @Modifying
     void updateCount(Long meetingId, int val);
 }

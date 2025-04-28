@@ -2,7 +2,6 @@ package spring.myproject.service.meeting;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -13,6 +12,7 @@ import spring.myproject.dto.response.meeting.querydto.MeetingDetailQuery;
 import spring.myproject.dto.response.meeting.querydto.MeetingsQuery;
 import spring.myproject.dto.response.meeting.querydto.MeetingsQueryInterface;
 import spring.myproject.dto.response.meeting.querydto.Participated;
+import spring.myproject.entity.alarm.Alarm;
 import spring.myproject.entity.attend.Attend;
 import spring.myproject.entity.fcm.Topic;
 import spring.myproject.repository.attend.AttendRepository;
@@ -29,9 +29,11 @@ import spring.myproject.common.exception.meeting.NotAuthorizeException;
 import spring.myproject.common.exception.meeting.NotFoundMeetingExeption;
 import spring.myproject.common.exception.user.NotFoundUserException;
 import spring.myproject.common.s3.S3ImageUploadService;
+import spring.myproject.service.alarm.AlarmService;
 import spring.myproject.service.recommend.RecommendService;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -54,11 +56,13 @@ public class MeetingService {
     private final ImageRepository imageRepository;
     private final RecommendService recommendService;
     private final AsyncService asyncService;
+    private final AlarmService alarmService;
     @Value("${server.url}")
     private String url;
     public AddMeetingResponse addMeeting(AddMeetingRequest addMeetingRequest, Long userId, Long gatheringId, MultipartFile file) throws IOException {
 
-            User user = userRepository.findById(userId).orElseThrow(()->new NotFoundUserException("no exist User!!"));
+            User user = userRepository.findById(userId)
+                    .orElseThrow(()->new NotFoundUserException("no exist User!!"));
             Gathering gathering = gatheringRepository.findTopicById(gatheringId)
                     .orElseThrow(() -> new NotFoundGatheringException("no exist Gathering!!"));
             Image image = null;
@@ -70,15 +74,14 @@ public class MeetingService {
             attendRepository.save(attend);
             recommendService.addScore(gatheringId,1);
             Topic topic = gathering.getTopic();
-            TopicNotificationRequestDto topicNotificationRequestDto = TopicNotificationRequestDto.builder()
-                    .topic(topic.getTopicName())
-                    .title("Meeting created")
-                    .content("%s has created a new meeting".formatted(user.getNickname()))
-                    .url(null)
-                    .img(null)
-                    .build();
+            String title = "Meeting Created";
+            String content = "%s has created a new meeting".formatted(user.getNickname());
+            TopicNotificationRequestDto topicNotificationRequestDto = TopicNotificationRequestDto.from(title, content, topic);
             asyncService.sendTopic(topicNotificationRequestDto);
-            //TODO : alarm
+            List<User> userList = userRepository.findEnrollmentById(gatheringId,userId);
+            String alarmContent = "%s has created a new meeting".formatted(user.getNickname());
+            List<Alarm> list = getAlarmList(userList,alarmContent);
+            alarmService.saveAll(list);
             return AddMeetingResponse.of(SUCCESS_CODE, SUCCESS_MESSAGE, meeting.getId());
     }
 
@@ -97,57 +100,46 @@ public class MeetingService {
 
             User user = userRepository.findById(userId)
                     .orElseThrow(()->new NotFoundUserException("no exist User!!"));
-            Meeting meeting = meetingRepository.findById(meetingId)
-                    .orElseThrow(()->new NotFoundMeetingExeption("no exist Meeting!!"));
             Gathering gathering = gatheringRepository.findTopicById(gatheringId)
                     .orElseThrow(() -> new NotFoundGatheringException("no exist Gathering!!"));
-            if(!meeting.getMeetingDate().equals(updateMeetingRequest.getMeetingDate())){
-                Topic topic = gathering.getTopic();
-                TopicNotificationRequestDto topicNotificationRequestDto = TopicNotificationRequestDto.builder()
-                        .topic(topic.getTopicName())
-                        .title("Meeting changed")
-                        .content("%s has changed meeting date : %s".formatted(user.getNickname(),meeting.getMeetingDate()))
-                        .url(null)
-                        .img(null)
-                        .build();
-                asyncService.sendTopic(topicNotificationRequestDto);
-                //TODO : alarm
-            }
+            Meeting meeting = meetingRepository.findById(meetingId)
+                    .orElseThrow(()->new NotFoundMeetingExeption("no exist Meeting!!"));
             boolean authorize = Objects.equals(meeting.getCreatedBy().getId(), user.getId());
             if(!authorize) throw new NotAuthorizeException("no authority!");
             Image image = null;
             image = saveImage(image,file);
             if(image!=null) imageRepository.save(image);
             changeMeeting(meeting,updateMeetingRequest,image);
+            if(!meeting.getMeetingDate().equals(updateMeetingRequest.getMeetingDate())){
+                Topic topic = gathering.getTopic();
+                String title = "Meeting Updated";
+                String content = "%s has changed meeting date : %s".formatted(user.getNickname(),meeting.getMeetingDate());
+                TopicNotificationRequestDto topicNotificationRequestDto = TopicNotificationRequestDto.from(title, content, topic);
+                asyncService.sendTopic(topicNotificationRequestDto);
+                List<User> userList = userRepository.findEnrollmentById(gatheringId, userId);
+                String alarmContent = "%s has changed meeting date : %s".formatted(user.getNickname(),meeting.getMeetingDate());
+                List<Alarm> alarmList = getAlarmList(userList, alarmContent);
+                alarmService.saveAll(alarmList);
+            }
             return UpdateMeetingResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE,meetingId);
     }
+
     public MeetingResponse meetingDetail(Long meetingId,Long gatheringId) {
 
         List<MeetingDetailQuery> meetingDetailQueries = meetingRepository.meetingDetail(meetingId);
         if(meetingDetailQueries.isEmpty()) throw new NotFoundMeetingExeption("no exist Meeting!!");
         return toMeetingResponse(meetingDetailQueries);
     }
-
     public MeetingsResponse meetings(int pageNum, Long gatheringId) {
         int offset = (pageNum-1)*8;
         List<MeetingsQueryInterface> queryInterface = meetingRepository.meetings(offset,gatheringId);
-        List<MeetingsQuery> list = queryInterface.stream().map(q -> MeetingsQuery.builder()
-                .id(q.getId())
-                .title(q.getTitle())
-                .createdBy(q.getCreatedBy())
-                .createdByNickname(q.getCreatedByNickname())
-                .meetingDate(q.getMeetingDate())
-                .endDate(q.getEndDate())
-                .content(q.getContent())
-                .count(q.getCount())
-                .url(url+q.getUrl())
-                .participatedImageUrl(url+q.getParticipatedImageUrl())
-                .participatedId(q.getParticipatedId())
-                .build()).toList();
+        List<MeetingsQuery> list = queryInterface.stream().map(query -> MeetingsQuery.from(query,url))
+                .toList();
         List<MeetingElement> content = convertToMeetingElements(list);
         boolean hasNext = content.size()>8;
         return MeetingsResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE,content,hasNext);
     }
+
     private List<MeetingElement> convertToMeetingElements(List<MeetingsQuery> queries) {
         Map<Long, MeetingElement.MeetingElementBuilder> meetingMap = new LinkedHashMap<>();
 
@@ -179,7 +171,6 @@ public class MeetingService {
                 .collect(Collectors.toList());
     }
 
-
     private MeetingResponse toMeetingResponse(List<MeetingDetailQuery> meetingDetailQueries) {
         List<String> attendBy = meetingDetailQueries.stream().map(MeetingDetailQuery::getAttendedBy).toList();
         List<String> attendByNickname = meetingDetailQueries.stream().map(MeetingDetailQuery::getAttendByNickname).toList();
@@ -202,6 +193,7 @@ public class MeetingService {
                 .attendedByUrl(attendByUrl)
                 .build();
     }
+
     private Image saveImage(Image image, MultipartFile file) throws IOException {
         if(file != null && !file.isEmpty()){
             String url = s3ImageUploadService.upload(file);
@@ -216,4 +208,14 @@ public class MeetingService {
         return image;
     }
 
+    private List<Alarm> getAlarmList(List<User> userList,String content) {
+        return userList.stream()
+                .map(element -> Alarm.builder()
+                        .date(LocalDateTime.now())
+                        .content(content)
+                        .checked(false)
+                        .user(element)
+                        .build())
+                .toList();
+    }
 }

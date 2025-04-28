@@ -58,9 +58,10 @@ public class RecommendRepositoryTest {
         recommendRepository.updateCount(gathering.getId(), LocalDate.now(),10);
         em.flush();
         em.clear();
-        Optional<Recommend> optionalRecommend = recommendRepository.findById(recommend.getId());
-        assertThat(optionalRecommend).isNotNull();
-        assertThat(optionalRecommend.get()).extracting("score").isEqualTo(11L);
+        Recommend fetchRecommend = recommendRepository.findById(recommend.getId())
+                        .orElseThrow(()-> new RuntimeException("Not Found Recommend"));
+        assertThat(fetchRecommend).isNotNull();
+        assertThat(fetchRecommend).extracting("score").isEqualTo(11L);
     }
 
 }

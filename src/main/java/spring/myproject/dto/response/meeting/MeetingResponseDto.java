@@ -67,8 +67,7 @@ public class MeetingResponseDto {
         private List<String> attendedBy;
         private List<String> attendedByNickname;
         private List<String> attendedByUrl;
-        private LocalDateTime boardDate;
-        private LocalDateTime startDate;
+        private LocalDateTime meetingDate;
         private LocalDateTime endDate;
         private String content;
         private String meetingUrl;
@@ -80,8 +79,8 @@ public class MeetingResponseDto {
                     .id(meetingDetailQueries.getLast().getId())
                     .title(meetingDetailQueries.getFirst().getTitle())
                     .content(meetingDetailQueries.getFirst().getContent())
-                    .boardDate(meetingDetailQueries.getFirst().getBoardDate())
-                    .startDate(meetingDetailQueries.getFirst().getStartDate())
+                    .meetingDate(meetingDetailQueries.getFirst().getMeetingDate())
+                    .endDate(meetingDetailQueries.getFirst().getEndDate())
                     .endDate(meetingDetailQueries.getFirst().getEndDate())
                     .createdBy(meetingDetailQueries.getFirst().getCreatedBy())
                     .attendedBy(attends)
@@ -127,8 +126,7 @@ public class MeetingResponseDto {
                     .id(meetingsQuery.getId())
                     .title(meetingsQuery.getTitle())
                     .createdBy(meetingsQuery.getCreatedBy())
-                    .boardDate(meetingsQuery.getBoardDate())
-                    .startDate(meetingsQuery.getStartDate())
+                    .meetingDate(meetingsQuery.getMeetingDate())
                     .endDate(meetingsQuery.getEndDate())
                     .content(meetingsQuery.getContent())
                     .count(meetingsQuery.getCount())

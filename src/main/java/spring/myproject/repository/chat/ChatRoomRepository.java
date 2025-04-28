@@ -59,15 +59,17 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
             "from ChatRoom c left join c.gathering g " +
             "left join c.createdBy u " +
             "left join ChatParticipant cp on cp.chatRoom.id = c.id and cp.user.id = :userId " +
+            "where g.id = :gatheringId " +
             "order by case when cp.id is not null then 0 else 1 end, c.id asc")
-    Page<ChatRoomElement> fetchChatRooms(Pageable pageable, Long userId);
+    Page<ChatRoomElement> fetchChatRooms(Pageable pageable, Long userId,Long gatheringId);
     @Query("select new spring.myproject.dto.response.chat.query." +
             "AbleChatRoomElement(c.id, c.title,c.description, c.count, u.username,g.title)" +
             "from ChatRoom c left join c.gathering g " +
             "left join c.createdBy u " +
-            "left join ChatParticipant cp on cp.chatRoom.id = c.id and cp.user.id = :userId where cp.id is null " +
+            "left join ChatParticipant cp on cp.chatRoom.id = c.id and cp.user.id = :userId " +
+            "where cp.id is null and g.id = :gatheringId " +
             "order by c.id asc")
-    Page<AbleChatRoomElement> fetchAbleChatRooms(Pageable pageable, Long userId);
+    Page<AbleChatRoomElement> fetchAbleChatRooms(Pageable pageable, Long userId,Long gatheringId);
     @Query("select new spring.myproject.dto.response.chat.query." +
             "ParticipateChatRoomElement(c.id, c.title,c.description, c.count, u.username, " +
             "case when cp.id is not null then " +
@@ -87,9 +89,11 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
             "order by r2.id desc limit 1)) " +
             "from ChatRoom c left join c.gathering g " +
             "left join c.createdBy u " +
-            "left join ChatParticipant cp on cp.chatRoom.id = c.id and cp.user.id = :userId where cp.id is not null " +
+            "left join ChatParticipant cp on cp.chatRoom.id = c.id and cp.user.id = :userId " +
+            "where cp.id is not null and g.id = :gatheringId " +
             "order by c.id asc")
-    Page<ParticipateChatRoomElement> fetchParticipateChatRooms(Pageable pageable, Long userId);
+    Page<ParticipateChatRoomElement> fetchParticipateChatRooms(Pageable pageable, Long userId,Long gatheringId);
+
     @Query("select c from ChatRoom c left join fetch c.createdBy u where c.id =:chatRoomId")
     Optional<ChatRoom> fetchChatRoomById(Long chatRoomId);
 }

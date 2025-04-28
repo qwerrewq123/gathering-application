@@ -155,7 +155,8 @@ public class UserService {
     }
 
     public UserResponse fetchUser(Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundUserException("user Not Found!"));
+        User user = userRepository.findByIdFetchImage(userId)
+                .orElseThrow(() -> new NotFoundUserException("user Not Found!"));
         return UserResponse.from(SUCCESS_CODE,SUCCESS_MESSAGE,user,fileUrl -> url + fileUrl);
     }
 }

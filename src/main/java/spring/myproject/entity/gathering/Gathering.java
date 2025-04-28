@@ -58,6 +58,7 @@ public class Gathering {
         this.registerDate = LocalDateTime.now();
     }
 
+
     public static Gathering of(AddGatheringRequest addGatheringRequest, User createBy, Category category, Image image){
         return Gathering.builder()
                 .title(addGatheringRequest.getTitle())

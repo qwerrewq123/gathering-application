@@ -19,6 +19,7 @@ import static spring.myproject.dto.request.meeting.MeetingRequestDto.*;
 @Getter
 @Setter
 @Entity
+@Table(name = "meeting")
 public class Meeting {
 
     @Id

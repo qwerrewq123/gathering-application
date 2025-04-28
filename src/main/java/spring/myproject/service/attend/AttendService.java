@@ -39,6 +39,7 @@ public class AttendService {
         private final GatheringRepository gatheringRepository;
         private final RecommendService recommendService;
         private final AsyncService asyncService;
+
         public AddAttendResponse addAttend(Long meetingId, Long userId,Long gatheringId) {
                 User user = userRepository.findById(userId)
                         .orElseThrow(()->new NotFoundUserException("no exist User!!"));
@@ -52,13 +53,9 @@ public class AttendService {
                 attendRepository.save(attend);
                 meetingRepository.updateCount(meetingId,1);
                 Topic topic = gathering.getTopic();
-                TopicNotificationRequestDto topicNotificationRequestDto = TopicNotificationRequestDto.builder()
-                        .topic(topic.getTopicName())
-                        .title("Board created")
-                        .content("%s has created board".formatted(user.getNickname()))
-                        .url(null)
-                        .img(null)
-                        .build();
+                String title = "Board created";
+                String content = "%s has created board".formatted(user.getNickname());
+                TopicNotificationRequestDto topicNotificationRequestDto = TopicNotificationRequestDto.from(title,content,topic);
                 asyncService.sendTopic(topicNotificationRequestDto);
                 return AddAttendResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE);
         }
@@ -78,7 +75,6 @@ public class AttendService {
                 recommendService.addScore(gatheringId,-1);
                 return DisAttendResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE);
         }
-
 
 
         private void checkMeetingOpener(Long createdById, Long userId, Long meetingId, Attend attend) {

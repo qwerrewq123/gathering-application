@@ -27,6 +27,7 @@ import spring.myproject.repository.recommend.RecommendRepository;
 import spring.myproject.repository.user.UserRepository;
 import spring.myproject.common.s3.S3ImageUploadService;
 import spring.myproject.service.fcm.FCMService;
+import spring.myproject.service.fcm.FCMTokenTopicService;
 import spring.myproject.service.recommend.RecommendService;
 
 import java.io.IOException;
@@ -56,13 +57,9 @@ public class GatheringServiceTest {
     @MockitoBean
     S3ImageUploadService s3ImageUploadService;
     @MockitoBean
-    FCMService fcmService;
+    FCMTokenTopicService fcmTokenTopicService;
     @MockitoBean
     TopicRepository topicRepository;
-    @MockitoBean
-    RecommendService recommendService;
-    @Value("${server.url}")
-    private String url;
 
     @Test
     void addGathering() throws IOException {
@@ -75,6 +72,7 @@ public class GatheringServiceTest {
         when(categoryRepository.findByName("false category")).thenReturn(Optional.empty());
         when(s3ImageUploadService.upload(any(MultipartFile.class))).thenReturn("url");
         when(topicRepository.save(any(Topic.class))).thenReturn(mock(Topic.class));
+        doNothing().when(fcmTokenTopicService).subscribeToTopic(any(String.class),anyLong());
         AddGatheringRequest trueAddGatheringRequest = AddGatheringRequest.builder()
                 .category("true category")
                 .build();

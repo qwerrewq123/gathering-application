@@ -24,4 +24,20 @@ public class MeetingsQuery {
     private String url;
     private String participatedImageUrl;
     private Long participatedId;
+
+    public static MeetingsQuery from(MeetingsQueryInterface query,String url){
+        return MeetingsQuery.builder()
+                .id(query.getId())
+                .title(query.getTitle())
+                .createdBy(query.getCreatedBy())
+                .createdByNickname(query.getCreatedByNickname())
+                .meetingDate(query.getMeetingDate())
+                .endDate(query.getEndDate())
+                .content(query.getContent())
+                .count(query.getCount())
+                .url(url+query.getUrl())
+                .participatedImageUrl(url+query.getParticipatedImageUrl())
+                .participatedId(query.getParticipatedId())
+                .build();
+    }
 }

@@ -3,9 +3,12 @@ package spring.myproject.service.fcm;
 import com.google.firebase.messaging.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import spring.myproject.dto.request.fcm.TokenNotificationRequestDto;
 import spring.myproject.dto.request.fcm.TopicNotificationRequestDto;
-import spring.myproject.entity.fcm.Topic;
+import spring.myproject.entity.fcm.FCMToken;
 import spring.myproject.repository.fcm.FCMTokenRepository;
 import spring.myproject.repository.fcm.FCMTokenTopicRepository;
 
@@ -40,6 +43,37 @@ public class FCMService {
 			throw new RuntimeException(e);
 		}
 	}
+	public void sendByToken(TokenNotificationRequestDto tokenNotificationRequestDto, List<FCMToken> tokens) {
+
+		List<FCMToken> failedTokens = new ArrayList<>();
+
+		for (FCMToken token : tokens) {
+			Message message = Message.builder()
+					.setToken(token.getTokenValue())
+					.setNotification(Notification.builder()
+							.setTitle(tokenNotificationRequestDto.getTitle())
+							.setBody(tokenNotificationRequestDto.getContent())
+							.setImage(tokenNotificationRequestDto.getImg())
+							.build())
+					.putData("click_action", tokenNotificationRequestDto.getUrl())
+					.build();
+			try {
+				FirebaseMessaging.getInstance().send(message);
+			} catch (FirebaseMessagingException e) {
+				failedTokens.add(token);
+			}
+		}
+
+		if (!failedTokens.isEmpty()) {
+			List<String> failedTokenList = failedTokens.stream()
+					.map(FCMToken::getTokenValue)
+					.toList();
+			fcmTokenRepository.deleteByTokenValueIn(failedTokenList);
+			fcmTokenRepository.deleteByTokenValueIn(failedTokenList);
+		}
+
+	}
+
 	public void subscribeToTopic(String topicName, List<String> tokens) {
 
 		List<String> failedTokens = new ArrayList<>();

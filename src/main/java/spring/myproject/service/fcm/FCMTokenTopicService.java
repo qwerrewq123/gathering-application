@@ -1,13 +1,13 @@
 package spring.myproject.service.fcm;
 
 import lombok.RequiredArgsConstructor;
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import spring.myproject.common.exception.fcm.AlreadySubscribeTopicException;
 import spring.myproject.common.exception.fcm.NotFoundTopicException;
 import spring.myproject.common.exception.user.NotFoundUserException;
-import spring.myproject.dto.request.user.UserRequestDto;
 import spring.myproject.entity.fcm.FCMToken;
 import spring.myproject.entity.fcm.FCMTokenTopic;
 import spring.myproject.entity.fcm.Topic;
@@ -19,7 +19,6 @@ import spring.myproject.repository.fcm.TopicRepository;
 import spring.myproject.repository.fcm.UserTopicRepository;
 import spring.myproject.repository.user.UserRepository;
 
-import java.security.Principal;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
@@ -128,22 +127,7 @@ public class FCMTokenTopicService {
         fcmService.unsubscribeFromTopic(topicName, tokenValues);
     }
 
-    @Scheduled(cron = "0 10 0 * * ?")
-    @Transactional
-    public void unsubscribeExpiredTokens() {
-        LocalDate now = LocalDate.now();
-        List<FCMToken> expiredTokens = fcmTokenRepository.findByExpirationDate(now);
-        List<FCMTokenTopic> topicTokens = fcmTokenTopicRepository.findByFcmTokenIn(expiredTokens);
-        List<String> tokenValues = expiredTokens.stream()
-                .map(FCMToken::getTokenValue)
-                .collect(Collectors.toList());
 
-        topicTokens.forEach(topicToken -> {
-            fcmService.unsubscribeFromTopic(topicToken.getTopic().getTopicName(), tokenValues);
-        });
-        fcmTokenTopicRepository.deleteAll(topicTokens);
-        fcmTokenRepository.deleteAll(expiredTokens);
-    }
 
 
 }

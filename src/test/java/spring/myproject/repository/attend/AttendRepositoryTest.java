@@ -55,12 +55,12 @@ class AttendRepositoryTest {
         Enrollment enrollment1 = returnDummyEnrollment(user1,gathering);
         Enrollment enrollment2 = returnDummyEnrollment(user2,gathering);
         Enrollment enrollment3 = returnDummyEnrollment(user3,gathering);
-        gathering.enroll(List.of(enrollment1,enrollment2));
+        gathering.enroll(List.of(enrollment1,enrollment2,enrollment3));
         Meeting meeting = returnDummyMeeting(1, user1, gathering,meetingImage);
         Attend attend1 = returnDummyAttend(user1,meeting);
         Attend attend2 = returnDummyAttend(user2,meeting);
         Attend attend3 = returnDummyAttend(user3,meeting);
-        meeting.attend(List.of(attend1,attend2));
+        meeting.attend(List.of(attend1,attend2,attend3));
         imageRepository.saveAll(List.of(userImage,gatheringImage,meetingImage));
         categoryRepository.save(category);
         userRepository.saveAll(List.of(user1,user2,user3));
@@ -69,75 +69,14 @@ class AttendRepositoryTest {
         meetingRepository.saveAll(List.of(meeting));
         attendRepository.saveAll(List.of(attend1,attend2,attend3));
 
-        Attend attend = attendRepository.findByUserIdAndMeetingId(user2.getId(), meeting.getId());
-        assertThat(attend).isNotNull();
-        assertThat(attend).extracting("attendBy").isEqualTo(user2);
-    }
-
-    @Test
-    void findByUserIdAndMeetingIdAndTrue() {
-        Category category = returnDummyCategory(1);
-        Image userImage = returnDummyImage(1);
-        Image gatheringImage = returnDummyImage(1);
-        Image meetingImage = returnDummyImage(1);
-        User user1 = returnDummyUser(1, userImage);
-        User user2 = returnDummyUser(2, userImage);
-        User user3 = returnDummyUser(3, userImage);
-        Gathering gathering = returnDummyGathering(1, category, user1, gatheringImage);
-        Enrollment enrollment1 = returnDummyEnrollment(user1,gathering);
-        Enrollment enrollment2 = returnDummyEnrollment(user2,gathering);
-        Enrollment enrollment3 = returnDummyEnrollment(user3,gathering);
-        gathering.enroll(List.of(enrollment1,enrollment2));
-        Meeting meeting = returnDummyMeeting(1, user1, gathering,meetingImage);
-        Attend attend1 = returnDummyAttend(user1,meeting);
-        Attend attend2 = returnDummyAttend(user2,meeting);
-        meeting.attend(List.of(attend1,attend2));
-        imageRepository.saveAll(List.of(userImage,gatheringImage,meetingImage));
-        categoryRepository.save(category);
-        userRepository.saveAll(List.of(user1,user2,user3));
-        gatheringRepository.saveAll(List.of(gathering));
-        enrollmentRepository.saveAll(List.of(enrollment1,enrollment2,enrollment3));
-        meetingRepository.saveAll(List.of(meeting));
-        attendRepository.saveAll(List.of(attend1,attend2));
-
-        Attend fetchAttend1 = attendRepository.findByUserIdAndMeetingIdAndTrue(user2.getId(), meeting.getId());
-        Attend fetchAttend2 = attendRepository.findByUserIdAndMeetingIdAndTrue(user3.getId(), meeting.getId());
+        Attend fetchAttend1 = attendRepository.findByUserIdAndMeetingId(user1.getId(), meeting.getId());
         assertThat(fetchAttend1).isNotNull();
-        assertThat(fetchAttend2).isNull();
-    }
-
-    @Test
-    void findByIdAndAccepted() {
-        Category category = returnDummyCategory(1);
-        Image userImage = returnDummyImage(1);
-        Image gatheringImage = returnDummyImage(1);
-        Image meetingImage = returnDummyImage(1);
-        User user1 = returnDummyUser(1, userImage);
-        User user2 = returnDummyUser(2, userImage);
-        User user3 = returnDummyUser(3, userImage);
-        Gathering gathering = returnDummyGathering(1, category, user1, gatheringImage);
-        Enrollment enrollment1 = returnDummyEnrollment(user1,gathering);
-        Enrollment enrollment2 = returnDummyEnrollment(user2,gathering);
-        Enrollment enrollment3 = returnDummyEnrollment(user3,gathering);
-        gathering.enroll(List.of(enrollment1,enrollment2));
-        Meeting meeting = returnDummyMeeting(1, user1, gathering,meetingImage);
-        Attend attend1 = returnDummyAttend(user1,meeting);
-        Attend attend2 = returnDummyAttend(user2,meeting);
-        Attend attend3 = returnDummyAttend(user3,meeting);
-        meeting.attend(List.of(attend1,attend2));
-        imageRepository.saveAll(List.of(userImage,gatheringImage,meetingImage));
-        categoryRepository.save(category);
-        userRepository.saveAll(List.of(user1,user2,user3));
-        gatheringRepository.saveAll(List.of(gathering));
-        enrollmentRepository.saveAll(List.of(enrollment1,enrollment2,enrollment3));
-        meetingRepository.saveAll(List.of(meeting));
-        attendRepository.saveAll(List.of(attend1,attend2,attend3));
-
-        Optional<Attend> optionalAttend1 = attendRepository.findByIdAndAccepted(attend1.getId(), true);
-        Optional<Attend> optionalAttend2 = attendRepository.findByIdAndAccepted(attend2.getId(), false);
-
-        assertThat(optionalAttend1).isPresent();
-        assertThat(optionalAttend1.get()).extracting("attendBy").isEqualTo(user1);
-        assertThat(optionalAttend2).isEmpty();
+        assertThat(fetchAttend1).extracting("attendBy").isEqualTo(user1);
+        Attend fetchAttend2 = attendRepository.findByUserIdAndMeetingId(user2.getId(), meeting.getId());
+        assertThat(fetchAttend2).isNotNull();
+        assertThat(fetchAttend2).extracting("attendBy").isEqualTo(user2);
+        Attend fetchAttend3 = attendRepository.findByUserIdAndMeetingId(user3.getId(), meeting.getId());
+        assertThat(fetchAttend3).isNotNull();
+        assertThat(fetchAttend3).extracting("attendBy").isEqualTo(user3);
     }
 }

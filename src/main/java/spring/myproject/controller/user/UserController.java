@@ -69,7 +69,7 @@ public class UserController {
     public ResponseEntity<SignInResponse> signIn(@RequestBody SignInRequest signInRequest, HttpServletResponse response) {
 
         SignInResponse signInResponse = userService.signIn(signInRequest,response);
-//        fcmTokenTopicService.saveFCMToken(signInRequest);
+        fcmTokenTopicService.saveFCMToken(signInRequest);
         return new ResponseEntity<>(signInResponse,HttpStatus.OK);
     }
 

@@ -53,7 +53,7 @@ public class ChatService {
         gatheringRepository.findById(gatheringId)
                 .orElseThrow(()->new NotFoundGatheringException("no exist Gathering!!"));
         PageRequest pageRequest = PageRequest.of(pageNum-1, pageSize);
-        Page<ChatRoomElement> page = chatRoomRepository.fetchChatRooms(pageRequest,userId);
+        Page<ChatRoomElement> page = chatRoomRepository.fetchChatRooms(pageRequest,userId,gatheringId);
         List<ChatRoomElement> content = page.getContent();
         boolean hasNext = page.hasNext();
         return ChatRoomResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE,content,hasNext);
@@ -74,7 +74,7 @@ public class ChatService {
         gatheringRepository.findById(gatheringId)
                 .orElseThrow(()->new NotFoundGatheringException("no exist Gathering!!"));
         PageRequest pageRequest = PageRequest.of(pageNum-1, pageSize);
-        Page<AbleChatRoomElement> page = chatRoomRepository.fetchAbleChatRooms(pageRequest, userId);
+        Page<AbleChatRoomElement> page = chatRoomRepository.fetchAbleChatRooms(pageRequest, userId,gatheringId);
         List<AbleChatRoomElement> content = page.getContent();
         boolean hasNext = page.hasNext();
         return AbleChatRoomResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE,content,hasNext);
@@ -84,7 +84,7 @@ public class ChatService {
         gatheringRepository.findById(gatheringId)
                 .orElseThrow(()->new NotFoundGatheringException("no exist Gathering!!"));
         PageRequest pageRequest = PageRequest.of(pageNum-1, pageSize);
-        Page<ParticipateChatRoomElement> page = chatRoomRepository.fetchParticipateChatRooms(pageRequest, userId);
+        Page<ParticipateChatRoomElement> page = chatRoomRepository.fetchParticipateChatRooms(pageRequest, userId,gatheringId);
         List<ParticipateChatRoomElement> content = page.getContent();
         boolean hasNext = page.hasNext();
         return ParticipateChatRoomResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE,content,hasNext);
