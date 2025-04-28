@@ -69,10 +69,11 @@ public class GatheringService {
             Gathering gathering = Gathering.of(addGatheringRequest,user,category,image);
             Enrollment enrollment = Enrollment.of(true, gathering, user, LocalDateTime.now());
             if(image!=null) imageRepository.save(image);
+            Topic topic = generateTopic(gathering);
+            gathering.changeTopic(topic);
+            topicRepository.save(topic);
             gatheringRepository.save(gathering);
             enrollmentRepository.save(enrollment);
-            Topic topic = generateTopic(gathering);
-            topicRepository.save(topic);
             fcmTokenTopicService.subscribeToTopic(topic.getTopicName(),userId);
             return AddGatheringResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE, gathering.getId());
     }

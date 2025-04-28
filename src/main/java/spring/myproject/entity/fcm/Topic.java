@@ -18,7 +18,7 @@ public class Topic {
     private Long id;
     @Column(name = "topic_name")
     private String topicName;
-    @OneToOne(fetch = FetchType.LAZY, mappedBy = "topic", optional = false)
+    @OneToOne(mappedBy = "topic", optional = false)
     private Gathering gathering;
 
 }

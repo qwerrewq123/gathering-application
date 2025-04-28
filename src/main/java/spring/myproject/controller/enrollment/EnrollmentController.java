@@ -17,7 +17,7 @@ import static spring.myproject.dto.response.enrollment.EnrollResponseDto.*;
 public class EnrollmentController {
 
     private final EnrollmentService enrollmentService;
-    @PostMapping("/gathering/{gatheringId}/participate")
+    @PatchMapping("/gathering/{gatheringId}/participate")
     public ResponseEntity<EnrollGatheringResponse> enrollGathering(@PathVariable Long gatheringId,
                                                                    @Id Long userId){
 

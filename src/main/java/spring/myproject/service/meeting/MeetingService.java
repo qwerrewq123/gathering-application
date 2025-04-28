@@ -77,11 +77,11 @@ public class MeetingService {
             String title = "Meeting Created";
             String content = "%s has created a new meeting".formatted(user.getNickname());
             TopicNotificationRequestDto topicNotificationRequestDto = TopicNotificationRequestDto.from(title, content, topic);
-            asyncService.sendTopic(topicNotificationRequestDto);
             List<User> userList = userRepository.findEnrollmentById(gatheringId,userId);
             String alarmContent = "%s has created a new meeting".formatted(user.getNickname());
             List<Alarm> list = getAlarmList(userList,alarmContent);
             alarmService.saveAll(list);
+            asyncService.sendTopic(topicNotificationRequestDto);
             return AddMeetingResponse.of(SUCCESS_CODE, SUCCESS_MESSAGE, meeting.getId());
     }
 
@@ -115,11 +115,11 @@ public class MeetingService {
                 String title = "Meeting Updated";
                 String content = "%s has changed meeting date : %s".formatted(user.getNickname(),meeting.getMeetingDate());
                 TopicNotificationRequestDto topicNotificationRequestDto = TopicNotificationRequestDto.from(title, content, topic);
-                asyncService.sendTopic(topicNotificationRequestDto);
                 List<User> userList = userRepository.findEnrollmentById(gatheringId, userId);
                 String alarmContent = "%s has changed meeting date : %s".formatted(user.getNickname(),meeting.getMeetingDate());
                 List<Alarm> alarmList = getAlarmList(userList, alarmContent);
                 alarmService.saveAll(alarmList);
+                asyncService.sendTopic(topicNotificationRequestDto);
             }
             return UpdateMeetingResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE,meetingId);
     }

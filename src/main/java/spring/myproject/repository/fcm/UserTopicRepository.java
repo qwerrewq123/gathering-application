@@ -13,7 +13,7 @@ public interface UserTopicRepository extends JpaRepository<UserTopic, Long> {
     @Query("select ut from UserTopic ut left join fetch ut.topic left join ut.user u where u.id = :userId")
     List<UserTopic> findByUserId(Long userId);
 
-    @Query("select ut from UserTopic ut join ut.topic t where t.topicName = :topicName and ut.user.id = :userId")
+    @Query("select count(ut)>0 from UserTopic ut join ut.topic t where t.topicName = :topicName and ut.user.id = :userId")
     boolean existsByTopicAndUser(String topicName, Long userId);
 
     void deleteByTopicAndUser(Topic topic, User member);

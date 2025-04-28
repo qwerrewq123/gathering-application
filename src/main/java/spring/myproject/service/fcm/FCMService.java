@@ -3,8 +3,6 @@ package spring.myproject.service.fcm;
 import com.google.firebase.messaging.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import spring.myproject.dto.request.fcm.TokenNotificationRequestDto;
 import spring.myproject.dto.request.fcm.TopicNotificationRequestDto;
@@ -34,7 +32,6 @@ public class FCMService {
 				.setBody(topicNotificationRequestDto.getContent())
 				.setImage(topicNotificationRequestDto.getImg())
 				.build())
-			.putData("click_action", topicNotificationRequestDto.getUrl())
 			.build();
 
 		try {
@@ -55,7 +52,6 @@ public class FCMService {
 							.setBody(tokenNotificationRequestDto.getContent())
 							.setImage(tokenNotificationRequestDto.getImg())
 							.build())
-					.putData("click_action", tokenNotificationRequestDto.getUrl())
 					.build();
 			try {
 				FirebaseMessaging.getInstance().send(message);

@@ -50,6 +50,9 @@ public class Gathering {
     @JoinColumn(name = "topic_id")
     private Topic topic;
 
+    public void changeTopic(Topic topic){
+        this.topic = topic;
+    }
     public void changeGathering(Image image, Category category, UpdateGatheringRequest updateGatheringRequest){
         if(image != null) this.gatheringImage = image;
         this.category = category;
