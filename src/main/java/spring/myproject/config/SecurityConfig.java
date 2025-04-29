@@ -30,7 +30,7 @@ public class SecurityConfig {
     private final FailedAuthenticationEntryPoint failedAuthenticationEntryPoint;
     private final JwtAuthFilter jwtAuthFilter;
     private String[] getWhiteList = {"/connect/**","/gatherings","/gathering/*","/gathering","/gathering/*/meetings",
-            "/gathering/*/meeting/*","/image/*","/gathering/*/image","/gathering/*/boards","/auth/user/*","/gathering/participated/*"};
+            "/gathering/*/meeting/*","/image/*","/gathering/*/image","/gathering/*/boards","/auth/user/*","/gathering/participated/*","/health"};
     private String[] postWhiteList = {"/auth/id-check","/auth/generateToken",
             "/auth/email-certification","/auth/check-certification","/auth/sign-in","/auth/sign-up"};
     @Bean
