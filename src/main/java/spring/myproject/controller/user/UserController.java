@@ -1,6 +1,5 @@
 package spring.myproject.controller.user;
 
-import com.google.firebase.remoteconfig.internal.TemplateResponse;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -9,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import spring.myproject.common.annotation.Id;
-import spring.myproject.service.fcm.FCMService;
 import spring.myproject.service.fcm.FCMTokenTopicService;
 import spring.myproject.service.user.UserService;
 
