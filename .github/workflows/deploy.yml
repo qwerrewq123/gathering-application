@@ -30,6 +30,11 @@ jobs:
           mkdir -p ./src/main/resources
           echo "${{ secrets.APPLICATION_MAIN_AWS_PROPERTIES }}" > ./src/main/resources/application-aws.yml
 
+      - name: firebase 디렉토리 만들기
+        run: |
+          mkdir -p ./src/main/resources/firebase
+          echo "${{ secrets.FIREBASE_PROPERTIES }}" > ./src/main/resources/firebase/gathering-fcm.json
+
       - name: application.yml 테스트 파일 만들기
         run: |
           mkdir -p ./src/test/resources
