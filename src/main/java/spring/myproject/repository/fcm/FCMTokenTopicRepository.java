@@ -12,6 +12,7 @@ import spring.myproject.entity.fcm.Topic;
 import java.util.List;
 
 public interface FCMTokenTopicRepository extends JpaRepository<FCMTokenTopic, Long> {
+
     void deleteByTopic(Topic topic);
 
 

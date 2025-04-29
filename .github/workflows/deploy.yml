@@ -1,4 +1,4 @@
-name: deploy
+name: Deploy To EC2
 
 on:
   push:
@@ -9,58 +9,51 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Fetch Github Repository
+      - name: Github Repository 파일 불러오기
         uses: actions/checkout@v4
+        with:
+          ref: master
 
-      - name: install jdk 21
+      - name: JDK 21버전 설치
         uses: actions/setup-java@v4
         with:
           distribution: corretto
           java-version: 21
 
-      - name: create application.yml
-        run: echo "${{ secrets.APPLICATION_PROPERTIES }}" > ./src/main/resources/application.yml
-
-      - name: create application-aws.yml
-        run: echo "${{ secrets.APPLICATION_AWS_PROPERTIES }}" > ./src/main/resources/application.yml
-
-      - name: create application.yml
+      - name: application.yml 파일 만들기
         run: |
-          mkdir -p ./src/main/resources/firebase
-          echo "${{ secrets.FIREBASE_JSON }}" > ./src/main/resources/firebase/firebase.json
+          mkdir -p ./src/main/resources
+          echo "${{ secrets.APPLICATION_MAIN_PROPERTIES }}" > ./src/main/resources/application.yml
 
-      - name: test and build
-        run: ./gradlew clean build
+      - name: application-aws.yml 파일 만들기
+        run: |
+          mkdir -p ./src/main/resources
+          echo "${{ secrets.APPLICATION_MAIN_AWS_PROPERTIES }}" > ./src/main/resources/application-aws.yml
 
-      - name: set AWS credential
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-region: ap-northeast-2
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      - name: application.yml 파일 만들기
+        run: |
+          mkdir -p ./src/test/resources
+          echo "${{ secrets.APPLICATION_TEST_PROPERTIES }}" > ./src/test/resources/application.yml
 
-      - name: login ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v2
+      - name: application.yml 파일 만들기
+        run: |
+          mkdir -p ./src/test/resources
+          echo "${{ secrets.APPLICATION_TEST_AWS_PROPERTIES }}" > ./src/test/resources/application-test.yml
 
-      - name: build docker image
-        run: docker build -t gathering-application .
+      - name: 권한 주기
+        run: chmod +x ./gradlew
 
-      - name: attach docker tag
-        run: docker tag gathering-application ${{ steps.login-ecr.outputs.registry }}/gathering-application:latest
+      - name: 테스트 및 빌드하기
+        run: ./gradlew clean build -x test
 
-      - name: push docker image
-        run: docker push ${{ steps.login-ecr.outputs.registry }}/gathering-application:latest
+      - name: 빌드된 파일 이름 변경하기
+        run: mv ./build/libs/*SNAPSHOT.jar ./project.jar
 
-      - name: ssh EC2
-        uses: appleboy/ssh-action@v1.0.3
+      - name: SCP로 EC2에 빌드된 파일 전송하기
+        uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
-          script_stop: true
-          script: |
-            docker stop gathering-application || true
-            docker rm gathering-application || true
-            docker pull ${{ steps.login-ecr.outputs.registry }}/gathering-application:latest
-            docker run -d --name gathering-application -p 8080:8080 ${{ steps.login-ecr.outputs.registry }}/gathering-application:latest
+          source: project.jar
+          target: /home/ubuntu/server/temp

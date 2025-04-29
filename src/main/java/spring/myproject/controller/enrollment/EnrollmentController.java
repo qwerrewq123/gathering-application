@@ -33,9 +33,11 @@ public class EnrollmentController {
         return new ResponseEntity<>(disEnrollGatheringResponse, HttpStatus.OK);
     }
 
-    @PatchMapping("/gathering/{gatheringId}/permit")
-    public ResponseEntity<PermitEnrollmentResponse> permit(@PathVariable Long gatheringId, @Id Long userId){
-        PermitEnrollmentResponse permitEnrollmentResponse = enrollmentService.permit(gatheringId,userId);
+    @PatchMapping("/gathering/{gatheringId}/permit/{enrollmentId}")
+    public ResponseEntity<PermitEnrollmentResponse> permit(@PathVariable Long gatheringId,
+                                                           @PathVariable Long enrollmentId,
+                                                           @Id Long userId){
+        PermitEnrollmentResponse permitEnrollmentResponse = enrollmentService.permit(gatheringId,enrollmentId,userId);
         return new ResponseEntity<>(permitEnrollmentResponse, HttpStatus.OK);
     }
 }

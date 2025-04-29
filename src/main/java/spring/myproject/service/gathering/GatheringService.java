@@ -69,12 +69,13 @@ public class GatheringService {
             Gathering gathering = Gathering.of(addGatheringRequest,user,category,image);
             Enrollment enrollment = Enrollment.of(true, gathering, user, LocalDateTime.now());
             if(image!=null) imageRepository.save(image);
+            gatheringRepository.save(gathering);
             Topic topic = generateTopic(gathering);
             gathering.changeTopic(topic);
             topicRepository.save(topic);
-            gatheringRepository.save(gathering);
             enrollmentRepository.save(enrollment);
             fcmTokenTopicService.subscribeToTopic(topic.getTopicName(),userId);
+            recommendService.addScore(gathering.getId(), 1);
             return AddGatheringResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE, gathering.getId());
     }
 
@@ -84,7 +85,7 @@ public class GatheringService {
                     .orElseThrow(()->new NotFoundUserException("no exist User!!"));
             Category category = categoryRepository.findByName(updateGatheringRequest.getCategory())
                     .orElseThrow(()-> new NotFoundCategoryException("no exist Category!!"));
-            Gathering gathering = gatheringRepository.findGatheringFetchCreatedById(gatheringId)
+            Gathering gathering = gatheringRepository.findGatheringFetchCreatedByAndTokensId(gatheringId)
                     .orElseThrow(()->new NotFoundGatheringException("no exist Gathering!!"));
             User createBy = gathering.getCreateBy();
             boolean authorize = Objects.equals(createBy.getId(),userId);

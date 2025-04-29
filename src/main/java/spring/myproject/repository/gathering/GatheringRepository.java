@@ -12,7 +12,6 @@ import spring.myproject.dto.response.gathering.querydto.GatheringsQuery;
 import spring.myproject.dto.response.gathering.querydto.ParticipatedQuery;
 import spring.myproject.entity.gathering.Gathering;
 import spring.myproject.dto.response.gathering.querydto.MainGatheringsQuery;
-import spring.myproject.entity.user.User;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -87,7 +86,12 @@ public interface GatheringRepository extends JpaRepository<Gathering,Long> {
             "left join fetch g.createBy u " +
             "left join fetch u.tokens t " +
             "where g.id = :gatheringId")
-    Optional<Gathering> findGatheringFetchCreatedById(Long gatheringId);
+    Optional<Gathering> findGatheringFetchCreatedByAndTokensId(Long gatheringId);
+    @Query("select g from Gathering g " +
+            "left join fetch g.createBy u " +
+            "left join fetch g.topic t " +
+            "where g.id = :gatheringId")
+    Optional<Gathering> findGatheringFetchCreatedAndTopicBy(Long gatheringId);
 
     @Query(value = "update gathering set count = count + :val where id = :gatheringId"
             ,nativeQuery = true)

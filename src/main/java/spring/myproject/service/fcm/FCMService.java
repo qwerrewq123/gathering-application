@@ -65,7 +65,6 @@ public class FCMService {
 					.map(FCMToken::getTokenValue)
 					.toList();
 			fcmTokenRepository.deleteByTokenValueIn(failedTokenList);
-			fcmTokenRepository.deleteByTokenValueIn(failedTokenList);
 		}
 
 	}

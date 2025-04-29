@@ -20,7 +20,6 @@ import spring.myproject.common.exception.enrollment.NotFoundEnrollmentException;
 import spring.myproject.common.exception.gathering.NotFoundGatheringException;
 import spring.myproject.common.exception.user.NotFoundUserException;
 import spring.myproject.service.alarm.AlarmService;
-import spring.myproject.service.fcm.FCMService;
 import spring.myproject.service.fcm.FCMTokenTopicService;
 import spring.myproject.service.recommend.RecommendService;
 
@@ -39,13 +38,12 @@ public class EnrollmentService {
     private final UserRepository userRepository;
     private final GatheringRepository gatheringRepository;
     private final FCMTokenTopicService fcmTokenTopicService;
-    private final FCMService fcmService;
     private final AlarmService alarmService;
     private final RecommendService recommendService;
     public EnrollGatheringResponse enrollGathering(Long gatheringId, Long userId) {
             User user = userRepository.findById(userId)
                     .orElseThrow(()->new NotFoundUserException("no exist User!!"));
-            Gathering gathering = gatheringRepository.findGatheringFetchCreatedById(gatheringId).orElseThrow(
+            Gathering gathering = gatheringRepository.findGatheringFetchCreatedByAndTokensId(gatheringId).orElseThrow(
                     () -> new NotFoundGatheringException("no exist Gathering!!"));
             Enrollment exist = enrollmentRepository.existEnrollment(gatheringId, userId);
             if(exist != null) throw new AlreadyEnrollmentException("Already enrolled;");
@@ -57,7 +55,7 @@ public class EnrollmentService {
             TokenNotificationRequestDto tokenNotificationRequestDto = TokenNotificationRequestDto.from(title,content);
             User createBy = gathering.getCreateBy();
             List<FCMToken> tokens = createBy.getTokens();
-            fcmService.sendByToken(tokenNotificationRequestDto, tokens);
+            fcmTokenTopicService.sendByToken(tokenNotificationRequestDto, tokens);
             String alarmContent = "%s has enrolled gathering".formatted(user.getNickname());
             Alarm alarm = Alarm.from(alarmContent, createBy);
             alarmService.save(alarm);
@@ -67,11 +65,11 @@ public class EnrollmentService {
 
             User user = userRepository.findById(userId)
                     .orElseThrow(()->new NotFoundUserException("no exist User!!"));
-            Gathering gathering = gatheringRepository.findTopicById(gatheringId).orElseThrow(
-                () -> new NotFoundGatheringException("no exist Gathering!!"));
-            Long createdById = gathering.getCreateBy().getId();
+            Gathering gathering = gatheringRepository.findGatheringFetchCreatedAndTopicBy(gatheringId)
+                    .orElseThrow(() -> new NotFoundGatheringException("no exist Gathering!!"));
             Enrollment enrollment = enrollmentRepository.findEnrollment(gatheringId, user.getId(),true)
                     .orElseThrow(() ->  new NotFoundEnrollmentException("no exist Enrollment!!"));
+            Long createdById = gathering.getCreateBy().getId();
             if(createdById.equals(userId)) throw new NotDisEnrollmentException("Opener cannot disEnroll!!");
             enrollmentRepository.delete(enrollment);
             gatheringRepository.updateCount(gatheringId,-1);
@@ -83,13 +81,13 @@ public class EnrollmentService {
     }
 
 
-    public PermitEnrollmentResponse permit(Long gatheringId, Long userId) {
+    public PermitEnrollmentResponse permit(Long gatheringId, Long enrollmentId,Long userId) {
             userRepository.findById(userId)
                     .orElseThrow(()->new NotFoundUserException("no exist User!!"));
-            Gathering gathering = gatheringRepository.findById(gatheringId)
+            Gathering gathering = gatheringRepository.findGatheringFetchCreatedAndTopicBy(gatheringId)
                     .orElseThrow(() -> new NotFoundGatheringException("no exist Gathering!!"));
-            Enrollment enrollment = enrollmentRepository.findEnrollment(gatheringId, userId, false)
-                    .orElseThrow(() -> new NotFoundEnrollmentException("no exist Enrollment!!"));
+            Enrollment enrollment = enrollmentRepository.findEnrollmentEnrolledByAndTokensById(enrollmentId)
+                    .orElseThrow(()-> new NotFoundEnrollmentException("no exist Enrollment!!"));
             Long createdById = gathering.getCreateBy().getId();
             if(!createdById.equals(userId)) throw new NotAuthorizeException("Not authorized");
             enrollment.changeAccepted();
@@ -97,10 +95,11 @@ public class EnrollmentService {
             Long enrolledById = enrolledBy.getId();
             List<FCMToken> tokens = enrolledBy.getTokens();
             gatheringRepository.updateCount(gatheringId,1);
+            recommendService.addScore(gatheringId,1);
             String title = "permit";
             String content = "permit Gathering";
             TokenNotificationRequestDto tokenNotificationRequestDto = TokenNotificationRequestDto.from(title, content);
-            fcmService.sendByToken(tokenNotificationRequestDto, tokens);
+            fcmTokenTopicService.sendByToken(tokenNotificationRequestDto, tokens);
             Topic topic = gathering.getTopic();
             String topicName = topic.getTopicName();
             fcmTokenTopicService.subscribeToTopic(topicName,enrolledById);

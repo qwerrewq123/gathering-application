@@ -1,13 +1,12 @@
 package spring.myproject.service.fcm;
 
 import lombok.RequiredArgsConstructor;
-import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import spring.myproject.common.exception.fcm.AlreadySubscribeTopicException;
 import spring.myproject.common.exception.fcm.NotFoundTopicException;
 import spring.myproject.common.exception.user.NotFoundUserException;
+import spring.myproject.dto.request.fcm.TokenNotificationRequestDto;
 import spring.myproject.entity.fcm.FCMToken;
 import spring.myproject.entity.fcm.FCMTokenTopic;
 import spring.myproject.entity.fcm.Topic;
@@ -69,9 +68,9 @@ public class FCMTokenTopicService {
                     .collect(Collectors.toList());
             fcmTokenTopicRepository.saveAll(newSubscriptions);
 
-            for (Topic topic : subscribedTopics) {
-                fcmService.subscribeToTopic(topic.getTopicName(), Collections.singletonList(fcmToken.getTokenValue()));
-            }
+//            for (Topic topic : subscribedTopics) {
+//                fcmService.subscribeToTopic(topic.getTopicName(), Collections.singletonList(fcmToken.getTokenValue()));
+//            }
         }
     }
 
@@ -105,7 +104,7 @@ public class FCMTokenTopicService {
         List<String> tokenValues = userTokens.stream()
                 .map(FCMToken::getTokenValue)
                 .collect(Collectors.toList());
-        fcmService.subscribeToTopic(topicName, tokenValues);
+//        fcmService.subscribeToTopic(topicName, tokenValues);
     }
 
     @Transactional
@@ -117,16 +116,18 @@ public class FCMTokenTopicService {
         User user = userRepository.findAndTokenByUserId(userId)
                 .orElseThrow(() -> new NotFoundUserException("Not Found User"));
 
-        userTopicRepository.deleteByTopicAndUser(topic, user);
-        fcmTokenTopicRepository.deleteByTopic(topic);
-
         List<FCMToken> memberTokens = user.getTokens();
         List<String> tokenValues = memberTokens.stream()
                 .map(FCMToken::getTokenValue)
                 .collect(Collectors.toList());
-        fcmService.unsubscribeFromTopic(topicName, tokenValues);
-    }
+        userTopicRepository.deleteByTopicAndUser(topic, user);
+        fcmTokenTopicRepository.deleteByTokenValueIn(tokenValues);
 
+//        fcmService.unsubscribeFromTopic(topicName, tokenValues);
+    }
+    public void sendByToken(TokenNotificationRequestDto tokenNotificationRequestDto, List<FCMToken> tokens) {
+//        fcmService.sendByToken(tokenNotificationRequestDto, tokens);
+    }
 
 
 
