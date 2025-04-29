@@ -140,6 +140,8 @@ public class GatheringRepositoryTest {
         for(int i=0;i<5;i++){
             recommendRepository.updateCount(gathering1.getId(), LocalDate.now(),1);
         }
+        em.flush();
+        em.clear();
         List<GatheringsQuery> gatheringDetailQueries = gatheringRepository.gatheringsRecommend(LocalDate.now());
         assertThat(gatheringDetailQueries).hasSize(1);
     }

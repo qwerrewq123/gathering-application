@@ -2,6 +2,8 @@ package spring.myproject.service.gathering;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,8 +12,10 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import spring.myproject.entity.category.Category;
+import spring.myproject.entity.enrollment.Enrollment;
 import spring.myproject.entity.fcm.Topic;
 import spring.myproject.entity.gathering.Gathering;
+import spring.myproject.entity.image.Image;
 import spring.myproject.entity.user.Role;
 import spring.myproject.entity.user.User;
 import spring.myproject.common.exception.category.NotFoundCategoryException;
@@ -39,27 +43,29 @@ import static spring.myproject.dto.request.gathering.GatheringRequestDto.*;
 import static spring.myproject.dto.response.gathering.GatheringResponseDto.*;
 import static spring.myproject.utils.ConstClass.*;
 
-@SpringBootTest
 @ExtendWith(MockitoExtension.class)
 public class GatheringServiceTest {
-    @Autowired
+    @InjectMocks
     GatheringService gatheringService;
-    @MockitoBean
+    @Mock
     GatheringRepository gatheringRepository;
-    @MockitoBean
-    EnrollmentRepository enrollmentRepository;
-    @MockitoBean
-    ImageRepository imageRepository;
-    @MockitoBean
+    @Mock
     CategoryRepository categoryRepository;
-    @MockitoBean
+    @Mock
     UserRepository userRepository;
-    @MockitoBean
+    @Mock
     S3ImageUploadService s3ImageUploadService;
-    @MockitoBean
+    @Mock
     FCMTokenTopicService fcmTokenTopicService;
-    @MockitoBean
+    @Mock
     TopicRepository topicRepository;
+    @Mock
+    RecommendService recommendService;
+    @Mock
+    ImageRepository imageRepository;
+    @Mock
+    EnrollmentRepository enrollmentRepository;
+
 
     @Test
     void addGathering() throws IOException {
@@ -71,8 +77,12 @@ public class GatheringServiceTest {
         when(categoryRepository.findByName("true category")).thenReturn(Optional.of(mock(Category.class)));
         when(categoryRepository.findByName("false category")).thenReturn(Optional.empty());
         when(s3ImageUploadService.upload(any(MultipartFile.class))).thenReturn("url");
+        when(imageRepository.save(any(Image.class))).thenReturn(mock(Image.class));
+        when(gatheringRepository.save(any(Gathering.class))).thenReturn(mock(Gathering.class));
         when(topicRepository.save(any(Topic.class))).thenReturn(mock(Topic.class));
+        when(enrollmentRepository.save(any(Enrollment.class))).thenReturn(mock(Enrollment.class));
         doNothing().when(fcmTokenTopicService).subscribeToTopic(any(String.class),anyLong());
+        doNothing().when(recommendService).addScore(any(),anyInt());
         AddGatheringRequest trueAddGatheringRequest = AddGatheringRequest.builder()
                 .category("true category")
                 .build();
@@ -100,10 +110,14 @@ public class GatheringServiceTest {
         when(userRepository.findById(2L)).thenReturn(Optional.empty());
         when(categoryRepository.findByName("true category")).thenReturn(Optional.of(mock(Category.class)));
         when(categoryRepository.findByName("false category")).thenReturn(Optional.empty());
-        when(gatheringRepository.findById(1L)).thenReturn(Optional.of(mockGathering));
-        when(gatheringRepository.findById(2L)).thenReturn(Optional.empty());
-        when(gatheringRepository.findById(3L)).thenReturn(Optional.of(falseMockGathering));
+        when(gatheringRepository.findGatheringFetchCreatedByAndTokensId(1L))
+                .thenReturn(Optional.of(mockGathering));
+        when(gatheringRepository.findGatheringFetchCreatedByAndTokensId(2L))
+                .thenReturn(Optional.empty());
+        when(gatheringRepository.findGatheringFetchCreatedByAndTokensId(3L))
+                .thenReturn(Optional.of(falseMockGathering));
         when(s3ImageUploadService.upload(any(MultipartFile.class))).thenReturn("url");
+        when(imageRepository.save(any(Image.class))).thenReturn(mock(Image.class));
         UpdateGatheringRequest trueUpdateGatheringRequest = UpdateGatheringRequest.builder()
                 .category("true category")
                 .build();

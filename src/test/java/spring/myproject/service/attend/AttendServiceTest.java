@@ -2,11 +2,14 @@ package spring.myproject.service.attend;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.transaction.annotation.Transactional;
 import spring.myproject.common.async.AsyncService;
 import spring.myproject.common.exception.attend.NotFoundAttendException;
 import spring.myproject.common.exception.gathering.NotFoundGatheringException;
@@ -36,22 +39,21 @@ import static org.mockito.Mockito.*;
 import static spring.myproject.dto.response.attend.AttendResponseDto.*;
 import static spring.myproject.utils.ConstClass.*;
 
-@SpringBootTest
 @ExtendWith(MockitoExtension.class)
 public class AttendServiceTest {
-    @Autowired
+    @InjectMocks
     AttendService attendService;
-    @MockitoBean
+    @Mock
     UserRepository userRepository;
-    @MockitoBean
+    @Mock
     GatheringRepository gatheringRepository;
-    @MockitoBean
+    @Mock
     AttendRepository attendRepository;
-    @MockitoBean
+    @Mock
     MeetingRepository meetingRepository;
-    @MockitoBean
+    @Mock
     RecommendService recommendService;
-    @MockitoBean
+    @Mock
     AsyncService asyncService;
     @Test
     public void addAttend() {
@@ -91,17 +93,12 @@ public class AttendServiceTest {
                 "address",1,"hobby", Role.USER,"nickname",null,null,null);
         Meeting mockMeeting = Meeting.builder().createdBy(mockUser1).count(1).build();
         Attend mockAttend = Attend.builder().attendBy(mockUser1).build();
-        when(userRepository.findById(1L)).thenReturn(Optional.of(mockUser1));
         when(userRepository.findById(2L)).thenReturn(Optional.of(mockUser2));
         when(userRepository.findById(3L)).thenReturn(Optional.empty());
 
         when(meetingRepository.findById(1L)).thenReturn(Optional.of(mockMeeting));
         when(meetingRepository.findById(2L)).thenReturn(Optional.empty());
-
-        when(attendRepository.findById(1L)).thenReturn(Optional.of(mockAttend));
-        when(attendRepository.findById(2L)).thenReturn(Optional.empty());
-        doNothing().when(meetingRepository).delete(any(Meeting.class));
-        doNothing().when(recommendService).addScore(anyLong(),anyInt());
+        when(attendRepository.findByUserIdAndMeetingId(eq(2L),any())).thenReturn(null);
         assertThatThrownBy(()->attendService.disAttend(2L,3L,1L))
                 .isInstanceOf(NotFoundUserException.class);
         assertThatThrownBy(()->attendService.disAttend(2L,2L,1L))

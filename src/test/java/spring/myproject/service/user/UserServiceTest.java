@@ -2,16 +2,21 @@ package spring.myproject.service.user;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import spring.myproject.common.async.AsyncService;
 import spring.myproject.common.exception.user.*;
+import spring.myproject.entity.fcm.FCMToken;
 import spring.myproject.entity.image.Image;
 import spring.myproject.entity.user.Role;
 import spring.myproject.repository.image.ImageRepository;
@@ -19,6 +24,7 @@ import spring.myproject.entity.user.User;
 import spring.myproject.repository.user.UserRepository;
 import spring.myproject.common.provider.JwtProvider;
 import spring.myproject.common.s3.S3ImageUploadService;
+import spring.myproject.service.fcm.FCMTokenTopicService;
 
 import java.io.IOException;
 import java.util.List;
@@ -30,24 +36,24 @@ import static spring.myproject.dto.request.user.UserRequestDto.*;
 import static spring.myproject.dto.response.user.UserResponseDto.*;
 import static spring.myproject.utils.ConstClass.*;
 
-@SpringBootTest
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
 
-    @Autowired
+    @InjectMocks
     UserService userService;
-    @MockitoBean
+    @Mock
     UserRepository userRepository;
-    @MockitoBean
+    @Mock
     PasswordEncoder passwordEncoder;
-    @MockitoBean
+    @Mock
     JwtProvider jwtProvider;
-    @MockitoBean
+    @Mock
     S3ImageUploadService s3ImageUploadService;
-    @MockitoBean
+    @Mock
     ImageRepository imageRepository;
-    @MockitoBean
+    @Mock
     AsyncService asyncService;
+
 
     @Test
     void idCheck() {
@@ -144,6 +150,7 @@ class UserServiceTest {
     void emailCertification() {
         when(userRepository.findByEmail("true email")).thenReturn(List.of());
         when(userRepository.findByEmail("false email")).thenReturn(List.of(mock(User.class), mock(User.class)));
+        doNothing().when(asyncService).asyncTask(any());
         EmailCertificationRequest trueEmailCertificationRequest = EmailCertificationRequest.builder()
                 .email("true email")
                 .build();

@@ -2,10 +2,13 @@ package spring.myproject.service.like;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.transaction.annotation.Transactional;
 import spring.myproject.entity.gathering.Gathering;
 import spring.myproject.entity.like.Like;
 import spring.myproject.entity.user.Role;
@@ -29,18 +32,17 @@ import static spring.myproject.dto.response.like.LikeResponseDto.*;
 import static spring.myproject.utils.ConstClass.SUCCESS_CODE;
 import static spring.myproject.utils.ConstClass.SUCCESS_MESSAGE;
 
-@SpringBootTest
 @ExtendWith(MockitoExtension.class)
 public class LikeServiceTest {
-    @Autowired
+    @InjectMocks
     LikeService likeService;
-    @MockitoBean
+    @Mock
     LikeRepository likeRepository;
-    @MockitoBean
+    @Mock
     UserRepository userRepository;
-    @MockitoBean
+    @Mock
     GatheringRepository gatheringRepository;
-    @MockitoBean
+    @Mock
     RecommendService recommendService;
 
     @Test
