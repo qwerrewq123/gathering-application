@@ -76,19 +76,38 @@ public interface GatheringRepository extends JpaRepository<Gathering,Long> {
     List<MainGatheringsQuery> gatherings();
 
     @Query(
-            value = "SELECT " +
-                    "g.id as id, g.title as title, g.content as content, g.register_date as registerDate, " +
-                    "ca.name as category, cr.username as createdBy, im.url as url, g.count as count " +
-                    "FROM ( " +
-                    "SELECT gathering_id, name " +
-                    "FROM category " +
-                    "WHERE name = :name " +
-                    ") ca " +
-                    "LEFT JOIN gathering g ON ca.gathering_id = g.id " +
-                    "LEFT JOIN user cr ON g.user_id = cr.id " +
-                    "LEFT JOIN image im ON g.image_id = im.id " +
-                    "ORDER BY g.count DESC " +
-                    "LIMIT 9"
+            value =
+//                    "SELECT " +
+//                    "g.id as id, g.title as title, g.content as content, g.register_date as registerDate, " +
+//                    "ca.name as category, cr.username as createdBy, im.url as url, g.count as count " +
+//                    "FROM ( " +
+//                    "SELECT gathering_id, name " +
+//                    "FROM category " +
+//                    "WHERE name = :name " +
+//                    ") ca " +
+//                    "LEFT JOIN gathering g ON ca.gathering_id = g.id " +
+//                    "LEFT JOIN user cr ON g.user_id = cr.id " +
+//                    "LEFT JOIN image im ON g.image_id = im.id " +
+//                    "ORDER BY g.count DESC " +
+//                    "LIMIT 9"
+                    "SELECT " +
+                            "g.id as id, g.title as title, g.content as content, g.register_date as registerDate, " +
+                            "g.category_name AS category, " +
+                            "cr.username AS createdBy, " +
+                            "im.url as url, " +
+                            "g.count as count " +
+                            "FROM ( " +
+                            "SELECT " +
+                            "g.*, " +
+                            "ca.name AS category_name " +
+                            "FROM gathering g " +
+                            "JOIN category ca ON ca.gathering_id = g.id " +
+                            "WHERE ca.name = :name " +
+                            "ORDER BY g.count DESC " +
+                            "LIMIT 9 " +
+                            ") g " +
+                            "LEFT JOIN user cr ON g.user_id = cr.id " +
+                            "LEFT JOIN image im ON g.image_id = im.id"
     ,nativeQuery = true
     )
     List<MainGatheringsQuery> subGatherings(String name);
