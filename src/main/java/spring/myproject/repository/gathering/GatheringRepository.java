@@ -20,41 +20,41 @@ import java.util.Optional;
 
 public interface GatheringRepository extends JpaRepository<Gathering,Long> {
     @Query(
-            "select " +
-            "new spring.myproject.dto.response.gathering.querydto.GatheringDetailQuery" +
-            "(g.id,g.title,g.content,g.registerDate,ca.name,cr.username,crm.url,u.username,u.nickname,pm.url,im.url,g.count) " +
-            "from Gathering g " +
-            "join g.createBy cr " +
-            "join cr.profileImage crm " +
-            "join Category ca on ca.gathering.id = g.id " +
-            "join g.gatheringImage im " +
-            "left join g.enrollments e " +
-            "left join e.enrolledBy u " +
-            "left join u.profileImage pm " +
-            "where g.id = :gatheringId order by u.id asc limit 9"
-//            value = "SELECT " +
-//                    "g.id as id, g.title as title, g.content as content, g.register_date as registerDate, " +
-//                    "ca.name as category, cr.username as createdBy, crm.url as createdByUrl, " +
-//                    "u.username as participatedBy, u.nickname as participatedByNickname, " +
-//                    "pm.url as participatedByUrl, g.count as count " +
-//                    "FROM gathering g " +
-//                    "JOIN category ca ON ca.gathering_id = g.id " +
-//                    "JOIN user cr ON g.user_id = cr.id " +
-//                    "JOIN image crm ON cr.image_id = crm.id " +
-//                    "JOIN image im ON g.image_id = im.id " +
-//                    "LEFT JOIN ( " +
-//                    "    SELECT e.* " +
-//                    "    FROM enrollment e " +
-//                    "    JOIN user u ON u.id = e.user_id " +
-//                    "    JOIN gathering ge ON ge.id = e.gathering_id AND ge.id = 50 " +
-//                    "    ORDER BY u.id " +
-//                    "    LIMIT 10 " +
-//                    ") e ON e.gathering_id = g.id " +
-//                    "LEFT JOIN user u ON u.id = e.user_id " +
-//                    "LEFT JOIN image pm ON u.image_id = pm.id " +
-//                    "WHERE g.id = 50 " +
-//                    "ORDER BY u.id",
-//            nativeQuery = true
+//            "select " +
+//            "new spring.myproject.dto.response.gathering.querydto.GatheringDetailQuery" +
+//            "(g.id,g.title,g.content,g.registerDate,ca.name,cr.username,crm.url,u.username,u.nickname,pm.url,im.url,g.count) " +
+//            "from Gathering g " +
+//            "join g.createBy cr " +
+//            "join cr.profileImage crm " +
+//            "join Category ca on ca.gathering.id = g.id " +
+//            "join g.gatheringImage im " +
+//            "left join g.enrollments e " +
+//            "left join e.enrolledBy u " +
+//            "left join u.profileImage pm " +
+//            "where g.id = :gatheringId order by u.id asc limit 9"
+            value = "SELECT " +
+                    "g.id as id, g.title as title, g.content as content, g.register_date as registerDate, " +
+                    "ca.name as category, cr.username as createdBy, crm.url as createdByUrl, " +
+                    "u.username as participatedBy, u.nickname as participatedByNickname, " +
+                    "pm.url as participatedByUrl, g.count as count " +
+                    "FROM gathering g " +
+                    "JOIN category ca ON ca.gathering_id = g.id " +
+                    "JOIN user cr ON g.user_id = cr.id " +
+                    "JOIN image crm ON cr.image_id = crm.id " +
+                    "JOIN image im ON g.image_id = im.id " +
+                    "LEFT JOIN ( " +
+                    "    SELECT e.* " +
+                    "    FROM enrollment e " +
+                    "    JOIN user u ON u.id = e.user_id " +
+                    "    JOIN gathering ge ON ge.id = e.gathering_id AND ge.id = 50 " +
+                    "    ORDER BY u.id " +
+                    "    LIMIT 10 " +
+                    ") e ON e.gathering_id = g.id " +
+                    "LEFT JOIN user u ON u.id = e.user_id " +
+                    "LEFT JOIN image pm ON u.image_id = pm.id " +
+                    "WHERE g.id = 50 " +
+                    "ORDER BY u.id",
+            nativeQuery = true
     )
     List<GatheringDetailQuery> gatheringDetail(Long gatheringId);
     @Query("select new spring.myproject.dto.response.gathering.querydto.ParticipatedQuery(u.username,u.nickname,i.url) " +
