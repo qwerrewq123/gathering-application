@@ -23,10 +23,10 @@ public class Board {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "user_id")
     User user;
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "gathering_id")
     Gathering gathering;
     @OneToMany(mappedBy = "board")

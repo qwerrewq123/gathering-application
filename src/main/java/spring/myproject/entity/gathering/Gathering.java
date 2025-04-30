@@ -29,10 +29,6 @@ public class Gathering {
     private String content;
     private LocalDateTime registerDate;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id")
-    private Category category;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User createBy;
@@ -53,21 +49,19 @@ public class Gathering {
     public void changeTopic(Topic topic){
         this.topic = topic;
     }
-    public void changeGathering(Image image, Category category, UpdateGatheringRequest updateGatheringRequest){
+    public void changeGathering(Image image, UpdateGatheringRequest updateGatheringRequest){
         if(image != null) this.gatheringImage = image;
-        this.category = category;
         this.title = updateGatheringRequest.getTitle();
         this.content = updateGatheringRequest.getContent();
         this.registerDate = LocalDateTime.now();
     }
 
 
-    public static Gathering of(AddGatheringRequest addGatheringRequest, User createBy, Category category, Image image){
+    public static Gathering of(AddGatheringRequest addGatheringRequest, User createBy, Image image){
         return Gathering.builder()
                 .title(addGatheringRequest.getTitle())
                 .content(addGatheringRequest.getContent())
                 .createBy(createBy)
-                .category(category)
                 .registerDate(LocalDateTime.now())
                 .gatheringImage(image)
                 .count(1)

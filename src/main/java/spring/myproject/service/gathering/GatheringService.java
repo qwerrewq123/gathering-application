@@ -15,6 +15,7 @@ import spring.myproject.entity.category.Category;
 import spring.myproject.entity.fcm.Topic;
 import spring.myproject.service.fcm.FCMTokenTopicService;
 import spring.myproject.service.recommend.RecommendService;
+import spring.myproject.utils.CategoryUtil;
 import spring.myproject.utils.mapper.GatheringFactory;
 import spring.myproject.repository.category.CategoryRepository;
 import spring.myproject.entity.enrollment.Enrollment;
@@ -62,14 +63,17 @@ public class GatheringService {
 
             User user = userRepository.findById(userId)
                     .orElseThrow(()->new NotFoundUserException("no exist User!!"));
-            Category category = categoryRepository.findByName(addGatheringRequest.getCategory())
-                    .orElseThrow(()-> new NotFoundCategoryException("no exist Category!!"));
+            if(!CategoryUtil.existCategory(addGatheringRequest.getCategory())){
+                throw new NotFoundCategoryException("category not found");
+            }
             Image image = null;
             image = saveImage(image,file);
-            Gathering gathering = Gathering.of(addGatheringRequest,user,category,image);
+            Gathering gathering = Gathering.of(addGatheringRequest,user,image);
+            Category category = Category.from(addGatheringRequest.getCategory(),gathering);
             Enrollment enrollment = Enrollment.of(true, gathering, user, LocalDateTime.now());
             if(image!=null) imageRepository.save(image);
             gatheringRepository.save(gathering);
+            categoryRepository.save(category);
             Topic topic = generateTopic(gathering);
             gathering.changeTopic(topic);
             topicRepository.save(topic);
@@ -83,8 +87,8 @@ public class GatheringService {
 
             userRepository.findById(userId)
                     .orElseThrow(()->new NotFoundUserException("no exist User!!"));
-            Category category = categoryRepository.findByName(updateGatheringRequest.getCategory())
-                    .orElseThrow(()-> new NotFoundCategoryException("no exist Category!!"));
+            Category category = categoryRepository.findBy(gatheringId, updateGatheringRequest.getCategory())
+                    .orElseThrow(()-> new NotFoundCategoryException("category not found"));
             Gathering gathering = gatheringRepository.findGatheringFetchCreatedByAndTokensId(gatheringId)
                     .orElseThrow(()->new NotFoundGatheringException("no exist Gathering!!"));
             User createBy = gathering.getCreateBy();
@@ -93,7 +97,8 @@ public class GatheringService {
             Image image = null;
             image = saveImage(image,file);
             if(image!=null) imageRepository.save(image);
-            gathering.changeGathering(image,category,updateGatheringRequest);
+            gathering.changeGathering(image,updateGatheringRequest);
+            category.changeName(updateGatheringRequest.getCategory());
             return UpdateGatheringResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE, gatheringId);
     }
 
@@ -125,14 +130,17 @@ public class GatheringService {
             return GatheringLikeResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE,content,hasNext);
     }
 
-    public MainGatheringResponse gatherings(String title) {
+    public MainGatheringResponse gatherings() {
 
-            List<MainGatheringsQuery> mainGatheringsQueryList = gatheringRepository.gatherings(title);
-            List<GatheringsQuery> gatherings = toGatheringQueriesList(mainGatheringsQueryList);
+//            List<MainGatheringsQuery> mainGatheringsQueryList = gatheringRepository.gatherings();
+        List<MainGatheringsQuery> mainGatheringsQueryList = CategoryUtil.list.parallelStream()
+                .map(gatheringRepository::subGatherings)
+                .flatMap(List::stream)
+                .toList();
+        List<GatheringsQuery> gatherings = toGatheringQueriesList(mainGatheringsQueryList);
             List<MainGatheringElement> mainGatheringElements = toGatheringsResponseList(gatherings);
             Map<String, CategoryTotalGatherings> map = categorizeByCategory(mainGatheringElements);
             return toMainGatheringResponse(map);
-
     }
 
     public ParticipatedByResponse participated(Long gatheringId,Integer pageNum,Integer pageSize) {

@@ -54,10 +54,9 @@ public class GatheringController {
     }
 
     @GetMapping("/gatherings")
-    public ResponseEntity<MainGatheringResponse> gatherings(@RequestParam(defaultValue = "") String title
-                                                            ){
+    public ResponseEntity<MainGatheringResponse> gatherings(){
 
-        MainGatheringResponse mainGatheringResponse = gatheringService.gatherings(title);
+        MainGatheringResponse mainGatheringResponse = gatheringService.gatherings();
         return new ResponseEntity<>(mainGatheringResponse, HttpStatus.OK);
     }
     @GetMapping("/gathering")
