@@ -1,5 +1,6 @@
 package spring.myproject.repository.enrollment;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -34,24 +35,41 @@ class EnrollmentRepositoryTest {
     GatheringRepository gatheringRepository;
     @Autowired
     EnrollmentRepository enrollmentRepository;
+    Category category;
+    Image userImage;
+    Image gatheringImage;
+    List<User> users;
+    List<Gathering> gatherings;
+    List<Enrollment> enrollments;
+    @BeforeEach
+    void beforeEach(){
+        category = returnDummyCategory(1);
+        userImage = returnDummyImage(1);
+        gatheringImage = returnDummyImage(1);
+        users = List.of(returnDummyUser(1, userImage),
+                returnDummyUser(2, userImage),
+                returnDummyUser(3, userImage));
+        gatherings = List.of(returnDummyGathering(1, category, users.get(0), gatheringImage),
+                returnDummyGathering(1, category, users.get(0), gatheringImage),
+                returnDummyGathering(1, category, users.get(0), gatheringImage),
+                returnDummyGathering(1, category, users.get(0), gatheringImage),
+                returnDummyGathering(1, category, users.get(0), gatheringImage));
+        enrollments = List.of(returnDummyEnrollment(users.get(0),gatherings.get(0)),
+                returnDummyEnrollment(users.get(1),gatherings.get(0)),
+                returnDummyEnrollment(users.get(2),gatherings.get(0)));
+    }
     @Test
     void existEnrollment(){
-        Category category = returnDummyCategory(1);
-        Image userImage = returnDummyImage(1);
-        Image gatheringImage = returnDummyImage(1);
-        User user1 = returnDummyUser(1, userImage);
-        User user2 = returnDummyUser(2, userImage);
-        User user3 = returnDummyUser(3, userImage);
-        Gathering gathering = returnDummyGathering(1, category, user1, gatheringImage);
-        Enrollment enrollment1 = returnDummyEnrollment(user1,gathering);
-        Enrollment enrollment2 = returnDummyEnrollment(user2,gathering);
-        Enrollment enrollment3 = returnDummyEnrollment(user3,gathering);
-        gathering.enroll(List.of(enrollment1,enrollment2));
+        Gathering gathering = gatherings.get(0);
+        User user1 = users.get(0);
+        User user2 = users.get(1);
+        User user3 = users.get(2);
         categoryRepository.save(category);
-        userRepository.saveAll(List.of(user1,user2,user3));
+        userRepository.saveAll(users);
         imageRepository.saveAll(List.of(userImage,gatheringImage));
-        gatheringRepository.saveAll(List.of(gathering));
-        enrollmentRepository.saveAll(List.of(enrollment1,enrollment2,enrollment3));
+        gatheringRepository.saveAll(gatherings);
+        enrollmentRepository.saveAll(enrollments);
+
 
         Enrollment fetchEnrollment1 = enrollmentRepository.existEnrollment(gathering.getId(), user1.getId());
         Enrollment fetchEnrollment2 = enrollmentRepository.existEnrollment(gathering.getId(), user2.getId());
@@ -66,22 +84,15 @@ class EnrollmentRepositoryTest {
     }
     @Test
     void findEnrollment(){
-        Category category = returnDummyCategory(1);
-        Image userImage = returnDummyImage(1);
-        Image gatheringImage = returnDummyImage(1);
-        User user1 = returnDummyUser(1, userImage);
-        User user2 = returnDummyUser(2, userImage);
-        User user3 = returnDummyUser(3, userImage);
-        Gathering gathering = returnDummyGathering(1, category, user1, gatheringImage);
-        Enrollment enrollment1 = returnDummyEnrollment(user1,gathering);
-        Enrollment enrollment2 = returnDummyEnrollment(user2,gathering);
-        Enrollment enrollment3 = returnDummyEnrollment(user3,gathering);
-        gathering.enroll(List.of(enrollment1,enrollment2,enrollment3));
+        Gathering gathering = gatherings.get(0);
+        User user1 = users.get(0);
+        User user2 = users.get(1);
+        User user3 = users.get(2);
         categoryRepository.save(category);
-        userRepository.saveAll(List.of(user1,user2,user3));
+        userRepository.saveAll(users);
         imageRepository.saveAll(List.of(userImage,gatheringImage));
-        gatheringRepository.saveAll(List.of(gathering));
-        enrollmentRepository.saveAll(List.of(enrollment1,enrollment2,enrollment3));
+        gatheringRepository.saveAll(gatherings);
+        enrollmentRepository.saveAll(enrollments);
 
         Optional<Enrollment> enrollmentOptional1 = enrollmentRepository.findEnrollment(gathering.getId(), user1.getId(),true);
         Optional<Enrollment> enrollmentOptional2 = enrollmentRepository.findEnrollment(gathering.getId(), user2.getId(),true);
@@ -96,22 +107,15 @@ class EnrollmentRepositoryTest {
     }
     @Test
     void findByGatheringAndEnrolledBy(){
-        Category category = returnDummyCategory(1);
-        Image userImage = returnDummyImage(1);
-        Image gatheringImage = returnDummyImage(1);
-        User user1 = returnDummyUser(1, userImage);
-        User user2 = returnDummyUser(2, userImage);
-        User user3 = returnDummyUser(3, userImage);
-        Gathering gathering = returnDummyGathering(1, category, user1, gatheringImage);
-        Enrollment enrollment1 = returnDummyEnrollment(user1,gathering);
-        Enrollment enrollment2 = returnDummyEnrollment(user2,gathering);
-        Enrollment enrollment3 = returnDummyEnrollment(user3,gathering);
-        gathering.enroll(List.of(enrollment1,enrollment2,enrollment3));
+        Gathering gathering = gatherings.get(0);
+        User user1 = users.get(0);
+        User user2 = users.get(1);
+        User user3 = users.get(2);
         categoryRepository.save(category);
-        userRepository.saveAll(List.of(user1,user2,user3));
+        userRepository.saveAll(users);
         imageRepository.saveAll(List.of(userImage,gatheringImage));
-        gatheringRepository.saveAll(List.of(gathering));
-        enrollmentRepository.saveAll(List.of(enrollment1,enrollment2,enrollment3));
+        gatheringRepository.saveAll(gatherings);
+        enrollmentRepository.saveAll(enrollments);
 
         Optional<Enrollment> optionalEnrollment1 = enrollmentRepository.findByGatheringAndEnrolledBy(gathering, user1);
         Optional<Enrollment> optionalEnrollment2 = enrollmentRepository.findByGatheringAndEnrolledBy(gathering, user2);

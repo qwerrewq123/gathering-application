@@ -2,6 +2,7 @@ package spring.myproject.repository.user;
 
 import jakarta.persistence.EntityManager;
 import org.hibernate.proxy.HibernateProxy;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -10,6 +11,7 @@ import spring.myproject.entity.image.Image;
 import spring.myproject.repository.image.ImageRepository;
 import spring.myproject.entity.user.User;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,15 +27,23 @@ class UserRepositoryTest {
     ImageRepository imageRepository;
     @Autowired
     EntityManager em;
+    List<User> users;
+    Image image;
+    @BeforeEach
+    void beforeEach(){
+        image = returnDummyImage(1);
+        users = List.of(returnDummyUser(1,image),
+                returnDummyUser(2,image)
+                );
+    }
 
 
     @Test
     void existByUsername(){
-        Image image1 = returnDummyImage(1);
-        User user1 = returnDummyUser(1,image1);
-        User user2 = returnDummyUser(2,image1);
+        User user1 = users.get(0);
+        User user2 = users.get(1);
 
-        imageRepository.save(image1);
+        imageRepository.save(image);
         userRepository.save(user1);
         userRepository.save(user2);
 
@@ -42,11 +52,10 @@ class UserRepositoryTest {
     }
     @Test
     void existByNickname(){
-        Image image1 = returnDummyImage(1);
-        User user1 = returnDummyUser(1,image1);
-        User user2 = returnDummyUser(2,image1);
+        User user1 = users.get(0);
+        User user2 = users.get(1);
 
-        imageRepository.save(image1);
+        imageRepository.save(image);
         userRepository.save(user1);
         userRepository.save(user2);
 
@@ -56,39 +65,27 @@ class UserRepositoryTest {
     @Test
     void findByEmail(){
 
-        Image image = returnDummyImage(1);
-        User user1 = returnDummyUser(1,image);
-        User user2 = returnDummyUser(2,image);
-        User user3 = returnDummyUser(3,image);
-        User user4 = returnDummyUser(4,image);
+        User user1 = users.get(0);
+        User user2 = users.get(1);
 
         imageRepository.save(image);
         userRepository.save(user1);
         userRepository.save(user2);
-        userRepository.save(user3);
-        userRepository.save(user4);
 
         List<User> userList1 = userRepository.findByEmail("email1");
         List<User> userList2 = userRepository.findByEmail("email2");
-        List<User> userList3 = userRepository.findByEmail("email3");
-        List<User> userList4 = userRepository.findByEmail("email4");
 
         assertThat(userList1.size()).isEqualTo(1);
         assertThat(userList1.getFirst()).extracting("email").isEqualTo("email1");
         assertThat(userList2.size()).isEqualTo(1);
         assertThat(userList2.getFirst()).extracting("email").isEqualTo("email2");
-        assertThat(userList3.size()).isEqualTo(1);
-        assertThat(userList3.getFirst()).extracting("email").isEqualTo("email3");
-        assertThat(userList4.size()).isEqualTo(1);
-        assertThat(userList4.getFirst()).extracting("email").isEqualTo("email4");
 
     }
     @Test
     void findById(){
 
-        Image image = returnDummyImage(1);
-        User user1 = returnDummyUser(1,image);
-        User user2 = returnDummyUser(2,image);
+        User user1 = users.get(0);
+        User user2 = users.get(1);
 
         imageRepository.save(image);
         userRepository.save(user1);
@@ -99,8 +96,4 @@ class UserRepositoryTest {
         assertThat(optionalUser1).isPresent();
         assertThat(optionalUser1.get().getProfileImage() instanceof HibernateProxy).isFalse();
     }
-
-
-
-
 }

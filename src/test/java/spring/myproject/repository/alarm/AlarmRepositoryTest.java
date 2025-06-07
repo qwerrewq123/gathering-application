@@ -1,5 +1,6 @@
 package spring.myproject.repository.alarm;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -29,18 +30,26 @@ class AlarmRepositoryTest {
     UserRepository userRepository;
     @Autowired
     ImageRepository imageRepository;
+    Image image;
+    User user;
+    List<Alarm> alarms;
+    @BeforeEach
+    void beforeEach(){
+        image = returnDummyImage(1);
+        user = returnDummyUser(1,image);
+        alarms = List.of(returnDummyAlarm(1, user),
+                returnDummyAlarm(2, user),
+                returnDummyAlarm(3, user),
+                returnDummyAlarm(4, user));
+
+    }
     @Test
     void findUncheckedAlarmPage(){
-        Image image = returnDummyImage(1);
-        User user = returnDummyUser(1, image);
-        Alarm alarm1 = returnDummyAlarm(1, user);
-        Alarm alarm2 = returnDummyAlarm(2, user);
-        Alarm alarm3 = returnDummyAlarm(3, user);
-        Alarm alarm4 = returnDummyAlarm(4, user);
 
         imageRepository.save(image);
         userRepository.save(user);
-        alarmRepository.saveAll(List.of(alarm1,alarm2,alarm3,alarm4));
+        alarmRepository.saveAll(alarms);
+
         Page<Alarm> page = alarmRepository.findUncheckedAlarmPage(PageRequest.of(0, 1), user.getId());
 
         assertThat(page.getTotalPages()).isEqualTo(4);
@@ -50,17 +59,15 @@ class AlarmRepositoryTest {
 
     @Test
     void findCheckedAlarmPage(){
-        Image image = returnDummyImage(1);
-        User user = returnDummyUser(1, image);
-        Alarm alarm1 = returnDummyAlarm(1, user);
-        Alarm alarm2 = returnDummyAlarm(1, user);
-        Alarm alarm3 = returnDummyAlarm(1, user);
-        Alarm alarm4 = returnDummyAlarm(1, user);
+
+        Alarm alarm1 = alarms.get(0);
+        Alarm alarm2 = alarms.get(1);
         alarm1.setChecked(true);
         alarm2.setChecked(true);
         imageRepository.save(image);
         userRepository.save(user);
-        alarmRepository.saveAll(List.of(alarm1,alarm2,alarm3,alarm4));
+        alarmRepository.saveAll(alarms);
+
         Page<Alarm> page = alarmRepository.findCheckedAlarmPage(PageRequest.of(0, 1), user.getId());
 
         assertThat(page.getTotalPages()).isEqualTo(2);

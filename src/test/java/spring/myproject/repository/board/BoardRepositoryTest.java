@@ -1,5 +1,6 @@
 package spring.myproject.repository.board;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -10,6 +11,7 @@ import spring.myproject.entity.board.Board;
 import spring.myproject.dto.response.board.querydto.BoardQuery;
 import spring.myproject.dto.response.board.querydto.BoardsQuery;
 import spring.myproject.entity.category.Category;
+import spring.myproject.entity.enrollment.Enrollment;
 import spring.myproject.repository.category.CategoryRepository;
 import spring.myproject.entity.gathering.Gathering;
 import spring.myproject.repository.gathering.GatheringRepository;
@@ -37,6 +39,34 @@ class BoardRepositoryTest {
     CategoryRepository categoryRepository;
     @Autowired
     BoardRepository boardRepository;
+    Category category;
+    Image userImage;
+    Image gatheringImage;
+    Image boardImage;
+    List<User> users;
+    List<Gathering> gatherings;
+    List<Enrollment> enrollments;
+    List<Board> boards;
+    //todo : test
+    @BeforeEach
+    void beforeEach(){
+        category = returnDummyCategory(1);
+        userImage = returnDummyImage(1);
+        gatheringImage = returnDummyImage(1);
+        boardImage = returnDummyImage(1);
+        users = List.of(returnDummyUser(1, userImage),
+                returnDummyUser(2, userImage),
+                returnDummyUser(3, userImage));
+        gatherings = List.of(returnDummyGathering(1, category, users.get(0), gatheringImage),
+                returnDummyGathering(1, category, users.get(0), gatheringImage),
+                returnDummyGathering(1, category, users.get(0), gatheringImage),
+                returnDummyGathering(1, category, users.get(0), gatheringImage),
+                returnDummyGathering(1, category, users.get(0), gatheringImage));
+        enrollments = List.of(returnDummyEnrollment(users.get(0),gatherings.get(0)),
+                returnDummyEnrollment(users.get(1),gatherings.get(0)),
+                returnDummyEnrollment(users.get(2),gatherings.get(0)));
+//        boards = List.of()
+    }
     @Test
     void fetchBoard() {
         Category category = returnDummyCategory(1);

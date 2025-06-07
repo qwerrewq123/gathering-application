@@ -50,7 +50,6 @@ public class DummyData {
                 .title(String.format("title%d",i))
                 .content(String.format("content%d",i))
                 .registerDate(LocalDateTime.now())
-                .category(category)
                 .createBy(createdBy)
                 .gatheringImage(gatheringImage)
                 .count(i)

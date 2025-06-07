@@ -1,9 +1,12 @@
 package spring.myproject.repository.chat;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import spring.myproject.entity.category.Category;
+import spring.myproject.entity.enrollment.Enrollment;
 import spring.myproject.entity.gathering.Gathering;
 import spring.myproject.repository.category.CategoryRepository;
+import spring.myproject.repository.enrollment.EnrollmentRepository;
 import spring.myproject.repository.gathering.GatheringRepository;
 import spring.myproject.repository.image.ImageRepository;
 import spring.myproject.repository.user.UserRepository;
@@ -23,6 +26,7 @@ import spring.myproject.entity.user.User;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.*;
 import static spring.myproject.utils.DummyData.*;
@@ -40,6 +44,8 @@ class ReadStatusRepositoryTest {
         @Autowired
         GatheringRepository gatheringRepository;
         @Autowired
+        EnrollmentRepository enrollmentRepository;
+        @Autowired
         ChatMessageRepository chatMessageRepository;
         @Autowired
         ChatParticipantRepository chatParticipantRepository;
@@ -49,49 +55,69 @@ class ReadStatusRepositoryTest {
         ReadStatusRepository readStatusRepository;
         @Autowired
         EntityManager em;
+        Image image;
+        List<User> users;
+        List<Enrollment> enrollments;
+        Category category;
+        Gathering gathering;
+        List<ChatRoom> chatRooms;
+        List<ChatParticipant> chatParticipants;
+        List<ChatMessage> chatMessages;
+        List<ReadStatus> readStatuses;
+        @BeforeEach
+        void beforeEach(){
+            image = returnDummyImage(1);
+            users = List.of(returnDummyUser(1, image),
+                    returnDummyUser(2, image),
+                    returnDummyUser(3, image),
+                    returnDummyUser(4, image),
+                    returnDummyUser(5, image));
+            Category category = returnDummyCategory(1);
+            Gathering gathering = returnDummyGathering(1, category, users.get(0), image);
+            enrollments = List.of(returnDummyEnrollment(users.get(0),gathering),
+                    returnDummyEnrollment(users.get(1),gathering),
+                    returnDummyEnrollment(users.get(2),gathering),
+                    returnDummyEnrollment(users.get(3),gathering),
+                    returnDummyEnrollment(users.get(4),gathering));
+            chatRooms = List.of(returnDummyChatRoom(users.get(0), gathering,1));
+            chatParticipants = List.of(returnDummyChatParticipant(users.get(0), chatRooms.get(0)),
+                    returnDummyChatParticipant(users.get(1), chatRooms.get(0)),
+                    returnDummyChatParticipant(users.get(2), chatRooms.get(0)),
+                    returnDummyChatParticipant(users.get(3), chatRooms.get(0)),
+                    returnDummyChatParticipant(users.get(4), chatRooms.get(0)));
+            chatMessages = new ArrayList<>();
+            readStatuses = new ArrayList<>();
+            for(int i = 1;i<=5;i++){
+                ChatMessage chatMessage = returnDummyChatMessage(chatRooms.get(0), chatParticipants.get(0), i);
+                chatMessages.add(chatMessage);
+                readStatuses.add(returnDummyReadStatus(chatParticipants.get(0),chatMessage));
+                readStatuses.add(returnDummyReadStatus(chatParticipants.get(1),chatMessage));
+                readStatuses.add(returnDummyReadStatus(chatParticipants.get(2),chatMessage));
+                readStatuses.add(returnDummyReadStatus(chatParticipants.get(3),chatMessage));
+                readStatuses.add(returnDummyReadStatus(chatParticipants.get(4),chatMessage));
+            }
+        }
         @Test
         void readChatMessage() {
-            Image image = returnDummyImage(1);
-            User user1 = returnDummyUser(1, image);
-            User user2 = returnDummyUser(2, image);
-            User user3 = returnDummyUser(3, image);
-            User user4 = returnDummyUser(3, image);
-            User user5 = returnDummyUser(3, image);
-            Category category = returnDummyCategory(1);
-            Gathering gathering = returnDummyGathering(1, category, user1, image);
-            ChatRoom chatRoom = returnDummyChatRoom(user1, gathering,1);
-            ChatParticipant chatParticipant1 = returnDummyChatParticipant(user1, chatRoom);
-            ChatParticipant chatParticipant2 = returnDummyChatParticipant(user2, chatRoom);
-            ChatParticipant chatParticipant3 = returnDummyChatParticipant(user3, chatRoom);
-            ChatParticipant chatParticipant4 = returnDummyChatParticipant(user4, chatRoom);
-            ChatParticipant chatParticipant5 = returnDummyChatParticipant(user5, chatRoom);
-            List<ChatMessage> chatMessages = new ArrayList<>();
-            List<ReadStatus> readStatuses = new ArrayList<>();
-            for(int i = 1;i<=5;i++){
-                ChatMessage chatMessage = returnDummyChatMessage(chatRoom, chatParticipant1, i);
-                chatMessages.add(chatMessage);
-                readStatuses.add(returnDummyReadStatus(chatParticipant1,chatMessage));
-                readStatuses.add(returnDummyReadStatus(chatParticipant2,chatMessage));
-                readStatuses.add(returnDummyReadStatus(chatParticipant3,chatMessage));
-                readStatuses.add(returnDummyReadStatus(chatParticipant4,chatMessage));
-                readStatuses.add(returnDummyReadStatus(chatParticipant5,chatMessage));
-            }
+            ChatParticipant chatParticipant = chatParticipants.get(0);
             imageRepository.save(image);
-            userRepository.saveAll(List.of(user1,user2,user3,user4,user5));
+            userRepository.saveAll(users);
             categoryRepository.save(category);
             gatheringRepository.save(gathering);
-            chatRoomRepository.saveAll(List.of(chatRoom));
-            chatParticipantRepository.saveAll(List.of(chatParticipant1,chatParticipant2,chatParticipant3,chatParticipant4,chatParticipant5));
+            chatRoomRepository.saveAll(chatRooms);
+            chatParticipantRepository.saveAll(chatParticipants);
             chatMessageRepository.saveAll(chatMessages);
             readStatusRepository.saveAll(readStatuses);
-            List<Long> chatMessagesIds = chatMessages.stream().map(c -> c.getId()).toList();
-            readStatusRepository.readChatMessage(chatParticipant1.getId(),chatMessagesIds);
+            List<Long> chatMessagesIds = chatMessages.stream()
+                    .map(ChatMessage::getId)
+                    .collect(Collectors.toList());
+            readStatusRepository.readChatMessage(chatParticipant.getId(),chatMessagesIds);
             em.flush();
             em.clear();
+
             Optional<ReadStatus> optionalReadStatus = readStatusRepository.findById(readStatuses.get(0).getId());
 
-            assertThat(optionalReadStatus).isPresent();
-            assertThat(optionalReadStatus.get()).extracting("status")
-                    .isEqualTo(true);
+            assertThat(optionalReadStatus).isPresent()
+                            .get().extracting("status").isEqualTo(true);
         }
 }

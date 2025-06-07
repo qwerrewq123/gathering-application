@@ -68,7 +68,4 @@ public class Gathering {
                 .build();
     }
 
-    public void enroll(List<Enrollment> enrollments){
-        this.enrollments = enrollments;
-    }
 }
