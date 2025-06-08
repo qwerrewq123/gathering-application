@@ -19,14 +19,11 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    @ManyToOne
-    @JoinColumn(name = "gathering_id")
-    private Gathering gathering;
 
-    public static Category from(String name,Gathering gathering){
+
+    public static Category from(String name){
         return Category.builder()
                 .name(name)
-                .gathering(gathering)
                 .build();
     }
 

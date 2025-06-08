@@ -2,6 +2,9 @@ package spring.myproject.repository.chat;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.context.TestPropertySource;
 import spring.myproject.entity.category.Category;
 import spring.myproject.entity.enrollment.Enrollment;
 import spring.myproject.entity.gathering.Gathering;
@@ -32,8 +35,9 @@ import static org.assertj.core.api.Assertions.*;
 import static spring.myproject.utils.DummyData.*;
 import static spring.myproject.utils.DummyData.returnDummyReadStatus;
 
-@SpringBootTest
-@Transactional
+@DataJpaTest
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@TestPropertySource(locations = "classpath:application.yml")
 class ReadStatusRepositoryTest {
         @Autowired
         UserRepository userRepository;
@@ -67,34 +71,35 @@ class ReadStatusRepositoryTest {
         @BeforeEach
         void beforeEach(){
             image = returnDummyImage(1);
-            users = List.of(returnDummyUser(1, image),
-                    returnDummyUser(2, image),
-                    returnDummyUser(3, image),
-                    returnDummyUser(4, image),
-                    returnDummyUser(5, image));
-            Category category = returnDummyCategory(1);
-            Gathering gathering = returnDummyGathering(1, category, users.get(0), image);
-            enrollments = List.of(returnDummyEnrollment(users.get(0),gathering),
-                    returnDummyEnrollment(users.get(1),gathering),
-                    returnDummyEnrollment(users.get(2),gathering),
-                    returnDummyEnrollment(users.get(3),gathering),
-                    returnDummyEnrollment(users.get(4),gathering));
-            chatRooms = List.of(returnDummyChatRoom(users.get(0), gathering,1));
-            chatParticipants = List.of(returnDummyChatParticipant(users.get(0), chatRooms.get(0)),
-                    returnDummyChatParticipant(users.get(1), chatRooms.get(0)),
-                    returnDummyChatParticipant(users.get(2), chatRooms.get(0)),
-                    returnDummyChatParticipant(users.get(3), chatRooms.get(0)),
-                    returnDummyChatParticipant(users.get(4), chatRooms.get(0)));
+            users = new ArrayList<>();
+            enrollments = new ArrayList<>();
+            chatParticipants = new ArrayList<>();
             chatMessages = new ArrayList<>();
             readStatuses = new ArrayList<>();
-            for(int i = 1;i<=5;i++){
-                ChatMessage chatMessage = returnDummyChatMessage(chatRooms.get(0), chatParticipants.get(0), i);
-                chatMessages.add(chatMessage);
-                readStatuses.add(returnDummyReadStatus(chatParticipants.get(0),chatMessage));
-                readStatuses.add(returnDummyReadStatus(chatParticipants.get(1),chatMessage));
-                readStatuses.add(returnDummyReadStatus(chatParticipants.get(2),chatMessage));
-                readStatuses.add(returnDummyReadStatus(chatParticipants.get(3),chatMessage));
-                readStatuses.add(returnDummyReadStatus(chatParticipants.get(4),chatMessage));
+            for(int i=1 ;i<=5;i++){
+                users.add(returnDummyUser(i,image));
+            }
+            category = returnDummyCategory(1);
+            gathering = returnDummyGathering(1, category, users.get(0), image);
+            for(int i=0;i<5;i++){
+                enrollments.add(returnDummyEnrollment(users.get(i),gathering));
+            }
+            chatRooms = List.of(returnDummyChatRoom(users.get(0), gathering,1),
+                    returnDummyChatRoom(users.get(0), gathering,2),
+                    returnDummyChatRoom(users.get(0), gathering,3));
+            for(int i= 0;i<3;i++){
+                for(int j= 0;j<5;j++){
+                    chatParticipants.add(returnDummyChatParticipant(users.get(j),chatRooms.get(i)));
+                }
+            }
+            for(int i = 0;i<3;i++){
+                for(int j= 0;j<5;j++){
+                    ChatMessage chatMessage = returnDummyChatMessage(chatRooms.get(i),chatParticipants.get(0),j+1);
+                    chatMessages.add(chatMessage);
+                    for(int k=0;k<5;k++){
+                        readStatuses.add(returnDummyReadStatus(chatParticipants.get(k),chatMessage));
+                    }
+                }
             }
         }
         @Test

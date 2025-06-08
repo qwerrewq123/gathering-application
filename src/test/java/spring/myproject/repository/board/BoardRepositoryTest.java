@@ -3,9 +3,12 @@ package spring.myproject.repository.board;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
 import spring.myproject.entity.board.Board;
 import spring.myproject.dto.response.board.querydto.BoardQuery;
@@ -14,19 +17,22 @@ import spring.myproject.entity.category.Category;
 import spring.myproject.entity.enrollment.Enrollment;
 import spring.myproject.repository.category.CategoryRepository;
 import spring.myproject.entity.gathering.Gathering;
+import spring.myproject.repository.enrollment.EnrollmentRepository;
 import spring.myproject.repository.gathering.GatheringRepository;
 import spring.myproject.entity.image.Image;
 import spring.myproject.repository.image.ImageRepository;
 import spring.myproject.entity.user.User;
 import spring.myproject.repository.user.UserRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
 import static spring.myproject.utils.DummyData.*;
 
-@SpringBootTest
-@Transactional
+@DataJpaTest
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@TestPropertySource(locations = "classpath:application.yml")
 class BoardRepositoryTest {
 
     @Autowired
@@ -39,56 +45,56 @@ class BoardRepositoryTest {
     CategoryRepository categoryRepository;
     @Autowired
     BoardRepository boardRepository;
+    @Autowired
+    EnrollmentRepository enrollmentRepository;
     Category category;
     Image userImage;
     Image gatheringImage;
-    Image boardImage;
+    List<Image> boardImages;
     List<User> users;
-    List<Gathering> gatherings;
+    Gathering gathering;
     List<Enrollment> enrollments;
     List<Board> boards;
-    //todo : test
     @BeforeEach
     void beforeEach(){
         category = returnDummyCategory(1);
         userImage = returnDummyImage(1);
-        gatheringImage = returnDummyImage(1);
-        boardImage = returnDummyImage(1);
         users = List.of(returnDummyUser(1, userImage),
                 returnDummyUser(2, userImage),
                 returnDummyUser(3, userImage));
-        gatherings = List.of(returnDummyGathering(1, category, users.get(0), gatheringImage),
-                returnDummyGathering(1, category, users.get(0), gatheringImage),
-                returnDummyGathering(1, category, users.get(0), gatheringImage),
-                returnDummyGathering(1, category, users.get(0), gatheringImage),
-                returnDummyGathering(1, category, users.get(0), gatheringImage));
-        enrollments = List.of(returnDummyEnrollment(users.get(0),gatherings.get(0)),
-                returnDummyEnrollment(users.get(1),gatherings.get(0)),
-                returnDummyEnrollment(users.get(2),gatherings.get(0)));
-//        boards = List.of()
+        User user1 = users.get(0);
+        User user2 = users.get(1);
+        User user3 = users.get(2);
+        gatheringImage = returnDummyImage(1);
+        gathering = returnDummyGathering(1, category, user1, gatheringImage);
+        enrollments = List.of(returnDummyEnrollment(user1,gathering),
+                returnDummyEnrollment(user2,gathering),
+                returnDummyEnrollment(user3,gathering));
+        boards = new ArrayList<>();
+        boardImages = new ArrayList<>();
+        for(int i= 0;i<3;i++){
+            Board board = returnDummyBoard(users.get(i),gathering,i);
+            boards.add(board);
+            for(int j=1;j<=3;j++){
+                Image boardImage = returnDummyImage(j);
+                boardImage.changeBoard(board);
+                boardImages.add(boardImage);
+            }
+        }
     }
     @Test
     void fetchBoard() {
-        Category category = returnDummyCategory(1);
-        Image userImage = returnDummyImage(1);
-        Image gatheringImage = returnDummyImage(1);
-        Image boardImage1 = returnDummyImage(1);
-        Image boardImage2 = returnDummyImage(2);
-        Image boardImage3 = returnDummyImage(3);
-        User user1 = returnDummyUser(1, userImage);
-        User user2 = returnDummyUser(2, userImage);
-        Gathering gathering = returnDummyGathering(1, category, user1, gatheringImage);
-        Board board = returnDummyBoard(user2, gathering, 1);
-        boardImage1.changeBoard(board);
-        boardImage2.changeBoard(board);
-        boardImage3.changeBoard(board);
+        Board board = boards.get(0);
         categoryRepository.save(category);
-        imageRepository.saveAll(List.of(userImage,gatheringImage,boardImage1,boardImage2,boardImage3));
-        userRepository.saveAll(List.of(user1,user2));
+        imageRepository.saveAll(List.of(userImage,gatheringImage));
+        userRepository.saveAll(users);
         gatheringRepository.saveAll(List.of(gathering));
-        boardRepository.saveAll(List.of(board));
+        enrollmentRepository.saveAll(enrollments);
+        boardRepository.saveAll(boards);
+        imageRepository.saveAll(boardImages);
 
         List<BoardQuery> boardQueries = boardRepository.fetchBoard(board.getId());
+
         assertThat(boardQueries).hasSize(3);
         assertThat(boardQueries).extracting("imageUrl")
                 .containsExactly(
@@ -98,41 +104,17 @@ class BoardRepositoryTest {
 
     @Test
     void fetchBoards() {
-        Category category = returnDummyCategory(1);
-        Image userImage = returnDummyImage(1);
-        Image gatheringImage = returnDummyImage(1);
-        Image boardImage1 = returnDummyImage(1);
-        Image boardImage2 = returnDummyImage(2);
-        Image boardImage3 = returnDummyImage(3);
-        Image boardImage4 = returnDummyImage(4);
-        Image boardImage5 = returnDummyImage(5);
-        Image boardImage6 = returnDummyImage(6);
-        Image boardImage7 = returnDummyImage(7);
-        Image boardImage8 = returnDummyImage(8);
-        Image boardImage9 = returnDummyImage(9);
-        User user1 = returnDummyUser(1, userImage);
-        User user2 = returnDummyUser(2, userImage);
-        User user3 = returnDummyUser(3, userImage);
-        Gathering gathering = returnDummyGathering(1, category, user1, gatheringImage);
-        Board board1 = returnDummyBoard(user1, gathering, 1);
-        Board board2 = returnDummyBoard(user2, gathering, 2);
-        Board board3 = returnDummyBoard(user3, gathering, 3);
-        boardImage1.changeBoard(board1);
-        boardImage2.changeBoard(board1);
-        boardImage3.changeBoard(board1);
-        boardImage4.changeBoard(board2);
-        boardImage5.changeBoard(board2);
-        boardImage6.changeBoard(board2);
-        boardImage7.changeBoard(board3);
-        boardImage8.changeBoard(board3);
-        boardImage9.changeBoard(board3);
+
         categoryRepository.save(category);
-        imageRepository.saveAll(List.of(userImage,gatheringImage,boardImage1,boardImage2,boardImage3,boardImage4,boardImage5,boardImage6,boardImage7,boardImage8,boardImage9));
-        userRepository.saveAll(List.of(user1,user2,user3));
+        imageRepository.saveAll(List.of(userImage,gatheringImage));
+        userRepository.saveAll(users);
         gatheringRepository.saveAll(List.of(gathering));
-        boardRepository.saveAll(List.of(board1,board2,board3));
+        enrollmentRepository.saveAll(enrollments);
+        boardRepository.saveAll(boards);
+        imageRepository.saveAll(boardImages);
 
         Page<BoardsQuery> page = boardRepository.fetchBoards(PageRequest.of(0, 2));
+
         assertThat(page.getTotalPages()).isEqualTo(2);
         assertThat(page.getTotalElements()).isEqualTo(3);
     }

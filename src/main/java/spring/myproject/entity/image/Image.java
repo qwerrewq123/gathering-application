@@ -23,7 +23,7 @@ public class Image {
     private String contentType;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "board_id")
-    Board board;
+    private Board board;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "gathering_id")
     private Gathering gathering;

@@ -3,6 +3,7 @@ package spring.myproject.service.enrollment;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ObjectUtils;
 import spring.myproject.common.exception.enrollment.NotDisEnrollmentException;
 import spring.myproject.common.exception.meeting.NotAuthorizeException;
 import spring.myproject.dto.request.fcm.TokenNotificationRequestDto;
@@ -70,7 +71,7 @@ public class EnrollmentService {
             Enrollment enrollment = enrollmentRepository.findEnrollment(gatheringId, user.getId(),true)
                     .orElseThrow(() ->  new NotFoundEnrollmentException("no exist Enrollment!!"));
             Long createdById = gathering.getCreateBy().getId();
-            if(createdById.equals(userId)) throw new NotDisEnrollmentException("Opener cannot disEnroll!!");
+            if(ObjectUtils.nullSafeEquals(createdById,userId)) throw new NotDisEnrollmentException("Opener cannot disEnroll!!");
             enrollmentRepository.delete(enrollment);
             gatheringRepository.updateCount(gatheringId,-1);
             Topic topic = gathering.getTopic();

@@ -35,12 +35,17 @@ public class Gathering {
 
     private int count;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "image_id")
     private Image gatheringImage;
 
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private Category category;
+
     @OneToMany(mappedBy = "gathering")
-    List<Enrollment> enrollments = new ArrayList<>();
+    @Builder.Default
+    private List<Enrollment> enrollments = new ArrayList<>();
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "topic_id")
@@ -57,13 +62,14 @@ public class Gathering {
     }
 
 
-    public static Gathering of(AddGatheringRequest addGatheringRequest, User createBy, Image image){
+    public static Gathering of(AddGatheringRequest addGatheringRequest, User createBy, Image image,Category category){
         return Gathering.builder()
                 .title(addGatheringRequest.getTitle())
                 .content(addGatheringRequest.getContent())
                 .createBy(createBy)
                 .registerDate(LocalDateTime.now())
                 .gatheringImage(image)
+                .category(category)
                 .count(1)
                 .build();
     }

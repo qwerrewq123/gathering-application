@@ -42,7 +42,6 @@ public class DummyData {
                 .password("password")
                 .email(String.format("email%d",i))
                 .profileImage(image)
-                .refreshToken(null)
                 .build();
     }
     public static Gathering returnDummyGathering(int i, Category category, User createdBy, Image gatheringImage){
@@ -52,6 +51,7 @@ public class DummyData {
                 .registerDate(LocalDateTime.now())
                 .createBy(createdBy)
                 .gatheringImage(gatheringImage)
+                .category(category)
                 .count(i)
                 .enrollments(null)
                 .build();
@@ -90,10 +90,10 @@ public class DummyData {
                 .date(LocalDateTime.now())
                 .build();
     }
-    public static Alarm returnDummyAlarm(int i, User user){
+    public static Alarm returnDummyAlarm(int i, User user,boolean checked){
         return Alarm.builder()
                 .user(user)
-                .checked(false)
+                .checked(checked)
                 .content(String.format("content%d",i))
                 .date(LocalDateTime.now())
                 .build();

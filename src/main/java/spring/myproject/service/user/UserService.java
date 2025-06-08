@@ -54,7 +54,6 @@ public class UserService {
 
 
     public IdCheckResponse idCheck(IdCheckRequest idCheckRequest) {
-
         boolean idCheck = !userRepository.existsByUsername(idCheckRequest.getUsername());
         if(!idCheck) throw new ExistUserException("user Exist!!");
         return IdCheckResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE);
@@ -122,7 +121,7 @@ public class UserService {
     public EmailCertificationResponse emailCertification(EmailCertificationRequest emailCertificationRequest) {
 
             List<User> users = userRepository.findByEmail(emailCertificationRequest.getEmail());
-            if(users.size()>1) throw new DuplicateEmailExeption("Duplicate Email");
+            if(!users.isEmpty()) throw new DuplicateEmailExeption("Duplicate Email");
             asyncService.asyncTask(emailCertificationRequest);
             return EmailCertificationResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE);
     }

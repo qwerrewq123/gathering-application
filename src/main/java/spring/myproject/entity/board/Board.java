@@ -30,6 +30,7 @@ public class Board {
     @JoinColumn(name = "gathering_id")
     Gathering gathering;
     @OneToMany(mappedBy = "board")
+    @Builder.Default
     List<Image> images = new ArrayList<>();
     private String title;
     @Lob

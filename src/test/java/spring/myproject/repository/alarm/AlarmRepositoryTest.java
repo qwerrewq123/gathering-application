@@ -3,10 +3,12 @@ package spring.myproject.repository.alarm;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
 import spring.myproject.entity.alarm.Alarm;
 import spring.myproject.entity.image.Image;
@@ -20,8 +22,9 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.*;
 import static spring.myproject.utils.DummyData.*;
 
-@SpringBootTest
-@Transactional
+@DataJpaTest
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@TestPropertySource(locations = "classpath:application.yml")
 class AlarmRepositoryTest {
 
     @Autowired
@@ -32,15 +35,20 @@ class AlarmRepositoryTest {
     ImageRepository imageRepository;
     Image image;
     User user;
-    List<Alarm> alarms;
+    List<Alarm> unCheckedAlarms;
+    List<Alarm> checkedAlarms;
     @BeforeEach
     void beforeEach(){
         image = returnDummyImage(1);
         user = returnDummyUser(1,image);
-        alarms = List.of(returnDummyAlarm(1, user),
-                returnDummyAlarm(2, user),
-                returnDummyAlarm(3, user),
-                returnDummyAlarm(4, user));
+        unCheckedAlarms = List.of(returnDummyAlarm(1, user,false),
+                returnDummyAlarm(2, user,false),
+                returnDummyAlarm(3, user,false),
+                returnDummyAlarm(4, user,false));
+        checkedAlarms = List.of(returnDummyAlarm(1, user,true),
+                returnDummyAlarm(2, user,true),
+                returnDummyAlarm(3, user,true),
+                returnDummyAlarm(4, user,true));
 
     }
     @Test
@@ -48,7 +56,7 @@ class AlarmRepositoryTest {
 
         imageRepository.save(image);
         userRepository.save(user);
-        alarmRepository.saveAll(alarms);
+        alarmRepository.saveAll(unCheckedAlarms);
 
         Page<Alarm> page = alarmRepository.findUncheckedAlarmPage(PageRequest.of(0, 1), user.getId());
 
@@ -60,17 +68,13 @@ class AlarmRepositoryTest {
     @Test
     void findCheckedAlarmPage(){
 
-        Alarm alarm1 = alarms.get(0);
-        Alarm alarm2 = alarms.get(1);
-        alarm1.setChecked(true);
-        alarm2.setChecked(true);
         imageRepository.save(image);
         userRepository.save(user);
-        alarmRepository.saveAll(alarms);
+        alarmRepository.saveAll(checkedAlarms);
 
         Page<Alarm> page = alarmRepository.findCheckedAlarmPage(PageRequest.of(0, 1), user.getId());
 
-        assertThat(page.getTotalPages()).isEqualTo(2);
-        assertThat(page.getTotalElements()).isEqualTo(2);
+        assertThat(page.getTotalPages()).isEqualTo(4);
+        assertThat(page.getTotalElements()).isEqualTo(4);
     }
 }

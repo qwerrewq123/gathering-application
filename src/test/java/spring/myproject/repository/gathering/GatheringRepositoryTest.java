@@ -4,9 +4,12 @@ import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
 import spring.myproject.common.exception.gathering.NotFoundGatheringException;
 import spring.myproject.dto.response.gathering.querydto.GatheringDetailQuery;
@@ -30,8 +33,9 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.*;
 import static spring.myproject.utils.DummyData.*;
 
-@SpringBootTest
-@Transactional
+@DataJpaTest
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@TestPropertySource(locations = "classpath:application.yml")
 public class GatheringRepositoryTest {
     @Autowired
     CategoryRepository categoryRepository;
@@ -65,16 +69,28 @@ public class GatheringRepositoryTest {
         users = List.of(returnDummyUser(1, userImage),
                 returnDummyUser(2, userImage),
                 returnDummyUser(3, userImage));
-        gatherings = List.of(returnDummyGathering(1, category, users.get(0), gatheringImage),
-                returnDummyGathering(1, category, users.get(0), gatheringImage),
-                returnDummyGathering(1, category, users.get(0), gatheringImage),
-                returnDummyGathering(1, category, users.get(0), gatheringImage),
-                returnDummyGathering(1, category, users.get(0), gatheringImage));
-        enrollments = List.of(returnDummyEnrollment(users.get(0),gatherings.get(0)),
-                returnDummyEnrollment(users.get(1),gatherings.get(0)),
-                returnDummyEnrollment(users.get(2),gatherings.get(0)));
-        likes = List.of(returnDummyLike(users.get(1), gatherings.get(0)),
-                returnDummyLike(users.get(2), gatherings.get(0)));
+        User user1 = users.get(0);
+        User user2 = users.get(1);
+        User user3 = users.get(2);
+        gatherings = List.of(returnDummyGathering(1, category, user1, gatheringImage),
+                returnDummyGathering(2, category, user1, gatheringImage),
+                returnDummyGathering(3, category, user1, gatheringImage),
+                returnDummyGathering(4, category, user1, gatheringImage),
+                returnDummyGathering(5, category, user1, gatheringImage));
+        Gathering gathering1 = gatherings.get(0);
+        Gathering gathering2 = gatherings.get(1);
+        Gathering gathering3 = gatherings.get(2);
+        Gathering gathering4 = gatherings.get(3);
+        Gathering gathering5 = gatherings.get(4);
+        enrollments = List.of(returnDummyEnrollment(user1,gathering1),
+                returnDummyEnrollment(user2,gathering1),
+                returnDummyEnrollment(user3,gathering1),
+                returnDummyEnrollment(user1,gathering2),
+                returnDummyEnrollment(user1,gathering3),
+                returnDummyEnrollment(user1,gathering4),
+                returnDummyEnrollment(user1,gathering5));
+        likes = List.of(returnDummyLike(user2, gathering1),
+                returnDummyLike(user3, gathering1));
 
     }
     @Test
@@ -85,7 +101,6 @@ public class GatheringRepositoryTest {
         userRepository.saveAll(users);
         gatheringRepository.saveAll(gatherings);
         enrollmentRepository.saveAll(enrollments);
-
         List<GatheringDetailQuery> gatheringDetailQueries = gatheringRepository.gatheringDetail(gatherings.get(0).getId());
 
         assertThat(gatheringDetailQueries).hasSize(3);
@@ -106,8 +121,8 @@ public class GatheringRepositoryTest {
         PageRequest pageRequest = PageRequest.of(0, 2);
         Page<GatheringsQuery> page = gatheringRepository.gatheringsCategory(pageRequest, category.getName());
 
-        assertThat(page.getTotalPages()).isEqualTo(2);
-        assertThat(page.getTotalElements()).isEqualTo(3);
+        assertThat(page.getTotalPages()).isEqualTo(3);
+        assertThat(page.getTotalElements()).isEqualTo(5);
     }
     @Test
     void gatheringsLike(){
@@ -119,13 +134,13 @@ public class GatheringRepositoryTest {
         likeRepository.saveAll(likes);
 
         PageRequest pageRequest = PageRequest.of(0, 2);
-        Page<GatheringsQuery> gatheringsQueryPage1 = gatheringRepository.gatheringsLike(pageRequest, users.get(1).getId());
-        Page<GatheringsQuery> gatheringsQueryPage2 = gatheringRepository.gatheringsLike(pageRequest, users.get(2).getId());
+        Page<GatheringsQuery> page1 = gatheringRepository.gatheringsLike(pageRequest, users.get(1).getId());
+        Page<GatheringsQuery> page2 = gatheringRepository.gatheringsLike(pageRequest, users.get(2).getId());
 
-        assertThat(gatheringsQueryPage1.getTotalPages()).isEqualTo(1);
-        assertThat(gatheringsQueryPage1.getTotalElements()).isEqualTo(1);
-        assertThat(gatheringsQueryPage2.getTotalPages()).isEqualTo(1);
-        assertThat(gatheringsQueryPage2.getTotalElements()).isEqualTo(1);
+        assertThat(page1.getTotalPages()).isEqualTo(1);
+        assertThat(page1.getTotalElements()).isEqualTo(1);
+        assertThat(page2.getTotalPages()).isEqualTo(1);
+        assertThat(page2.getTotalElements()).isEqualTo(1);
     }
     @Test
     void gatheringsRecommend(){
@@ -133,11 +148,11 @@ public class GatheringRepositoryTest {
         imageRepository.saveAll(List.of(userImage,gatheringImage));
         userRepository.saveAll(users);
         gatheringRepository.saveAll(gatherings);
+        em.flush();
+        em.clear();
         for(int i=0;i<5;i++){
             recommendRepository.updateCount(gatherings.get(0).getId(), LocalDate.now(),1);
         }
-        em.flush();
-        em.clear();
         List<GatheringsQuery> gatheringDetailQueries = gatheringRepository.gatheringsRecommend(LocalDate.now());
 
         assertThat(gatheringDetailQueries).hasSize(1);
@@ -149,9 +164,9 @@ public class GatheringRepositoryTest {
         userRepository.saveAll(users);
         gatheringRepository.saveAll(gatherings);
         enrollmentRepository.saveAll(enrollments);
-        gatheringRepository.updateCount(gatherings.get(0).getId(),10);
         em.flush();
         em.clear();
+        gatheringRepository.updateCount(gatherings.get(0).getId(),10);
         Gathering fetchGathering = gatheringRepository.findById(gatherings.get(0).getId())
                 .orElseThrow(() -> new NotFoundGatheringException("Not Found Gathering"));
 

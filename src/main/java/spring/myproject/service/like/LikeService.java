@@ -3,6 +3,7 @@ package spring.myproject.service.like;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ObjectUtils;
 import spring.myproject.entity.gathering.Gathering;
 import spring.myproject.repository.gathering.GatheringRepository;
 import spring.myproject.entity.like.Like;
@@ -38,8 +39,8 @@ public class LikeService {
                     .orElseThrow(()->new NotFoundUserException("no exist User!!"));
             Gathering gathering = gatheringRepository.findById(gatheringId)
                     .orElseThrow(()-> new NotFoundGatheringException("no exist Gathering!!"));
-            Optional<Like> optionalLike = likeRepository.findLike(userId, gatheringId);
-            if(optionalLike.isPresent()) throw new AlreadyLikeGatheringException("Already Like Gathering!!");
+            if(likeRepository.findLike(userId,gatheringId).isPresent())
+                throw new AlreadyLikeGatheringException("Already Like Gathering!!");
             likeRepository.save(Like.of(gathering,user));
             recommendService.addScore(gatheringId,1);
             return LikeResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE);
@@ -52,8 +53,6 @@ public class LikeService {
                     .orElseThrow(()-> new NotFoundGatheringException("no exist Gathering!!"));
             Like like = likeRepository.findLike(userId, gatheringId)
                     .orElseThrow(()-> new NotFoundLikeException("no exist Like"));
-            Long likedId = like.getLikedBy().getId();
-            if(!likedId.equals(userId)) throw new NotAuthorizeException("no Authorize!");
             likeRepository.delete(like);
             recommendService.addScore(gatheringId,-1);
             return DislikeResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE);

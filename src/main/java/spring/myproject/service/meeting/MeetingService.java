@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import spring.myproject.common.async.AsyncService;
@@ -87,9 +88,12 @@ public class MeetingService {
 
     public DeleteMeetingResponse deleteMeeting(Long userId, Long meetingId,Long gatheringId) {
 
-            userRepository.findById(userId).orElseThrow(()->new NotFoundUserException("no exist User!!"));
-            Meeting meeting = meetingRepository.findById(meetingId).orElseThrow(()->new NotFoundMeetingExeption("no exist Meeting!!"));
-            boolean authorize = meeting.getCreatedBy().getId().equals(userId);
+            userRepository.findById(userId)
+                    .orElseThrow(()->new NotFoundUserException("no exist User!!"));
+            Meeting meeting = meetingRepository.findById(meetingId)
+                    .orElseThrow(()->new NotFoundMeetingExeption("no exist Meeting!!"));
+            User createdBy = meeting.getCreatedBy();
+            boolean authorize = ObjectUtils.nullSafeEquals(createdBy.getId(),userId);
             if(!authorize) throw new NotAuthorizeException("no authority!");
             meetingRepository.delete(meeting);
             recommendService.addScore(gatheringId,-1);
@@ -109,7 +113,6 @@ public class MeetingService {
             Image image = null;
             image = saveImage(image,file);
             if(image!=null) imageRepository.save(image);
-            changeMeeting(meeting,updateMeetingRequest,image);
             if(!meeting.getMeetingDate().equals(updateMeetingRequest.getMeetingDate())){
                 Topic topic = gathering.getTopic();
                 String title = "Meeting Updated";
@@ -121,6 +124,7 @@ public class MeetingService {
                 alarmService.saveAll(alarmList);
                 asyncService.sendTopic(topicNotificationRequestDto);
             }
+            changeMeeting(meeting,updateMeetingRequest,image);
             return UpdateMeetingResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE,meetingId);
     }
 
@@ -210,11 +214,11 @@ public class MeetingService {
 
     private List<Alarm> getAlarmList(List<User> userList,String content) {
         return userList.stream()
-                .map(element -> Alarm.builder()
+                .map(user -> Alarm.builder()
                         .date(LocalDateTime.now())
                         .content(content)
                         .checked(false)
-                        .user(element)
+                        .user(user)
                         .build())
                 .toList();
     }

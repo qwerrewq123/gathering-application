@@ -34,11 +34,12 @@ public class Meeting {
     @JoinColumn(name = "user_id")
     private User createdBy;
     @OneToMany(mappedBy = "meeting",cascade = CascadeType.REMOVE)
+    @Builder.Default
     private List<Attend> attends = new ArrayList<>();
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "gathering_id")
     private Gathering gathering;
-    @OneToOne(fetch = FetchType.LAZY,optional = false,cascade = CascadeType.REMOVE)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "image_id")
     private Image image;
     private int count;

@@ -3,7 +3,10 @@ package spring.myproject.repository.like;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
 import spring.myproject.entity.category.Category;
 import spring.myproject.entity.enrollment.Enrollment;
@@ -23,8 +26,9 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.*;
 import static spring.myproject.utils.DummyData.*;
 
-@SpringBootTest
-@Transactional
+@DataJpaTest
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@TestPropertySource(locations = "classpath:application.yml")
 class LikeRepositoryTest {
     @Autowired
     CategoryRepository categoryRepository;
@@ -53,16 +57,28 @@ class LikeRepositoryTest {
         users = List.of(returnDummyUser(1, userImage),
                 returnDummyUser(2, userImage),
                 returnDummyUser(3, userImage));
-        gatherings = List.of(returnDummyGathering(1, category, users.get(0), gatheringImage),
-                returnDummyGathering(1, category, users.get(0), gatheringImage),
-                returnDummyGathering(1, category, users.get(0), gatheringImage),
-                returnDummyGathering(1, category, users.get(0), gatheringImage),
-                returnDummyGathering(1, category, users.get(0), gatheringImage));
-        enrollments = List.of(returnDummyEnrollment(users.get(0),gatherings.get(0)),
-                returnDummyEnrollment(users.get(1),gatherings.get(0)),
-                returnDummyEnrollment(users.get(2),gatherings.get(0)));
-        likes = List.of(returnDummyLike(users.get(1), gatherings.get(0)),
-                returnDummyLike(users.get(2), gatherings.get(0)));
+        User user1 = users.get(0);
+        User user2 = users.get(1);
+        User user3 = users.get(2);
+        gatherings = List.of(returnDummyGathering(1, category, user1, gatheringImage),
+                returnDummyGathering(2, category, user1, gatheringImage),
+                returnDummyGathering(3, category, user1, gatheringImage),
+                returnDummyGathering(4, category, user1, gatheringImage),
+                returnDummyGathering(5, category, user1, gatheringImage));
+        Gathering gathering1 = gatherings.get(0);
+        Gathering gathering2 = gatherings.get(1);
+        Gathering gathering3 = gatherings.get(2);
+        Gathering gathering4 = gatherings.get(3);
+        Gathering gathering5 = gatherings.get(4);
+        enrollments = List.of(returnDummyEnrollment(user1,gathering1),
+                returnDummyEnrollment(user2,gathering1),
+                returnDummyEnrollment(user3,gathering1),
+                returnDummyEnrollment(user1,gathering2),
+                returnDummyEnrollment(user1,gathering3),
+                returnDummyEnrollment(user1,gathering4),
+                returnDummyEnrollment(user1,gathering5));
+        likes = List.of(returnDummyLike(user2, gathering1),
+                returnDummyLike(user3, gathering1));
     }
     @Test
     void findLike(){

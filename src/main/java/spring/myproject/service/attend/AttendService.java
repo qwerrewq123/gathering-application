@@ -3,6 +3,7 @@ package spring.myproject.service.attend;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ObjectUtils;
 import spring.myproject.common.async.AsyncService;
 import spring.myproject.common.exception.gathering.NotFoundGatheringException;
 import spring.myproject.dto.request.fcm.TopicNotificationRequestDto;
@@ -69,8 +70,6 @@ public class AttendService {
                 Attend attend = attendRepository.findByUserIdAndMeetingId(userId,meetingId);
                 if(attend == null) throw  new NotFoundAttendException("Not Found Attend!!");
                 Long createdById = meeting.getCreatedBy().getId();
-                Long attendById = attend.getAttendBy().getId();
-                if(!attendById.equals(userId)) throw new NotAuthorizeException("Not Authorized");
                 checkMeetingOpener(createdById, userId, meetingId, attend);
                 recommendService.addScore(gatheringId,-1);
                 return DisAttendResponse.of(SUCCESS_CODE,SUCCESS_MESSAGE);

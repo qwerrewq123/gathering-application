@@ -3,7 +3,10 @@ package spring.myproject.repository.attend;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
 import spring.myproject.entity.attend.Attend;
 import spring.myproject.entity.category.Category;
@@ -26,8 +29,9 @@ import static org.assertj.core.api.Assertions.*;
 import static spring.myproject.utils.DummyData.*;
 import static spring.myproject.utils.DummyData.returnDummyAttend;
 
-@SpringBootTest
-@Transactional
+@DataJpaTest
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@TestPropertySource(locations = "classpath:application.yml")
 class AttendRepositoryTest {
     @Autowired
     CategoryRepository categoryRepository;
@@ -64,33 +68,38 @@ class AttendRepositoryTest {
                 returnDummyUser(4, userImage),
                 returnDummyUser(5, userImage),
                 returnDummyUser(6, userImage));
-        gatherings = List.of(returnDummyGathering(1, category, users.get(0), gatheringImage),
-                returnDummyGathering(1, category, users.get(0), gatheringImage),
-                returnDummyGathering(1, category, users.get(0), gatheringImage),
-                returnDummyGathering(1, category, users.get(0), gatheringImage),
-                returnDummyGathering(1, category, users.get(0), gatheringImage));
-        enrollments = List.of(returnDummyEnrollment(users.get(0),gatherings.get(0)),
-                returnDummyEnrollment(users.get(1),gatherings.get(0)),
-                returnDummyEnrollment(users.get(2),gatherings.get(0)),
-                returnDummyEnrollment(users.get(3),gatherings.get(0)),
-                returnDummyEnrollment(users.get(4),gatherings.get(0)),
-                returnDummyEnrollment(users.get(5),gatherings.get(0)));
-        meetings = List.of(returnDummyMeeting(1, users.get(0), gatherings.get(0),meetingImage),
-                returnDummyMeeting(1, users.get(3), gatherings.get(0),meetingImage));
-        attends = List.of(returnDummyAttend(users.get(0),meetings.get(0)),
-                returnDummyAttend(users.get(1),meetings.get(0)),
-                returnDummyAttend(users.get(2),meetings.get(0)),
-                returnDummyAttend(users.get(3),meetings.get(1)),
-                returnDummyAttend(users.get(4),meetings.get(1)),
-                returnDummyAttend(users.get(5),meetings.get(1)));
+        User user1 = users.get(0);
+        User user2 = users.get(1);
+        User user3 = users.get(2);
+        User user4 = users.get(3);
+        User user5 = users.get(4);
+        User user6 = users.get(5);
+        gatherings = List.of(returnDummyGathering(1, category, user1, gatheringImage),
+                returnDummyGathering(2, category, user1, gatheringImage),
+                returnDummyGathering(3, category, user1, gatheringImage),
+                returnDummyGathering(4, category, user1, gatheringImage),
+                returnDummyGathering(5, category, user1, gatheringImage));
+        Gathering gathering = gatherings.get(0);
+        enrollments = List.of(returnDummyEnrollment(user1,gathering),
+                returnDummyEnrollment(user2,gathering),
+                returnDummyEnrollment(user3,gathering),
+                returnDummyEnrollment(user4,gathering),
+                returnDummyEnrollment(user5,gathering),
+                returnDummyEnrollment(user6,gathering));
+        meetings = List.of(returnDummyMeeting(1, user1, gathering,meetingImage),
+                returnDummyMeeting(2, user4, gathering,meetingImage));
+        Meeting meeting1 = meetings.get(0);
+        Meeting meeting2 = meetings.get(1);
+        attends = List.of(returnDummyAttend(user1,meeting1),
+                returnDummyAttend(user2,meeting1),
+                returnDummyAttend(user3,meeting1),
+                returnDummyAttend(user4,meeting2),
+                returnDummyAttend(user5,meeting2),
+                returnDummyAttend(user6,meeting2));
 
     }
     @Test
     void findByUserIdAndMeetingId() {
-        User user1 = users.get(0);
-        User user2 = users.get(1);
-        User user3 = users.get(2);
-        Meeting meeting = meetings.get(0);
         imageRepository.saveAll(List.of(userImage,gatheringImage,meetingImage));
         categoryRepository.save(category);
         userRepository.saveAll(users);
@@ -99,14 +108,19 @@ class AttendRepositoryTest {
         meetingRepository.saveAll(meetings);
         attendRepository.saveAll(attends);
 
+        User user1 = users.get(0);
+        User user2 = users.get(1);
+        User user3 = users.get(2);
+        Meeting meeting = meetings.get(0);
+
         Attend fetchAttend1 = attendRepository.findByUserIdAndMeetingId(user1.getId(), meeting.getId());
         Attend fetchAttend2 = attendRepository.findByUserIdAndMeetingId(user2.getId(), meeting.getId());
         Attend fetchAttend3 = attendRepository.findByUserIdAndMeetingId(user3.getId(), meeting.getId());
         assertThat(fetchAttend1).isNotNull()
                 .extracting("attendBy").isEqualTo(user1);
         assertThat(fetchAttend2).isNotNull()
-                .extracting("attendBy").isEqualTo(user1);
+                .extracting("attendBy").isEqualTo(user2);
         assertThat(fetchAttend3).isNotNull()
-                .extracting("attendBy").isEqualTo(user1);
+                .extracting("attendBy").isEqualTo(user3);
     }
 }

@@ -5,7 +5,10 @@ import org.hibernate.proxy.HibernateProxy;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
 import spring.myproject.entity.image.Image;
 import spring.myproject.repository.image.ImageRepository;
@@ -17,8 +20,9 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 import static spring.myproject.utils.DummyData.*;
-@SpringBootTest
-@Transactional
+@DataJpaTest
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@TestPropertySource(locations = "classpath:application.yml")
 class UserRepositoryTest {
 
     @Autowired
@@ -40,24 +44,18 @@ class UserRepositoryTest {
 
     @Test
     void existByUsername(){
-        User user1 = users.get(0);
-        User user2 = users.get(1);
 
         imageRepository.save(image);
-        userRepository.save(user1);
-        userRepository.save(user2);
+        userRepository.saveAll(users);
 
         Boolean exist1 = userRepository.existsByUsername("user1");
         assertThat(exist1).isEqualTo(true);
     }
     @Test
     void existByNickname(){
-        User user1 = users.get(0);
-        User user2 = users.get(1);
 
         imageRepository.save(image);
-        userRepository.save(user1);
-        userRepository.save(user2);
+        userRepository.saveAll(users);
 
         Boolean exist = userRepository.existsByNickname("nickname1");
         assertThat(exist).isEqualTo(true);
@@ -65,12 +63,9 @@ class UserRepositoryTest {
     @Test
     void findByEmail(){
 
-        User user1 = users.get(0);
-        User user2 = users.get(1);
 
         imageRepository.save(image);
-        userRepository.save(user1);
-        userRepository.save(user2);
+        userRepository.saveAll(users);
 
         List<User> userList1 = userRepository.findByEmail("email1");
         List<User> userList2 = userRepository.findByEmail("email2");
@@ -84,16 +79,13 @@ class UserRepositoryTest {
     @Test
     void findById(){
 
-        User user1 = users.get(0);
-        User user2 = users.get(1);
-
+        User user = users.get(0);
         imageRepository.save(image);
-        userRepository.save(user1);
-        userRepository.save(user2);
+        userRepository.saveAll(users);
 
-        Optional<User> optionalUser1 = userRepository.findById(user1.getId());
+        Optional<User> optionalUser = userRepository.findById(user.getId());
 
-        assertThat(optionalUser1).isPresent();
-        assertThat(optionalUser1.get().getProfileImage() instanceof HibernateProxy).isFalse();
+        assertThat(optionalUser).isPresent();
+        assertThat(optionalUser.get().getProfileImage() instanceof HibernateProxy).isFalse();
     }
 }

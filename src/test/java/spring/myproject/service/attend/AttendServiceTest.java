@@ -1,5 +1,6 @@
 package spring.myproject.service.attend;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -13,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import spring.myproject.common.async.AsyncService;
 import spring.myproject.common.exception.attend.NotFoundAttendException;
 import spring.myproject.common.exception.gathering.NotFoundGatheringException;
+import spring.myproject.common.exception.meeting.NotAuthorizeException;
 import spring.myproject.dto.request.fcm.TopicNotificationRequestDto;
 import spring.myproject.entity.attend.Attend;
 import spring.myproject.entity.fcm.Topic;
@@ -28,6 +30,7 @@ import spring.myproject.repository.gathering.GatheringRepository;
 import spring.myproject.repository.meeting.MeetingRepository;
 import spring.myproject.repository.user.UserRepository;
 import spring.myproject.service.recommend.RecommendService;
+import spring.myproject.utils.MockData;
 
 import java.util.Optional;
 
@@ -38,6 +41,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import static spring.myproject.dto.response.attend.AttendResponseDto.*;
 import static spring.myproject.utils.ConstClass.*;
+import static spring.myproject.utils.MockData.*;
 
 @ExtendWith(MockitoExtension.class)
 public class AttendServiceTest {
@@ -55,56 +59,143 @@ public class AttendServiceTest {
     RecommendService recommendService;
     @Mock
     AsyncService asyncService;
+    @DisplayName("Throws NotFoundUserException")
+    @Test
+    public void addAttendThrowsNotFoundUserException(){
+        when(userRepository.findById(1L))
+                .thenReturn(Optional.empty());
+
+        assertThatThrownBy(()->attendService.addAttend(1L,1L,1L))
+                .isInstanceOf(NotFoundUserException.class);
+    }
+    @DisplayName("Throws NotFoundGatheringException")
+    @Test
+    public void addAttendThrowsNotFoundGatheringException(){
+        User mockUser = returnMockUser(1L,"true username","true password");
+
+        when(userRepository.findById(1L))
+                .thenReturn(Optional.of(mockUser));
+        when(gatheringRepository.findTopicById(1L))
+                .thenReturn(Optional.empty());
+
+        assertThatThrownBy(()->attendService.addAttend(1L,1L,1L))
+                .isInstanceOf(NotFoundGatheringException.class);
+    }
+    @DisplayName("Throws NotFoundMeetingException")
+    @Test
+    public void addAttendThrowsNotFoundMetingException(){
+        User mockUser = returnMockUser(1L,"true username","true password");
+        Gathering mockGathering = returnMockGathering(mockUser);
+        when(userRepository.findById(1L))
+                .thenReturn(Optional.of(mockUser));
+        when(gatheringRepository.findTopicById(1L))
+                .thenReturn(Optional.of(mockGathering));
+        when(meetingRepository.findById(1L))
+                .thenReturn(Optional.empty());
+        assertThatThrownBy(()->attendService.addAttend(1L,1L,1L))
+                .isInstanceOf(NotFoundMeetingExeption.class);
+    }
+    @DisplayName("Throws AlreadyAttendException")
+    @Test
+    public void addAttendThrowsAlreadyAttendException(){
+        User mockUser = returnMockUser(1L,"true username","true password");
+        Gathering mockGathering = returnMockGathering(mockUser);
+        Meeting mockMeeting = returnMockMeeting(mockGathering,mockUser);
+        when(userRepository.findById(1L))
+                .thenReturn(Optional.of(mockUser));
+        when(gatheringRepository.findTopicById(1L))
+                .thenReturn(Optional.of(mockGathering));
+        when(meetingRepository.findById(1L))
+                .thenReturn(Optional.of(mockMeeting));
+        when(attendRepository.findByUserIdAndMeetingId(1L,1L))
+                .thenReturn(mock(Attend.class));
+        assertThatThrownBy(()->attendService.addAttend(1L,1L,1L))
+                .isInstanceOf(AlreadyAttendExeption.class);
+    }
+    @DisplayName("Return Normal Response")
     @Test
     public void addAttend() {
-        User mockUser1 = new User(1L,"true username1","password","email",
-                "address",1,"hobby", Role.USER,"nickname",null,null,null);
-        User mockUser2 = new User(2L,"true username2","password","email",
-                "address",1,"hobby", Role.USER,"nickname",null,null,null);
-        Gathering mockGathering = new Gathering(1L,null,null,null,null,null,0,null,null, Topic.builder().build());
-        when(userRepository.findById(1L)).thenReturn(Optional.of(mockUser1));
-        when(userRepository.findById(2L)).thenReturn(Optional.of(mockUser2));
-        when(userRepository.findById(3L)).thenReturn(Optional.empty());
-        when(gatheringRepository.findTopicById(1L)).thenReturn(Optional.of(mockGathering));
-        when(gatheringRepository.findTopicById(2L)).thenReturn(Optional.empty());
-        when(meetingRepository.findById(1L)).thenReturn(Optional.of(mock(Meeting.class)));
-        when(meetingRepository.findById(2L)).thenReturn(Optional.empty());
-        when(attendRepository.findByUserIdAndMeetingId(eq(1L),anyLong())).thenReturn(null);
-        when(attendRepository.findByUserIdAndMeetingId(eq(2L),anyLong())).thenReturn(mock(Attend.class));
+        User mockUser = returnMockUser(1L,"true username","true password");
+        Gathering mockGathering = returnMockGathering(mockUser);
+        Meeting mockMeeting = returnMockMeeting(mockGathering,mockUser);
+        when(userRepository.findById(1L))
+                .thenReturn(Optional.of(mockUser));
+        when(gatheringRepository.findTopicById(1L))
+                .thenReturn(Optional.of(mockGathering));
+        when(meetingRepository.findById(1L))
+                .thenReturn(Optional.of(mockMeeting));
+        when(attendRepository.findByUserIdAndMeetingId(1L,1L))
+                .thenReturn(null);
+        when(attendRepository.save(any(Attend.class)))
+                .thenReturn(mock(Attend.class));
+        doNothing().when(meetingRepository).updateCount(anyLong(),anyInt());
         doNothing().when(asyncService).sendTopic(any(TopicNotificationRequestDto.class));
-        assertThatThrownBy(()->attendService.addAttend(2L,3L,2L))
-                .isInstanceOf(NotFoundUserException.class);
-        assertThatThrownBy(()->attendService.addAttend(2L,2L,2L))
-                .isInstanceOf(NotFoundGatheringException.class);
-        assertThatThrownBy(()->attendService.addAttend(2L,2L,1L))
-                .isInstanceOf(NotFoundMeetingExeption.class);
-        assertThatThrownBy(()->attendService.addAttend(1L,2L,1L))
-                .isInstanceOf(AlreadyAttendExeption.class);
+
         AddAttendResponse addAttendResponse = attendService.addAttend(1L, 1L,1L);
+
         assertThat(addAttendResponse)
                 .extracting("code","message")
                 .containsExactly(SUCCESS_CODE, SUCCESS_MESSAGE);
     }
+    @DisplayName("Throws NotFoundUserException")
+    @Test
+    public void disAttendThrowsNotFoundUserException(){
+        when(userRepository.findById(1L))
+                .thenReturn(Optional.empty());
+
+        assertThatThrownBy(()->attendService.disAttend(1L,1L,1L))
+                .isInstanceOf(NotFoundUserException.class);
+    }
+    @DisplayName("Throws NotFoundMeetingException")
+    @Test
+    public void disAttendThrowsNotFoundMeetingException(){
+        User mockUser = returnMockUser(1L,"true username","true password");
+        when(userRepository.findById(1L))
+                .thenReturn(Optional.of(mockUser));
+        when(meetingRepository.findById(1L))
+                .thenReturn(Optional.empty());
+
+        assertThatThrownBy(()->attendService.disAttend(1L,1L,1L))
+                .isInstanceOf(NotFoundMeetingExeption.class);
+    }
+    @DisplayName("Throws NotFoundAttendException")
+    @Test
+    public void disAttendThrowsNotFoundAttendException(){
+        User mockUser = returnMockUser(1L,"true username","true password");
+        Gathering mockGathering = returnMockGathering(mockUser);
+        Meeting mockMeeting = returnMockMeeting(mockGathering,mockUser);
+        when(userRepository.findById(1L))
+                .thenReturn(Optional.of(mockUser));
+        when(meetingRepository.findById(1L))
+                .thenReturn(Optional.of(mockMeeting));
+        when(attendRepository.findByUserIdAndMeetingId(1L,1L))
+                .thenReturn(null);
+
+        assertThatThrownBy(()->attendService.disAttend(1L,1L,1L))
+                .isInstanceOf(NotFoundAttendException.class);
+    }
     @Test
     public void disAttend() {
-        User mockUser1 = new User(1L,"true username1","password","email",
-                "address",1,"hobby", Role.USER,"nickname",null,null,null);
-        User mockUser2 = new User(2L,"true username2","password","email",
-                "address",1,"hobby", Role.USER,"nickname",null,null,null);
-        Meeting mockMeeting = Meeting.builder().createdBy(mockUser1).count(1).build();
-        Attend mockAttend = Attend.builder().attendBy(mockUser1).build();
-        when(userRepository.findById(2L)).thenReturn(Optional.of(mockUser2));
-        when(userRepository.findById(3L)).thenReturn(Optional.empty());
+        User mockUser1 = returnMockUser(1L,"true username","true password");
+        User mockUser2 = returnMockUser(2L,"true username","true password");
+        Gathering mockGathering = returnMockGathering(mockUser1);
+        Meeting mockMeeting = returnMockMeeting(mockGathering,mockUser1);
+        Attend mockAttend = returnMockAttend(mockMeeting,mockUser2);
+        when(userRepository.findById(2L))
+                .thenReturn(Optional.of(mockUser2));
+        when(meetingRepository.findById(1L))
+                .thenReturn(Optional.of(mockMeeting));
+        when(attendRepository.findByUserIdAndMeetingId(2L,1L))
+                .thenReturn(mockAttend);
+        doNothing().when(attendRepository).delete(any(Attend.class));
+        doNothing().when(meetingRepository).updateCount(anyLong(),anyInt());
+        doNothing().when(recommendService).addScore(anyLong(),anyInt());
 
-        when(meetingRepository.findById(1L)).thenReturn(Optional.of(mockMeeting));
-        when(meetingRepository.findById(2L)).thenReturn(Optional.empty());
-        when(attendRepository.findByUserIdAndMeetingId(eq(2L),any())).thenReturn(null);
-        assertThatThrownBy(()->attendService.disAttend(2L,3L,1L))
-                .isInstanceOf(NotFoundUserException.class);
-        assertThatThrownBy(()->attendService.disAttend(2L,2L,1L))
-                .isInstanceOf(NotFoundMeetingExeption.class);
-        assertThatThrownBy(()->attendService.disAttend(1L,2L,1L))
-                .isInstanceOf(NotFoundAttendException.class);
+        DisAttendResponse disAttendResponse = attendService.disAttend(1L, 2L, 1L);
+
+        assertThat(disAttendResponse)
+                .extracting("code","message")
+                .containsExactly(SUCCESS_CODE,SUCCESS_MESSAGE);
 
     }
 }

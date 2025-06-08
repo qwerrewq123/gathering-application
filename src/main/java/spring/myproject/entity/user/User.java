@@ -38,11 +38,12 @@ public class User implements Serializable {
     @Enumerated(EnumType.STRING)
     private Role role;
     private String nickname;
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "image_id")
     private Image profileImage;
     private String refreshToken;
     @OneToMany(mappedBy = "user")
+    @Builder.Default
     private List<FCMToken> tokens = new ArrayList<>();
 
     public void changeRefreshToken(String refreshToken){

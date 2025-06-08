@@ -130,6 +130,7 @@ public class GatheringResponseDto {
     public static class MainGatheringResponse {
         private String code;
         private String message;
+        @Builder.Default
         private Map<String, CategoryTotalGatherings> map = new HashMap<>();
 
         public static MainGatheringResponse of(String code, String message, Map<String, CategoryTotalGatherings> categoryMap) {
@@ -201,6 +202,7 @@ public class GatheringResponseDto {
     @NoArgsConstructor
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class CategoryTotalGatherings {
+        @Builder.Default
         private List<MainGatheringElement> totalGatherings = new ArrayList<>();
         boolean hasNext;
 

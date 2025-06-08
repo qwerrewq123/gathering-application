@@ -17,6 +17,7 @@ import java.util.List;
 public class GatheringImageResponse {
     private String code;
     private String message;
+    @Builder.Default
     private List<String> urls = new ArrayList<>();
     private boolean hasNext;
 

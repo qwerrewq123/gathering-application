@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.NumberUtils;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import spring.myproject.dto.response.gathering.querydto.MainGatheringsQuery;
@@ -68,14 +70,14 @@ public class GatheringService {
             }
             Image image = null;
             image = saveImage(image,file);
-            Gathering gathering = Gathering.of(addGatheringRequest,user,image);
-            Category category = Category.from(addGatheringRequest.getCategory(),gathering);
-            Enrollment enrollment = Enrollment.of(true, gathering, user, LocalDateTime.now());
+            Category category = Category.from(addGatheringRequest.getCategory());
+            Gathering gathering = Gathering.of(addGatheringRequest,user,image,category);
+            Enrollment enrollment= Enrollment.of(true, gathering, user, LocalDateTime.now());
             if(image!=null) imageRepository.save(image);
-            gatheringRepository.save(gathering);
-            categoryRepository.save(category);
             Topic topic = generateTopic(gathering);
             gathering.changeTopic(topic);
+            gatheringRepository.save(gathering);
+            categoryRepository.save(category);
             topicRepository.save(topic);
             enrollmentRepository.save(enrollment);
             fcmTokenTopicService.subscribeToTopic(topic.getTopicName(),userId);
@@ -92,7 +94,7 @@ public class GatheringService {
             Gathering gathering = gatheringRepository.findGatheringFetchCreatedByAndTokensId(gatheringId)
                     .orElseThrow(()->new NotFoundGatheringException("no exist Gathering!!"));
             User createBy = gathering.getCreateBy();
-            boolean authorize = Objects.equals(createBy.getId(),userId);
+            boolean authorize = ObjectUtils.nullSafeEquals(createBy.getId(),userId);
             if(!authorize) throw new NotAuthorizeException("no authorize!!");
             Image image = null;
             image = saveImage(image,file);

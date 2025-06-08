@@ -7,6 +7,6 @@ import spring.myproject.entity.category.Category;
 import java.util.Optional;
 
 public interface CategoryRepository extends JpaRepository<Category,Long> {
-    @Query("select c from Category c left join c.gathering g where g.id =:gatheringId and c.name = :name")
+    @Query("select c from Gathering g left join g.category c where g.id =:gatheringId and c.name = :name")
     Optional<Category> findBy(Long gatheringId,String name);
 }
