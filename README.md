@@ -1,30 +1,5 @@
 <div align="center">
 
-<!-- logo -->
-
-<img src="https://user-images.githubusercontent.com/80824750/208554611-f8277015-12e8-48d2-b2cc-d09d67f03c02.png" width="400"/>
-
-
-</div> 
-
-## 📝 소개
-
-- 프로젝트 소개
-- 프로젝트 API 설계
-- 사용한 기술 스택
-- 프로젝트 아키텍쳐
-- 기술적 이슈와 해결 과정
-- 프로젝트 팀원
-
-
-
-<br />
-
-
-
-
-
-
 ## ⚙ 기술 스택
 ### Back-end
 <div>
