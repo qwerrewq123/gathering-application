@@ -1,4 +1,4 @@
-<div align="center">
+
 
 ## ⚙ 기술 스택
 ### Back-end
