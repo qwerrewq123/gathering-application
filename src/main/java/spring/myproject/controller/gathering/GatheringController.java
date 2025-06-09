@@ -69,7 +69,7 @@ public class GatheringController {
     }
 
 
-    @GetMapping("/gatherings/like")
+    @PostMapping("/gatherings/like")
     public ResponseEntity<GatheringLikeResponse> gatheringsLike(@RequestParam int pageNum,
                                                                   @RequestParam Integer pageSize,
                                                                 @Id Long userId){
